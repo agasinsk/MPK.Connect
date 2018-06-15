@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MPK.Connect.DataAccess\MPK.Connect.DataAccess.csproj" />
+    <ProjectReference Include="..\MPK.Connect.Model\MPK.Connect.Model.csproj" />
+  </ItemGroup>
+
+</Project>
