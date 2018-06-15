@@ -47,7 +47,7 @@ namespace MPK.Connect.Service.Service.Stops
 
         private Stop MapToStop(string stopString)
         {
-            var stopInfos = stopString.Split(';');
+            var stopInfos = stopString.Split(',');
             var id = stopInfos[2];
             var longitude = stopInfos[0];
             var latitude = stopInfos[1];

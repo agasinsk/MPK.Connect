@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@ namespace MPK.Console.DataImporter
             // Add logging
             serviceCollection.AddSingleton(new LoggerFactory())
                 .AddLogging(configure => configure.AddConsole())
+                .AddLogging(configure => configure.AddConsole().AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning))
                 .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information)
                 .AddTransient<StopsRepository>()
                 .AddTransient<StopsService>();
@@ -31,10 +33,13 @@ namespace MPK.Console.DataImporter
             // Add access to generic IConfigurationRoot
             serviceCollection.AddSingleton(Configuration);
 
+            // Add dbContext
+            serviceCollection.AddDbContext<MpkContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("MpkContext")));
+
             // Add services
             serviceCollection.AddTransient<IStopsService, StopsService>();
             serviceCollection.AddTransient<IStopsRepository, StopsRepository>();
-            serviceCollection.AddTransient<IRouteService, RouteService>();
         }
 
         private static void Main(string[] args)
@@ -46,12 +51,9 @@ namespace MPK.Console.DataImporter
             // Create service provider
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            //var fileName = Configuration.GetSection("Sources:Csv");
-            //var stopImporterService = serviceProvider.GetService(typeof(IStopsService)) as StopsService;
-            //stopImporterService?.ReadStopsFromFile(fileName.Value);
-            var fileName = Configuration.GetSection("Sources:Routes");
-            var routeService = serviceProvider.GetService(typeof(IRouteService)) as RouteService;
-            routeService?.ReadRoutesFromFile(fileName.Value);
+            var fileName = Configuration.GetSection("Sources:Stops");
+            var stopImporterService = serviceProvider.GetService(typeof(IStopsService)) as StopsService;
+            stopImporterService?.ReadStopsFromFile(fileName.Value);
 
             // Get backup sources for client
             System.Console.ReadLine();
