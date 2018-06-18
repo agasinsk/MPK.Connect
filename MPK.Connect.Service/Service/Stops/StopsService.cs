@@ -1,4 +1,5 @@
-﻿using MPK.Connect.Model;
+﻿using System;
+using MPK.Connect.Model;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Logging;
@@ -48,16 +49,19 @@ namespace MPK.Connect.Service.Service.Stops
         private Stop MapToStop(string stopString)
         {
             var stopInfos = stopString.Split(',');
-            var id = stopInfos[2];
-            var longitude = stopInfos[0];
-            var latitude = stopInfos[1];
-            var typeKey = stopInfos[3];
+            var id = stopInfos[0];
+            var code = stopInfos[1];
+            var name = stopInfos[2];
+            var longitude = stopInfos[3];
+            var latitude = stopInfos[4];
 
             var mappedStop = new Stop
             {
                 Id = int.Parse(id),
-                Longitude = longitude,
-                Latitude = latitude,
+                Code = code,
+                Name = name,
+                Longitude = double.Parse(longitude),
+                Latitude = double.Parse(latitude),
             };
 
             return mappedStop;

@@ -9,6 +9,10 @@
     <Compile Remove="Migrations\20180615160911_ForeignKeys.cs" />
     <Compile Remove="Migrations\20180615161018_ForeignKeys.cs" />
     <Compile Remove="Migrations\20180615161358_ForeignKeys.cs" />
+    <Compile Remove="Migrations\20180618190037_ModelsAdded.cs" />
+    <Compile Remove="Migrations\20180618192833_ModelsAdded.cs" />
+    <Compile Remove="Migrations\20180618194406_ModelsAdded.cs" />
+    <Compile Remove="Migrations\20180618195246_ModelsAdded.cs" />
   </ItemGroup>
 
   <ItemGroup>

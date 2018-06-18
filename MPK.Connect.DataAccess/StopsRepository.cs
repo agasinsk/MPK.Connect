@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.Model;
 
@@ -27,7 +28,11 @@ namespace MPK.Connect.DataAccess
         {
             _logger.LogInformation($"Creating {stops.Count} new stops");
             _dbContext.Stops.AddRange(stops);
+
+            _dbContext.Database.ExecuteSqlCommand($"SET IDENTITY_INSERT dbo.Stops ON");
             _dbContext.SaveChanges();
+            _dbContext.Database.ExecuteSqlCommand($"SET IDENTITY_INSERT dbo.Stops OFF");
+
             return stops;
         }
 

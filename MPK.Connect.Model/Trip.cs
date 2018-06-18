@@ -1,11 +1,22 @@
-﻿namespace MPK.Connect.Model
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MPK.Connect.Model
 {
     public class Trip
     {
         public int BrigadeId { get; set; }
+
+        [ForeignKey(nameof(ServiceId))]
+        public Calendar Calendar { get; set; }
+
+        [ForeignKey(nameof(ServiceId))]
+        public CalendarDate CalendarDate { get; set; }
+
         public int DirectionId { get; set; }
         public string HeadSign { get; set; }
 
+        [Key]
         public string Id { get; set; }
 
         public Route Route { get; set; }
