@@ -12,7 +12,7 @@ namespace MPK.Connect.Model
         public double Longitude { get; set; }
         public string Name { get; set; }
         public ICollection<Route> Routes { get; set; }
-        public int StopId { get; set; }
+
         public ICollection<StopTime> StopTimes { get; set; }
 
         public override string ToString()

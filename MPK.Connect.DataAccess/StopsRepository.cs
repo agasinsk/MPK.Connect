@@ -21,6 +21,7 @@ namespace MPK.Connect.DataAccess
         {
             _logger.LogInformation($"Creating new stop with id {stop.Id}");
             _dbContext.Stops.Add(stop);
+            SaveChangesWithIdentityInsert();
             return stop;
         }
 
@@ -28,10 +29,7 @@ namespace MPK.Connect.DataAccess
         {
             _logger.LogInformation($"Creating {stops.Count} new stops");
             _dbContext.Stops.AddRange(stops);
-
-            _dbContext.Database.ExecuteSqlCommand($"SET IDENTITY_INSERT dbo.Stops ON");
-            _dbContext.SaveChanges();
-            _dbContext.Database.ExecuteSqlCommand($"SET IDENTITY_INSERT dbo.Stops OFF");
+            SaveChangesWithIdentityInsert();
 
             return stops;
         }
@@ -54,6 +52,22 @@ namespace MPK.Connect.DataAccess
             _logger.LogInformation($"Updating stop with id {stop.Id}");
             _dbContext.SaveChanges();
             return stop;
+        }
+
+        private void SaveChangesWithIdentityInsert()
+
+        {
+            _dbContext.Database.OpenConnection();
+            try
+            {
+                _dbContext.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Stops ON");
+                _dbContext.SaveChanges();
+                _dbContext.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.Stops OFF");
+            }
+            finally
+            {
+                _dbContext.Database.CloseConnection();
+            }
         }
     }
 }
