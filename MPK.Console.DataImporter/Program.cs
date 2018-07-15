@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
-using MPK.Connect.Service.Service.Routes;
+using MPK.Connect.DataAccess.Stops;
 using MPK.Connect.Service.Service.Stops;
 
 namespace MPK.Console.DataImporter
@@ -21,8 +21,8 @@ namespace MPK.Console.DataImporter
                 .AddLogging(configure => configure.AddConsole())
                 .AddLogging(configure => configure.AddConsole().AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning))
                 .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information)
-                .AddTransient<StopsRepository>()
-                .AddTransient<StopsService>();
+                .AddTransient<StopRepository>()
+                .AddTransient<StopService>();
 
             // Build configuration
             Configuration = new ConfigurationBuilder()
@@ -38,8 +38,8 @@ namespace MPK.Console.DataImporter
                 options.UseSqlServer(Configuration.GetConnectionString("MpkContext")));
 
             // Add services
-            serviceCollection.AddTransient<IStopsService, StopsService>();
-            serviceCollection.AddTransient<IStopsRepository, StopsRepository>();
+            serviceCollection.AddTransient<IStopService, StopService>();
+            serviceCollection.AddTransient<IStopRepository, StopRepository>();
         }
 
         private static void Main(string[] args)
@@ -52,7 +52,7 @@ namespace MPK.Console.DataImporter
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
             var fileName = Configuration.GetSection("Sources:Stops");
-            var stopImporterService = serviceProvider.GetService(typeof(IStopsService)) as StopsService;
+            var stopImporterService = serviceProvider.GetService(typeof(IStopService)) as StopService;
             stopImporterService?.ReadStopsFromFile(fileName.Value);
 
             // Get backup sources for client

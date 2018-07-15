@@ -20,6 +20,10 @@ namespace MPK.Connect.DataAccess
         {
         }
 
+        public MpkContext()
+        {
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server=DESKTOP-N60GSEK\\SQLEXPRESS;Database=MPK.Connect;Trusted_Connection=True;");

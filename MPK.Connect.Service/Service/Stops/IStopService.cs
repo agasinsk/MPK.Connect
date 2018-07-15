@@ -1,6 +1,6 @@
 ﻿namespace MPK.Connect.Service.Service.Stops
 {
-    public interface IStopsService
+    public interface IStopService
     {
         int ReadStopsFromFile(string filePath);
     }

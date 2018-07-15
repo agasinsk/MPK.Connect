@@ -37,7 +37,7 @@ namespace MPK.Connect.Service.Service.Routes
                 allRoutes.Sort((route1, route2) => route1.Id.CompareTo(route2.Id));
                 _logger.LogInformation("Routes have been sorted!");
 
-                _routeRepository.CreateRoutes(allRoutes);
+                _routeRepository.AddRange(allRoutes);
                 allRoutesCount = allRoutes.Count;
                 allRoutes.Clear();
                 _logger.LogInformation("Routes have been successfully saved!");

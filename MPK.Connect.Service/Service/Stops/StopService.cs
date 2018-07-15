@@ -1,18 +1,17 @@
-﻿using System;
-using MPK.Connect.Model;
+﻿using MPK.Connect.Model;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Logging;
-using MPK.Connect.DataAccess;
+using MPK.Connect.DataAccess.Stops;
 
 namespace MPK.Connect.Service.Service.Stops
 {
-    public class StopsService : IStopsService
+    public class StopService : IStopService
     {
-        private readonly ILogger<StopsService> _logger;
-        private readonly IStopsRepository _stopsRepository;
+        private readonly ILogger<StopService> _logger;
+        private readonly IStopRepository _stopsRepository;
 
-        public StopsService(IStopsRepository stopsRepository, ILogger<StopsService> logger)
+        public StopService(IStopRepository stopsRepository, ILogger<StopService> logger)
         {
             _stopsRepository = stopsRepository;
             _logger = logger;
@@ -21,7 +20,7 @@ namespace MPK.Connect.Service.Service.Stops
         public int ReadStopsFromFile(string filePath)
         {
             var allStops = new List<Stop>();
-            var allStopsCount = 0;
+            int allStopsCount;
 
             using (var streamReader = new StreamReader(filePath))
             {
@@ -37,7 +36,7 @@ namespace MPK.Connect.Service.Service.Stops
                 allStops.Sort((stop1, stop2) => stop1.Id.CompareTo(stop2.Id));
                 _logger.LogInformation("Stops have been sorted!");
 
-                _stopsRepository.CreateStops(allStops);
+                _stopsRepository.AddRange(allStops);
                 allStopsCount = allStops.Count;
                 allStops.Clear();
                 _logger.LogInformation("Stops have been successfully saved!");
