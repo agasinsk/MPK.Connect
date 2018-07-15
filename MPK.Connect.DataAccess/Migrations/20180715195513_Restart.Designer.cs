@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MPK.Connect.DataAccess.Migrations
 {
     [DbContext(typeof(MpkContext))]
-    [Migration("20180615161417_ForeignKeys")]
-    partial class ForeignKeys
+    [Migration("20180715195513_Restart")]
+    partial class Restart
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,42 +29,92 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.Property<string>("Language");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired();
 
                     b.Property<string>("Phone");
 
-                    b.Property<string>("Timezone");
+                    b.Property<string>("Timezone")
+                        .IsRequired();
 
-                    b.Property<string>("Url");
+                    b.Property<string>("Url")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
                     b.ToTable("Agencies");
                 });
 
-            modelBuilder.Entity("MPK.Connect.Model.ControlStop", b =>
+            modelBuilder.Entity("MPK.Connect.Model.Calendar", b =>
                 {
-                    b.Property<int>("StopId")
+                    b.Property<int>("ServiceId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("StopId1");
+                    b.Property<DateTime>("EndDate");
 
-                    b.Property<int>("VariantId");
+                    b.Property<bool>("Friday");
 
-                    b.HasKey("StopId");
+                    b.Property<bool>("Monday");
 
-                    b.HasIndex("StopId1");
+                    b.Property<bool>("Saturday");
 
-                    b.HasIndex("VariantId");
+                    b.Property<DateTime>("StartDate");
 
-                    b.ToTable("ControlStops");
+                    b.Property<bool>("Sunday");
+
+                    b.Property<bool>("Thursday");
+
+                    b.Property<bool>("Tuesday");
+
+                    b.Property<bool>("Wednesday");
+
+                    b.HasKey("ServiceId");
+
+                    b.ToTable("Calendars");
+                });
+
+            modelBuilder.Entity("MPK.Connect.Model.CalendarDate", b =>
+                {
+                    b.Property<int>("ServiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<int>("ExceptionRule");
+
+                    b.HasKey("ServiceId");
+
+                    b.ToTable("CalendarDates");
+                });
+
+            modelBuilder.Entity("MPK.Connect.Model.FeedInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("EndDate");
+
+                    b.Property<string>("Language");
+
+                    b.Property<string>("PublisherName");
+
+                    b.Property<string>("PublisherUrl");
+
+                    b.Property<DateTime>("StartDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FeedInfos");
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.Route", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("AgencyId");
 
@@ -72,17 +122,21 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.Property<string>("LongName");
 
+                    b.Property<string>("RouteId");
+
                     b.Property<int>("RouteTypeId");
 
                     b.Property<string>("ShortName");
 
-                    b.Property<int>("StopTypeId");
+                    b.Property<int?>("StopId");
 
-                    b.Property<string>("StopTypeId1");
+                    b.Property<int>("StopTypeId");
 
                     b.Property<DateTime>("ValidFrom");
 
                     b.Property<DateTime>("ValidUntil");
+
+                    b.Property<int>("VehicleType");
 
                     b.HasKey("Id");
 
@@ -90,7 +144,7 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.HasIndex("RouteTypeId");
 
-                    b.HasIndex("StopTypeId1");
+                    b.HasIndex("StopId");
 
                     b.ToTable("Routes");
                 });
@@ -105,7 +159,7 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RouteTypes");
+                    b.ToTable("RouteType");
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.Shape", b =>
@@ -131,39 +185,55 @@ namespace MPK.Connect.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Latitude");
+                    b.Property<string>("Code");
 
-                    b.Property<string>("Longitude");
+                    b.Property<double>("Latitude");
+
+                    b.Property<double>("Longitude");
 
                     b.Property<string>("Name");
 
-                    b.Property<int>("StopTypeId");
-
-                    b.Property<string>("StopTypeId1");
+                    b.Property<int>("StopId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("StopTypeId1");
 
                     b.ToTable("Stops");
                 });
 
-            modelBuilder.Entity("MPK.Connect.Model.StopType", b =>
+            modelBuilder.Entity("MPK.Connect.Model.StopTime", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Name");
+                    b.Property<DateTime>("ArrivalTime");
+
+                    b.Property<DateTime>("DepartureTime");
+
+                    b.Property<int>("DropOffType");
+
+                    b.Property<int>("PickupType");
+
+                    b.Property<int>("StopId");
+
+                    b.Property<int>("StopSequence");
+
+                    b.Property<int>("TripId");
 
                     b.HasKey("Id");
 
-                    b.ToTable("StopTypes");
+                    b.HasIndex("StopId");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("StopTime");
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.Trip", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("BrigadeId");
 
@@ -173,11 +243,11 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.Property<int>("RouteId");
 
-                    b.Property<string>("RouteId1");
-
                     b.Property<int>("ServiceId");
 
                     b.Property<int>("ShapeId");
+
+                    b.Property<string>("TripId");
 
                     b.Property<int>("VariantId");
 
@@ -185,7 +255,9 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RouteId1");
+                    b.HasIndex("RouteId");
+
+                    b.HasIndex("ServiceId");
 
                     b.HasIndex("ShapeId");
 
@@ -212,6 +284,10 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DisjoinStopId");
+
+                    b.HasIndex("JoinStopId");
+
                     b.ToTable("Variants");
                 });
 
@@ -232,18 +308,6 @@ namespace MPK.Connect.DataAccess.Migrations
                     b.ToTable("Vehicles");
                 });
 
-            modelBuilder.Entity("MPK.Connect.Model.ControlStop", b =>
-                {
-                    b.HasOne("MPK.Connect.Model.Stop", "Stop")
-                        .WithMany()
-                        .HasForeignKey("StopId1");
-
-                    b.HasOne("MPK.Connect.Model.Variant", "Variant")
-                        .WithMany()
-                        .HasForeignKey("VariantId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("MPK.Connect.Model.Route", b =>
                 {
                     b.HasOne("MPK.Connect.Model.Agency", "Agency")
@@ -256,23 +320,40 @@ namespace MPK.Connect.DataAccess.Migrations
                         .HasForeignKey("RouteTypeId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("MPK.Connect.Model.StopType", "StopType")
-                        .WithMany()
-                        .HasForeignKey("StopTypeId1");
+                    b.HasOne("MPK.Connect.Model.Stop")
+                        .WithMany("Routes")
+                        .HasForeignKey("StopId");
                 });
 
-            modelBuilder.Entity("MPK.Connect.Model.Stop", b =>
+            modelBuilder.Entity("MPK.Connect.Model.StopTime", b =>
                 {
-                    b.HasOne("MPK.Connect.Model.StopType", "StopType")
-                        .WithMany("Stops")
-                        .HasForeignKey("StopTypeId1");
+                    b.HasOne("MPK.Connect.Model.Stop", "Stop")
+                        .WithMany("StopTimes")
+                        .HasForeignKey("StopId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MPK.Connect.Model.Trip", "Trip")
+                        .WithMany()
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.Trip", b =>
                 {
                     b.HasOne("MPK.Connect.Model.Route", "Route")
+                        .WithMany("Trips")
+                        .HasForeignKey("RouteId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MPK.Connect.Model.Calendar", "Calendar")
                         .WithMany()
-                        .HasForeignKey("RouteId1");
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MPK.Connect.Model.CalendarDate", "CalendarDate")
+                        .WithMany()
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MPK.Connect.Model.Shape", "Shape")
                         .WithMany()
@@ -280,7 +361,7 @@ namespace MPK.Connect.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MPK.Connect.Model.Variant", "Variant")
-                        .WithMany()
+                        .WithMany("Trips")
                         .HasForeignKey("VariantId")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -288,6 +369,19 @@ namespace MPK.Connect.DataAccess.Migrations
                         .WithMany()
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("MPK.Connect.Model.Variant", b =>
+                {
+                    b.HasOne("MPK.Connect.Model.Stop", "DisjoinStop")
+                        .WithMany("DisjoinVariants")
+                        .HasForeignKey("DisjoinStopId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MPK.Connect.Model.Stop", "JoinStop")
+                        .WithMany("JoinVariants")
+                        .HasForeignKey("JoinStopId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

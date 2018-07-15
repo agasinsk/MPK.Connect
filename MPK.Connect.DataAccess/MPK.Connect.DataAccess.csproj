@@ -5,17 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20180615160730_ForeignKeys.cs" />
-    <Compile Remove="Migrations\20180615160911_ForeignKeys.cs" />
-    <Compile Remove="Migrations\20180615161018_ForeignKeys.cs" />
-    <Compile Remove="Migrations\20180615161358_ForeignKeys.cs" />
-    <Compile Remove="Migrations\20180618190037_ModelsAdded.cs" />
-    <Compile Remove="Migrations\20180618192833_ModelsAdded.cs" />
-    <Compile Remove="Migrations\20180618194406_ModelsAdded.cs" />
-    <Compile Remove="Migrations\20180618195246_ModelsAdded.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.0" />

@@ -7,7 +7,7 @@ using MPK.Connect.Model;
 
 namespace MPK.Connect.Service.Service.Routes
 {
-    public class RouteService : IRouteService
+    public class RouteService : IGenericService<Route>
     {
         private readonly ILogger<RouteService> _logger;
         private readonly IRouteRepository _routeRepository;
@@ -18,7 +18,7 @@ namespace MPK.Connect.Service.Service.Routes
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public int ReadRoutesFromFile(string filePath)
+        public int ReadFromFile(string filePath)
         {
             var allRoutes = new List<Route>();
             var allRoutesCount = 0;
@@ -52,8 +52,8 @@ namespace MPK.Connect.Service.Service.Routes
 
             var mappedRoute = new Route
             {
-                Id = routeInfos[0],
-                AgencyId = Int32.Parse(routeInfos[1]),
+                RouteId = routeInfos[0],
+                AgencyId = int.Parse(routeInfos[1]),
                 ShortName = routeInfos[2].Replace("\"", "").Trim(),
                 LongName = routeInfos[3].Replace("\"", ""),
                 Description = routeInfos[4].Replace("\"", ""),

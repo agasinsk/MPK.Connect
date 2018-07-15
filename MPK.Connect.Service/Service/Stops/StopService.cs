@@ -6,7 +6,7 @@ using MPK.Connect.DataAccess.Stops;
 
 namespace MPK.Connect.Service.Service.Stops
 {
-    public class StopService : IStopService
+    public class StopService : IGenericService<Stop>
     {
         private readonly ILogger<StopService> _logger;
         private readonly IStopRepository _stopsRepository;
@@ -17,7 +17,7 @@ namespace MPK.Connect.Service.Service.Stops
             _logger = logger;
         }
 
-        public int ReadStopsFromFile(string filePath)
+        public int ReadFromFile(string filePath)
         {
             var allStops = new List<Stop>();
             int allStopsCount;
@@ -33,10 +33,11 @@ namespace MPK.Connect.Service.Service.Stops
                 }
                 _logger.LogInformation($"Read {allStops.Count} stops.");
                 _logger.LogInformation("Sorting stops by StopId...");
-                allStops.Sort((stop1, stop2) => stop1.Id.CompareTo(stop2.Id));
+                allStops.Sort((stop1, stop2) => stop1.StopId.CompareTo(stop2.Id));
                 _logger.LogInformation("Stops have been sorted!");
 
                 _stopsRepository.AddRange(allStops);
+                _stopsRepository.Save();
                 allStopsCount = allStops.Count;
                 allStops.Clear();
                 _logger.LogInformation("Stops have been successfully saved!");
@@ -56,7 +57,7 @@ namespace MPK.Connect.Service.Service.Stops
 
             var mappedStop = new Stop
             {
-                Id = int.Parse(id),
+                StopId = int.Parse(id),
                 Code = code,
                 Name = name,
                 Longitude = double.Parse(longitude),

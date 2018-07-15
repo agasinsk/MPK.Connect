@@ -34,14 +34,12 @@ namespace MPK.Connect.DataAccess
 
         public IQueryable<T> FindBy(Expression<Func<T, bool>> predicate)
         {
-            var query = Context.Set<T>().Where(predicate);
-            return query;
+            return Context.Set<T>().Where(predicate); ;
         }
 
         public virtual IQueryable<T> GetAll()
         {
-            IQueryable<T> query = Context.Set<T>();
-            return query;
+            return Context.Set<T>(); ;
         }
 
         public virtual void Save()

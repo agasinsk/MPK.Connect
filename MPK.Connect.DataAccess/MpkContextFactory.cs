@@ -9,7 +9,7 @@ namespace MPK.Connect.DataAccess
         {
             var optionsBuilder = new DbContextOptionsBuilder<MpkContext>();
             optionsBuilder.UseSqlServer(
-                "Server=DESKTOP-N60GSEK\\SQLEXPRESS;Database=MPK.Core;Trusted_Connection=True;");
+                "Server=DESKTOP-N60GSEK\\SQLEXPRESS;Database=MPK.Connect;Trusted_Connection=True;");
 
             return new MpkContext(optionsBuilder.Options);
         }

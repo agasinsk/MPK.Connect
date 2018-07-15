@@ -5,7 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
+using MPK.Connect.DataAccess.Agencies;
+using MPK.Connect.DataAccess.Routes.Types;
 using MPK.Connect.DataAccess.Stops;
+using MPK.Connect.Model;
+using MPK.Connect.Service.Service;
+using MPK.Connect.Service.Service.Routes.Types;
 using MPK.Connect.Service.Service.Stops;
 
 namespace MPK.Console.DataImporter
@@ -38,8 +43,12 @@ namespace MPK.Console.DataImporter
                 options.UseSqlServer(Configuration.GetConnectionString("MpkContext")));
 
             // Add services
-            serviceCollection.AddTransient<IStopService, StopService>();
+            serviceCollection.AddTransient<IGenericService<Stop>, StopService>();
             serviceCollection.AddTransient<IStopRepository, StopRepository>();
+            serviceCollection.AddTransient<IGenericService<RouteType>, RouteTypeService>();
+            serviceCollection.AddTransient<IRouteTypeRepository, RouteTypeRepository>();
+            serviceCollection.AddTransient<IGenericService<Agency>, AgencyService>();
+            serviceCollection.AddTransient<IAgencyRepository, AgencyRepository>();
         }
 
         private static void Main(string[] args)
@@ -51,9 +60,17 @@ namespace MPK.Console.DataImporter
             // Create service provider
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            var fileName = Configuration.GetSection("Sources:Stops");
-            var stopImporterService = serviceProvider.GetService(typeof(IStopService)) as StopService;
-            stopImporterService?.ReadStopsFromFile(fileName.Value);
+            //var fileName = Configuration.GetSection("Sources:Stops");
+            //var stopImporterService = serviceProvider.GetService(typeof(IGenericService<Stop>)) as IGenericService<Stop>;
+            //stopImporterService?.ReadFromFile(fileName.Value);
+
+            //var fileName = Configuration.GetSection("Sources:RouteTypes");
+            //var stopImporterService = serviceProvider.GetService(typeof(IGenericService<RouteType>)) as IGenericService<RouteType>;
+            //stopImporterService?.ReadFromFile(fileName.Value);
+
+            var fileName = Configuration.GetSection("Sources:Agencies");
+            var service = serviceProvider.GetService(typeof(IGenericService<Agency>)) as IGenericService<Agency>;
+            service?.ReadFromFile(fileName.Value);
 
             // Get backup sources for client
             System.Console.ReadLine();

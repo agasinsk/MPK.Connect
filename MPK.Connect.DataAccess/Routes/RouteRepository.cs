@@ -7,7 +7,7 @@ namespace MPK.Connect.DataAccess.Routes
     {
         public Route GetRoute(string routeId)
         {
-            return GetAll().FirstOrDefault(r => r.Id == routeId);
+            return GetAll().FirstOrDefault(r => r.RouteId == routeId);
         }
     }
 }

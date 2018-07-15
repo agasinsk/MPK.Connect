@@ -4,7 +4,11 @@ namespace MPK.Connect.Model
 {
     public class Agency
     {
+        public int AgencyId { get; set; }
+
+        [Key]
         public int Id { get; set; }
+
         public string Language { get; set; }
 
         [Required]
