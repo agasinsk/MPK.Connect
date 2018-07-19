@@ -9,9 +9,7 @@ using MPK.Connect.DataAccess.Agencies;
 using MPK.Connect.DataAccess.Routes.Types;
 using MPK.Connect.DataAccess.Stops;
 using MPK.Connect.Model;
-using MPK.Connect.Service.Service;
-using MPK.Connect.Service.Service.Routes.Types;
-using MPK.Connect.Service.Service.Stops;
+using MPK.Connect.Service;
 
 namespace MPK.Console.DataImporter
 {

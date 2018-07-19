@@ -1,4 +1,4 @@
-﻿namespace MPK.Connect.Service.Service
+﻿namespace MPK.Connect.Service
 {
     public interface IGenericService<T> where T : class
     {
