@@ -1,23 +1,23 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using MPK.Connect.DataAccess;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Extensions.Logging;
-using MPK.Connect.DataAccess;
 
 namespace MPK.Connect.Service
 {
-    public abstract class GenericService<T> : IGenericService<T> where T : class
+    public abstract class ImporterService<T> : IImporterService where T : class
     {
-        private readonly ILogger<GenericService<T>> _logger;
+        private readonly ILogger<ImporterService<T>> _logger;
         private readonly IGenericRepository<T> _repository;
 
-        protected GenericService(IGenericRepository<T> repository, ILogger<GenericService<T>> logger)
+        protected ImporterService(IGenericRepository<T> repository, ILogger<ImporterService<T>> logger)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger)); ;
         }
 
-        public int ReadFromFile(string filePath)
+        public int ImportEntitiesFromFile(string filePath)
         {
             var entities = new List<T>();
             int entitiesCount;
@@ -28,8 +28,8 @@ namespace MPK.Connect.Service
 
                 while ((entityLine = streamReader.ReadLine()) != null)
                 {
-                    var createdStop = Map(entityLine);
-                    entities.Add(createdStop);
+                    var mappedEntity = Map(entityLine);
+                    entities.Add(mappedEntity);
                 }
                 _logger.LogInformation($"Read {entities.Count} lines of {nameof(T)}.");
                 SortEntities(entities);
@@ -46,6 +46,8 @@ namespace MPK.Connect.Service
 
         protected abstract T Map(string entityString);
 
-        protected abstract void SortEntities(List<T> entities);
+        protected virtual void SortEntities(List<T> entities)
+        {
+        }
     }
 }

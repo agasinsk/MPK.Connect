@@ -4,22 +4,22 @@ namespace MPK.Connect.Model
 {
     public class Agency
     {
-        public int AgencyId { get; set; }
-
-        [Key]
-        public int Id { get; set; }
-
-        public string Language { get; set; }
+        [Required]
+        public string Id { get; set; }
 
         [Required]
         public string Name { get; set; }
 
-        public string Phone { get; set; }
+        [Required]
+        public string Url { get; set; }
 
         [Required]
         public string Timezone { get; set; }
 
-        [Required]
-        public string Url { get; set; }
+        public string Language { get; set; }
+
+        public string Phone { get; set; }
+        public string FareUrl { get; set; }
+        public string Email { get; set; }
     }
 }

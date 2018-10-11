@@ -1,6 +1,10 @@
-﻿namespace MPK.Connect.Model.Enums
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace MPK.Connect.Model.Enums
 {
-    public enum VehicleTypes
+    public enum RouteTypes
     {
         Tram = 0,
         Metro = 1,

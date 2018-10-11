@@ -1,14 +1,22 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MPK.Connect.Model
 {
     public class FeedInfo
     {
-        public DateTime EndDate { get; set; }
-        public int Id { get; set; }
-        public string Language { get; set; }
+        [Key]
+        [Required]
         public string PublisherName { get; set; }
+
+        [Required]
         public string PublisherUrl { get; set; }
+
+        [Required]
+        public string Language { get; set; }
+
         public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public int Version { get; set; }
     }
 }

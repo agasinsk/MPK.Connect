@@ -1,11 +1,10 @@
-﻿using MPK.Connect.Model;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess.Stops;
+using MPK.Connect.Model;
 
 namespace MPK.Connect.Service
 {
-    public class StopService : GenericService<Stop>
+    public class StopService : ImporterService<Stop>
     {
         public StopService(IStopRepository stopsRepository, ILogger<StopService> logger) : base(stopsRepository, logger)
         {
@@ -22,7 +21,7 @@ namespace MPK.Connect.Service
 
             var mappedStop = new Stop
             {
-                StopId = int.Parse(id),
+                Id = id,
                 Code = code,
                 Name = name,
                 Longitude = double.Parse(longitude),
@@ -30,11 +29,6 @@ namespace MPK.Connect.Service
             };
 
             return mappedStop;
-        }
-
-        protected override void SortEntities(List<Stop> entities)
-        {
-            entities.Sort((stop1, stop2) => stop1.StopId.CompareTo(stop2.Id));
         }
     }
 }

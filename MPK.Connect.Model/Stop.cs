@@ -1,27 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using MPK.Connect.Model.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace MPK.Connect.Model
 {
     public class Stop
     {
+        [Required]
+        public string Id { get; set; }
+
         public string Code { get; set; }
-        public ICollection<Variant> DisjoinVariants { get; set; }
 
-        [Key]
-        public int Id { get; set; }
-
-        public ICollection<Variant> JoinVariants { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
+        [Required]
         public string Name { get; set; }
-        public ICollection<Route> Routes { get; set; }
-        public int StopId { get; set; }
-        public ICollection<StopTime> StopTimes { get; set; }
 
-        public override string ToString()
-        {
-            return $"Stop {Id}:{Name}";
-        }
+        public string Description { get; set; }
+
+        [Required]
+        public double Latitude { get; set; }
+
+        [Required]
+        public double Longitude { get; set; }
+
+        public string ZoneId { get; set; }
+        public string Url { get; set; }
+        public LocationTypes LocationType { get; set; }
+        public string ParentStation { get; set; }
+        public string Timezone { get; set; }
+        public WheelchairBordings WheelchairBording { get; set; }
     }
 }

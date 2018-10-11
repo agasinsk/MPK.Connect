@@ -1,6 +1,6 @@
-﻿namespace MPK.Connect.Model
+﻿namespace MPK.Connect.Model.Enums
 {
-    public enum DropOffType
+    public enum DropOffTypes
     {
         Regular = 0,
         NoDropOff = 1,

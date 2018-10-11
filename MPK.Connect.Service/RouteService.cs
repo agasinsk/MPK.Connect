@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess.Routes;
 using MPK.Connect.Model;
+using System.Collections.Generic;
 
 namespace MPK.Connect.Service
 {
-    public class RouteService : GenericService<Route>
+    public class RouteService : ImporterService<Route>
     {
         public RouteService(IRouteRepository stopsRepository, ILogger<RouteService> logger) : base(stopsRepository, logger)
         {
@@ -20,7 +19,7 @@ namespace MPK.Connect.Service
 
             var mappedStop = new Route
             {
-                RouteId = routeId,
+                Id = routeId,
             };
 
             return mappedStop;

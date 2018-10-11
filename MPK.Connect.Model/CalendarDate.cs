@@ -1,14 +1,18 @@
-﻿using System;
+﻿using MPK.Connect.Model.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MPK.Connect.Model
 {
     public class CalendarDate
     {
-        public DateTime Date { get; set; }
-        public ExceptionRules ExceptionRule { get; set; }
-
         [Key]
-        public int ServiceId { get; set; }
+        public string ServiceId { get; set; }
+
+        [Required]
+        public DateTime Date { get; set; }
+
+        [Required]
+        public ExceptionRules ExceptionRule { get; set; }
     }
 }

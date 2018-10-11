@@ -1,4 +1,4 @@
-﻿namespace MPK.Connect.Model
+﻿namespace MPK.Connect.Model.Enums
 {
     public enum ExceptionRules
     {

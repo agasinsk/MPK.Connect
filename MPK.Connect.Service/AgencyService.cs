@@ -6,7 +6,7 @@ using MPK.Connect.Model;
 
 namespace MPK.Connect.Service
 {
-    public class AgencyService : GenericService<Agency>
+    public class AgencyService : ImporterService<Agency>
     {
         private readonly ILogger<AgencyService> _logger;
         private readonly IAgencyRepository _repository;
@@ -20,7 +20,7 @@ namespace MPK.Connect.Service
         protected override Agency Map(string entityString)
         {
             var routeTypeInfos = entityString.Split(',');
-            var id = int.Parse(routeTypeInfos[0]);
+            var id = routeTypeInfos[0];
             var name = routeTypeInfos[1];
             var url = routeTypeInfos[2];
             var timeZone = routeTypeInfos[3];
@@ -28,7 +28,7 @@ namespace MPK.Connect.Service
             var language = routeTypeInfos[5];
             var agency = new Agency
             {
-                AgencyId = id,
+                Id = id,
                 Name = name,
                 Url = url,
                 Phone = phone,
@@ -38,7 +38,7 @@ namespace MPK.Connect.Service
             return agency;
         }
 
-        protected override void SortEntities(List<Agency> entities)
+        protected override void OrderEntities(List<Agency> entities)
         {
             ;
         }
