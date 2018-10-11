@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess.Agencies;
 using MPK.Connect.Model;
+using System;
 
 namespace MPK.Connect.Service
 {
@@ -36,11 +35,6 @@ namespace MPK.Connect.Service
                 Language = language
             };
             return agency;
-        }
-
-        protected override void OrderEntities(List<Agency> entities)
-        {
-            ;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.IO;
 
 namespace MPK.Connect.Service
 {
-    public abstract class ImporterService<T> : IImporterService where T : class
+    public abstract class ImporterService<T> : IImporterService<T> where T : class
     {
         private readonly ILogger<ImporterService<T>> _logger;
         private readonly IGenericRepository<T> _repository;
@@ -28,7 +28,7 @@ namespace MPK.Connect.Service
 
                 while ((entityLine = streamReader.ReadLine()) != null)
                 {
-                    var mappedEntity = Map(entityLine);
+                    var mappedEntity = Map(entityLine.Replace("\"", ""));
                     entities.Add(mappedEntity);
                 }
                 _logger.LogInformation($"Read {entities.Count} lines of {nameof(T)}.");

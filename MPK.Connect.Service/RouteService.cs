@@ -14,15 +14,12 @@ namespace MPK.Connect.Service
         protected override Route Map(string entityString)
         {
             var routeInfos = entityString.Replace("\"", "").Split(',');
-            var routeId = routeInfos[0];
-            var agencyId = routeInfos[0];
 
-            var mappedStop = new Route
+            var mappedEntity = new Route
             {
-                Id = routeId,
             };
 
-            return mappedStop;
+            return mappedEntity;
         }
 
         protected override void SortEntities(List<Route> entities)

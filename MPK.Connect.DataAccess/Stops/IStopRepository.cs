@@ -4,6 +4,6 @@ namespace MPK.Connect.DataAccess.Stops
 {
     public interface IStopRepository : IGenericRepository<Stop>
     {
-        Stop GetSingle(int stopId);
+        Stop GetSingle(string stopId);
     }
 }

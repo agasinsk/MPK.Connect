@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using MPK.Connect.Model;
+﻿using MPK.Connect.Model;
+using System.Linq;
 
 namespace MPK.Connect.DataAccess.Routes
 {
@@ -7,7 +7,7 @@ namespace MPK.Connect.DataAccess.Routes
     {
         public Route GetRoute(string routeId)
         {
-            return GetAll().FirstOrDefault(r => r.RouteId == routeId);
+            return GetAll().FirstOrDefault(r => r.Id == routeId);
         }
     }
 }

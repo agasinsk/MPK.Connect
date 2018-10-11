@@ -12,7 +12,7 @@ namespace MPK.Connect.Service
 
         protected override Stop Map(string entityString)
         {
-            var stopInfos = entityString.Split(',');
+            var stopInfos = entityString.Replace("\"", "").Split(',');
             var id = stopInfos[0];
             var code = stopInfos[1];
             var name = stopInfos[2];
