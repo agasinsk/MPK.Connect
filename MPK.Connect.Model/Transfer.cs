@@ -13,5 +13,9 @@ namespace MPK.Connect.Model
 
         public TransferTypes TransferType { get; set; }
         public long MinTransferTime { get; set; }
+
+        public virtual Stop FromStop { get; set; }
+
+        public virtual Stop ToStop { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
@@ -22,5 +23,8 @@ namespace MPK.Connect.Model
 
         public Route Route { get; set; }
         public Shape Shape { get; set; }
+
+        [ForeignKey("ServiceId")]
+        public Calendar Calendar { get; set; }
     }
 }

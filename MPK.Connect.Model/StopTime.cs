@@ -1,11 +1,14 @@
-﻿using System;
+﻿using MPK.Connect.Model.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
-using MPK.Connect.Model.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
     public class StopTime
     {
+        [Key, ForeignKey(nameof(Trip))]
+        [Required]
         public string TripId { get; set; }
 
         [Required]

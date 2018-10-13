@@ -25,5 +25,7 @@ namespace MPK.Connect.Model
         public string Color { get; set; }
         public string TextColor { get; set; }
         public string SortOrder { get; set; }
+
+        public Agency Agency { get; set; }
     }
 }

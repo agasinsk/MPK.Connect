@@ -4,9 +4,9 @@ namespace MPK.Connect.Model
 {
     public class Agency
     {
-        [Required]
         public string Id { get; set; }
 
+        [Key]
         [Required]
         public string Name { get; set; }
 

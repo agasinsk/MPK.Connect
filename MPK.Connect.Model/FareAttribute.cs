@@ -5,6 +5,7 @@ namespace MPK.Connect.Model
 {
     public class FareAttribute
     {
+        [Required]
         public string Id { get; set; }
 
         [Required]
@@ -21,5 +22,7 @@ namespace MPK.Connect.Model
 
         public string AgencyId { get; set; }
         public long TransferDuration { get; set; }
+
+        public Agency Agency { get; set; }
     }
 }

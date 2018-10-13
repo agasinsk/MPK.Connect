@@ -4,18 +4,20 @@ using MPK.Connect.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MPK.Connect.DataAccess.Migrations
 {
     [DbContext(typeof(MpkContext))]
-    partial class MpkContextModelSnapshot : ModelSnapshot
+    [Migration("20181013164746_Generic")]
+    partial class Generic
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
+                .HasAnnotation("ProductVersion", "2.1.0-rtm-30799")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -75,7 +77,8 @@ namespace MPK.Connect.DataAccess.Migrations
 
             modelBuilder.Entity("MPK.Connect.Model.CalendarDate", b =>
                 {
-                    b.Property<string>("ServiceId");
+                    b.Property<string>("ServiceId")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("Date");
 
@@ -84,53 +87,6 @@ namespace MPK.Connect.DataAccess.Migrations
                     b.HasKey("ServiceId");
 
                     b.ToTable("CalendarDates");
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.FareAttribute", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("AgencyId");
-
-                    b.Property<string>("AgencyName");
-
-                    b.Property<string>("CurrencyType")
-                        .IsRequired();
-
-                    b.Property<int>("PaymentMethod");
-
-                    b.Property<double>("Price");
-
-                    b.Property<long>("TransferDuration");
-
-                    b.Property<int?>("Transfers")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AgencyName");
-
-                    b.ToTable("FareAttributes");
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.FareRule", b =>
-                {
-                    b.Property<string>("FareId");
-
-                    b.Property<string>("ContainsId");
-
-                    b.Property<string>("DestinationId");
-
-                    b.Property<string>("OriginId");
-
-                    b.Property<string>("RouteId");
-
-                    b.HasKey("FareId");
-
-                    b.HasIndex("RouteId");
-
-                    b.ToTable("FareRules");
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.FeedInfo", b =>
@@ -155,31 +111,12 @@ namespace MPK.Connect.DataAccess.Migrations
                     b.ToTable("FeedInfos");
                 });
 
-            modelBuilder.Entity("MPK.Connect.Model.Frequency", b =>
-                {
-                    b.Property<string>("TripId");
-
-                    b.Property<DateTime>("EndTime");
-
-                    b.Property<int>("ExactTimes");
-
-                    b.Property<long>("HeadwaySecs");
-
-                    b.Property<DateTime>("StartTime");
-
-                    b.HasKey("TripId");
-
-                    b.ToTable("Frequencies");
-                });
-
             modelBuilder.Entity("MPK.Connect.Model.Route", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("AgencyId");
-
-                    b.Property<string>("AgencyName");
 
                     b.Property<string>("Color");
 
@@ -200,8 +137,6 @@ namespace MPK.Connect.DataAccess.Migrations
                     b.Property<string>("Url");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AgencyName");
 
                     b.ToTable("Routes");
                 });
@@ -250,60 +185,13 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.Property<string>("Url");
 
-                    b.Property<int>("WheelchairBoarding");
+                    b.Property<int>("WheelchairBording");
 
                     b.Property<string>("ZoneId");
 
                     b.HasKey("Id");
 
                     b.ToTable("Stops");
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.StopTime", b =>
-                {
-                    b.Property<string>("TripId");
-
-                    b.Property<DateTime>("ArrivalTime");
-
-                    b.Property<DateTime>("DepartureTime");
-
-                    b.Property<int>("DropOffTypes");
-
-                    b.Property<string>("HeadSign");
-
-                    b.Property<int>("PickupType");
-
-                    b.Property<double>("ShapeDistTraveled");
-
-                    b.Property<string>("StopId")
-                        .IsRequired();
-
-                    b.Property<int>("StopSequence");
-
-                    b.Property<int>("TimePoint");
-
-                    b.HasKey("TripId");
-
-                    b.HasIndex("StopId");
-
-                    b.ToTable("StopTimes");
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.Transfer", b =>
-                {
-                    b.Property<string>("FromStopId");
-
-                    b.Property<string>("ToStopId");
-
-                    b.Property<long>("MinTransferTime");
-
-                    b.Property<int>("TransferType");
-
-                    b.HasKey("FromStopId", "ToStopId");
-
-                    b.HasIndex("ToStopId");
-
-                    b.ToTable("Transfers");
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.Trip", b =>
@@ -331,79 +219,9 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.HasIndex("RouteId");
 
-                    b.HasIndex("ServiceId");
-
                     b.HasIndex("ShapeId");
 
                     b.ToTable("Trips");
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.CalendarDate", b =>
-                {
-                    b.HasOne("MPK.Connect.Model.Calendar", "Calendar")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.FareAttribute", b =>
-                {
-                    b.HasOne("MPK.Connect.Model.Agency", "Agency")
-                        .WithMany()
-                        .HasForeignKey("AgencyName");
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.FareRule", b =>
-                {
-                    b.HasOne("MPK.Connect.Model.FareAttribute", "FareAttribute")
-                        .WithMany()
-                        .HasForeignKey("FareId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("MPK.Connect.Model.Route", "Route")
-                        .WithMany()
-                        .HasForeignKey("RouteId");
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.Frequency", b =>
-                {
-                    b.HasOne("MPK.Connect.Model.Trip", "Trip")
-                        .WithMany()
-                        .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.Route", b =>
-                {
-                    b.HasOne("MPK.Connect.Model.Agency", "Agency")
-                        .WithMany()
-                        .HasForeignKey("AgencyName");
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.StopTime", b =>
-                {
-                    b.HasOne("MPK.Connect.Model.Stop", "Stop")
-                        .WithMany()
-                        .HasForeignKey("StopId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("MPK.Connect.Model.Trip", "Trip")
-                        .WithMany()
-                        .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.Transfer", b =>
-                {
-                    b.HasOne("MPK.Connect.Model.Stop", "FromStop")
-                        .WithMany()
-                        .HasForeignKey("FromStopId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MPK.Connect.Model.Stop", "ToStop")
-                        .WithMany()
-                        .HasForeignKey("ToStopId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.Trip", b =>
@@ -411,11 +229,6 @@ namespace MPK.Connect.DataAccess.Migrations
                     b.HasOne("MPK.Connect.Model.Route", "Route")
                         .WithMany()
                         .HasForeignKey("RouteId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("MPK.Connect.Model.Calendar", "Calendar")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MPK.Connect.Model.Shape", "Shape")

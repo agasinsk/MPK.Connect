@@ -26,6 +26,6 @@ namespace MPK.Connect.Model
         public LocationTypes LocationType { get; set; }
         public string ParentStation { get; set; }
         public string Timezone { get; set; }
-        public WheelchairBordings WheelchairBording { get; set; }
+        public WheelchairBordings WheelchairBoarding { get; set; }
     }
 }

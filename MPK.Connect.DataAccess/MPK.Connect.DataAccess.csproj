@@ -5,12 +5,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.0" />
+    <Compile Remove="Migrations\20181013173440_New-Models.cs" />
+    <Compile Remove="Migrations\20181013174156_New-Models-Update.cs" />
+    <Compile Remove="Migrations\20181013174416_New-Models-Update.cs" />
+    <Compile Remove="Migrations\20181013174537_ModelUpdate.cs" />
+    <Compile Remove="Migrations\20181013175117_ModelsUpdate.cs" />
+    <Compile Remove="Migrations\20181013175309_ModelsUpdate.cs" />
+    <Compile Remove="Migrations\20181013175529_ModelsUpdate.cs" />
+    <Compile Remove="Migrations\20181013180118_ModelsUpdate.cs" />
+    <Compile Remove="Migrations\20181013180630_ModelsUpdate.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>

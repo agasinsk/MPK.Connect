@@ -7,6 +7,7 @@ using MPK.Connect.DataAccess.Agencies;
 using MPK.Connect.DataAccess.Stops;
 using MPK.Connect.Model;
 using MPK.Connect.Service;
+using MPK.Connect.Service.Builders;
 using System;
 using System.IO;
 using System.Linq;
@@ -41,10 +42,12 @@ namespace MPK.Console.DataImporter
                 options.UseSqlServer(Configuration.GetConnectionString("MpkContext")));
 
             // Add services
-            serviceCollection.AddTransient<IImporterService<Stop>, StopService>();
+
             serviceCollection.AddTransient<IStopRepository, StopRepository>();
-            serviceCollection.AddTransient<IImporterService<Agency>, AgencyService>();
             serviceCollection.AddTransient<IAgencyRepository, AgencyRepository>();
+            serviceCollection.AddTransient<IGenericRepository<Agency>, AgencyRepository>();
+            serviceCollection.AddTransient<IImporterService<Agency>, ImporterService<Agency>>();
+            serviceCollection.AddTransient<IEntityBuilder<Agency>, AgencyBuilder>();
         }
 
         private static void Main(string[] args)
@@ -56,10 +59,10 @@ namespace MPK.Console.DataImporter
             // Create service provider
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            var fileNames = Configuration.GetSection("GTFS").GetChildren().Select(a => new { a.Key, a.Value }).ToList();
+            var fileNames = Configuration.GetSection("GTFS").GetChildren().ToDictionary(kv => kv.Key, kv => kv.Value);
 
-            //var service = serviceProvider.GetService(typeof(IImporterService<Agency>)) as IImporterService<Agency>;
-            //service?.ImportEntitiesFromFile(fileName.Value);
+            var service = serviceProvider.GetService(typeof(IImporterService<Agency>)) as IImporterService<Agency>;
+            service?.ImportEntitiesFromFile(fileNames[nameof(Agency)]);
 
             // Get backup sources for client
             System.Console.ReadLine();
