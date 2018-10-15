@@ -19,7 +19,6 @@ namespace MPK.Console.DataImporter
     public class Program
     {
         public static IConfigurationRoot Configuration { get; set; }
-        private static IContainer Container { get; set; }
 
         public static IEnumerable<Type> GetAllTypes(Type genericType)
         {
