@@ -1,12 +1,13 @@
 ﻿using MPK.Connect.Model.Enums;
+using MPK.Connect.Model.Helpers;
 using System.ComponentModel.DataAnnotations;
 
 namespace MPK.Connect.Model
 {
-    public class Stop
+    public class Stop : IdentifiableEntity<string>
     {
         [Required]
-        public string Id { get; set; }
+        public override string Id { get; set; }
 
         public string Code { get; set; }
 
@@ -26,6 +27,6 @@ namespace MPK.Connect.Model
         public LocationTypes LocationType { get; set; }
         public string ParentStation { get; set; }
         public string Timezone { get; set; }
-        public WheelchairBordings WheelchairBoarding { get; set; }
+        public WheelchairBoardings WheelchairBoarding { get; set; }
     }
 }

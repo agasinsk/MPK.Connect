@@ -1,12 +1,13 @@
 ﻿using MPK.Connect.Model.Enums;
+using MPK.Connect.Model.Helpers;
 using System.ComponentModel.DataAnnotations;
 
 namespace MPK.Connect.Model
 {
-    public class Route
+    public class Route : IdentifiableEntity<string>
     {
         [Required]
-        public string Id { get; set; }
+        public override string Id { get; set; }
 
         public string AgencyId { get; set; }
 

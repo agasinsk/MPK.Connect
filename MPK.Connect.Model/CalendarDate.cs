@@ -1,12 +1,16 @@
 ﻿using MPK.Connect.Model.Enums;
+using MPK.Connect.Model.Helpers;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class CalendarDate
+    public class CalendarDate : IdentifiableEntity<string>
     {
+        [NotMapped]
+        public override string Id => ServiceId;
+
         [Key]
         public string ServiceId { get; set; }
 

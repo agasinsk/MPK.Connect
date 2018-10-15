@@ -1,12 +1,13 @@
 ﻿using MPK.Connect.Model.Enums;
+using MPK.Connect.Model.Helpers;
 using System.ComponentModel.DataAnnotations;
 
 namespace MPK.Connect.Model
 {
-    public class FareAttribute
+    public class FareAttribute : IdentifiableEntity<string>
     {
         [Required]
-        public string Id { get; set; }
+        public override string Id { get; set; }
 
         [Required]
         public double Price { get; set; }
@@ -21,7 +22,7 @@ namespace MPK.Connect.Model
         public int? Transfers { get; set; }
 
         public string AgencyId { get; set; }
-        public long TransferDuration { get; set; }
+        public long? TransferDuration { get; set; }
 
         public Agency Agency { get; set; }
     }

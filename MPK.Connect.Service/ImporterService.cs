@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
+using MPK.Connect.Model.Helpers;
 using MPK.Connect.Service.Builders;
 using System.Collections.Generic;
 using System.IO;
 
 namespace MPK.Connect.Service
 {
-    public class ImporterService<T> : IImporterService<T> where T : class
+    public class ImporterService<T> : IImporterService<T> where T : IdentifiableEntity<string>
     {
         private readonly ILogger<ImporterService<T>> _logger;
         private readonly IGenericRepository<T> _repository;
@@ -33,6 +34,7 @@ namespace MPK.Connect.Service
                 {
                     var mappedEntity = _entityBuilder.Build(entityLine, entityMappings);
                     entities.Add(mappedEntity);
+                    _logger.LogInformation($"Read {nameof(T)} with id: \"{mappedEntity.Id}\"");
                 }
                 _logger.LogInformation($"Read {entities.Count} lines of {nameof(T)}.");
                 SortEntities(entities);

@@ -14,6 +14,9 @@
     <Compile Remove="Migrations\20181013175529_ModelsUpdate.cs" />
     <Compile Remove="Migrations\20181013180118_ModelsUpdate.cs" />
     <Compile Remove="Migrations\20181013180630_ModelsUpdate.cs" />
+    <Compile Remove="Migrations\20181014123116_IdInterfaceTest.cs" />
+    <Compile Remove="Migrations\20181014123303_IdInterfaceTest-DifferentKey.cs" />
+    <Compile Remove="Migrations\20181014123622_IdInterfaceTest-DifferentKey.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,10 +39,6 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Routes\Types\" />
   </ItemGroup>
 
 </Project>

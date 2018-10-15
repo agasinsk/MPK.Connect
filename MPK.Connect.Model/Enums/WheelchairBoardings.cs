@@ -1,6 +1,6 @@
 ﻿namespace MPK.Connect.Model.Enums
 {
-    public enum WheelchairBordings
+    public enum WheelchairBoardings
     {
         NoInfo = 0,
         Possible = 1,

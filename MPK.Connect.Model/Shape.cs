@@ -1,21 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MPK.Connect.Model.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace MPK.Connect.Model
 {
-    public class Shape
+    public class Shape : IdentifiableEntity<string>
     {
         [Required]
-        public string Id { get; set; }
+        public override string Id { get; set; }
 
         [Required]
-        public string PointLatitude { get; set; }
+        public double PointLatitude { get; set; }
 
         [Required]
-        public string PointLongitude { get; set; }
+        public double PointLongitude { get; set; }
 
         [Required]
         public int PointSequence { get; set; }
 
-        public double DistTraveled { get; set; }
+        public double? DistTraveled { get; set; }
     }
 }

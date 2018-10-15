@@ -1,10 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MPK.Connect.Model.Helpers;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class FareRule
+    public class FareRule : IdentifiableEntity<string>
     {
+        [NotMapped]
+        public override string Id => FareId;
+
         [Key]
         public string FareId { get; set; }
 

@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MPK.Connect.Model.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace MPK.Connect.Model
 {
-    public class Agency
+    public class Agency : IdentifiableEntity<string>
     {
-        public string Id { get; set; }
+        public override string Id { get; set; }
 
         [Key]
         [Required]

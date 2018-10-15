@@ -1,12 +1,16 @@
 ﻿using MPK.Connect.Model.Enums;
+using MPK.Connect.Model.Helpers;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Frequency
+    public class Frequency : IdentifiableEntity<string>
     {
+        [NotMapped]
+        public override string Id => $"{TripId}:{HeadwaySecs}";
+
         [Key, ForeignKey(nameof(Trip))]
         [Required]
         public string TripId { get; set; }
