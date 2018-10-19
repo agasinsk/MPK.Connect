@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MPK.Connect.Service.Builders
 {
-    public class AgencyBuilder : BaseEntityBuilder<Agency>, IEntityBuilder<Agency>
+    public class AgencyBuilder : BaseEntityBuilder<Agency>
     {
         public override Agency Build(string dataString, IDictionary<string, int> mappings)
         {

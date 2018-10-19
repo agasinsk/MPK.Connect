@@ -7,45 +7,52 @@ using System.Linq.Expressions;
 
 namespace MPK.Connect.DataAccess
 {
-    public abstract class GenericRepository<TContext, T, TId> :
-        IGenericRepository<T> where T : IdentifiableEntity<TId> where TId : class where TContext : DbContext, new()
+    public abstract class GenericRepository<TContext, TEntity, TId> :
+        IGenericRepository<TEntity> where TEntity : IdentifiableEntity<TId> where TId : class where TContext : DbContext, new()
     {
         public TContext Context { get; set; } = new TContext();
 
-        public virtual void Add(T entity)
+        public virtual void Add(TEntity entity)
         {
-            Context.Set<T>().Add(entity);
+            Context.Set<TEntity>().Add(entity);
         }
 
-        public virtual void AddRange(List<T> entities)
+        public virtual int AddRange(List<TEntity> entities)
         {
-            Context.Set<T>().AddRange(entities);
+            var newEntities = entities.Where(e => !Contains(e)).ToList();
+            Context.Set<TEntity>().AddRange(newEntities);
+            return newEntities.Count;
         }
 
-        public virtual T Delete(T entity)
+        public bool Contains(TEntity entity)
         {
-            Context.Set<T>().Remove(entity);
+            return Context.Set<TEntity>().Any(e => e.Id == entity.Id);
+        }
+
+        public virtual TEntity Delete(TEntity entity)
+        {
+            Context.Set<TEntity>().Remove(entity);
             return entity;
         }
 
-        public virtual void Edit(T entity)
+        public virtual void Edit(TEntity entity)
         {
             Context.Entry(entity).State = EntityState.Modified;
         }
 
-        public IQueryable<T> FindBy(Expression<Func<T, bool>> predicate)
+        public IQueryable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate)
         {
-            return Context.Set<T>().Where(predicate); ;
+            return Context.Set<TEntity>().Where(predicate); ;
         }
 
-        public virtual IQueryable<T> GetAll()
+        public virtual IQueryable<TEntity> GetAll()
         {
-            return Context.Set<T>(); ;
+            return Context.Set<TEntity>(); ;
         }
 
-        public virtual T GetSingle(TId id)
+        public virtual TEntity GetSingle(TId id)
         {
-            return Context.Set<T>().FirstOrDefault(t => t.Id == id);
+            return Context.Set<TEntity>().FirstOrDefault(t => t.Id == id);
         }
 
         public virtual void Save()

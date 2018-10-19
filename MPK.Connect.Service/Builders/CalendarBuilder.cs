@@ -1,6 +1,7 @@
-﻿using MPK.Connect.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using Calendar = MPK.Connect.Model.Calendar;
 
 namespace MPK.Connect.Service.Builders
 {
@@ -17,8 +18,8 @@ namespace MPK.Connect.Service.Builders
             var friday = calendarData[mappings["friday"]] == "1";
             var saturday = calendarData[mappings["saturday"]] == "1";
             var sunday = calendarData[mappings["sunday"]] == "1";
-            var start = DateTime.Parse(calendarData[mappings["start_date"]]);
-            var end = DateTime.Parse(calendarData[mappings["end_date"]]);
+            var start = DateTime.ParseExact(calendarData[mappings["start_date"]], _dateFormatString, CultureInfo.CurrentCulture);
+            var end = DateTime.ParseExact(calendarData[mappings["start_date"]], _dateFormatString, CultureInfo.CurrentCulture);
 
             var mappedCalendar = new Calendar
             {

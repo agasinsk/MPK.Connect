@@ -34,17 +34,16 @@ namespace MPK.Connect.Service
                 {
                     var mappedEntity = _entityBuilder.Build(entityLine, entityMappings);
                     entities.Add(mappedEntity);
-                    _logger.LogInformation($"Read {nameof(T)} with id: \"{mappedEntity.Id}\"");
+                    _logger.LogInformation($"Read {typeof(T).Name} with id: \"{mappedEntity.Id}\"");
                 }
-                _logger.LogInformation($"Read {entities.Count} lines of {nameof(T)}.");
+                _logger.LogInformation($"Read {entities.Count} lines of {typeof(T).Name}.");
                 SortEntities(entities);
 
-                _repository.AddRange(entities);
+                entitiesCount = _repository.AddRange(entities);
                 _repository.Save();
-                entitiesCount = entities.Count;
-                entities.Clear();
-                _logger.LogInformation($"{nameof(T)} have been successfully saved!");
             }
+
+            _logger.LogInformation($"{entitiesCount} entities of type '{typeof(T).Name}' have been successfully saved.");
 
             return entitiesCount;
         }

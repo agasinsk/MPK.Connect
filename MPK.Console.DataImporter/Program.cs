@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
-using MPK.Connect.Model;
 using MPK.Connect.Model.Helpers;
 using MPK.Connect.Service;
 using MPK.Connect.Service.Builders;
@@ -13,11 +14,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using IEntityImporter = MPK.Connect.Service.IEntityImporter;
 
 namespace MPK.Console.DataImporter
 {
     public class Program
     {
+        public static IContainer Container { get; set; }
         public static IConfigurationRoot Configuration { get; set; }
 
         public static IEnumerable<Type> GetAllTypes(Type genericType)
@@ -28,18 +31,20 @@ namespace MPK.Console.DataImporter
             return runtimeAssemblyNames
                 .Select(Assembly.Load)
                 .SelectMany(assembly => assembly.GetTypes()
-                    .Where(type => type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericType) && !type.IsAbstract));
+                    .Where(type =>
+                        type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericType) &&
+                        !type.IsAbstract));
         }
 
         private static void ConfigureServices(IServiceCollection serviceCollection)
         {
             // Add logging
             serviceCollection.AddSingleton(new LoggerFactory())
-                .AddLogging(configure => configure.AddConsole())
                 .AddLogging(configure =>
-                    configure.AddConsole()
+                    configure
+                        .AddConsole()
                         .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning))
-                .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Warning);
+                .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information);
 
             // Build configuration
             Configuration = new ConfigurationBuilder()
@@ -55,14 +60,22 @@ namespace MPK.Console.DataImporter
                 options.UseSqlServer(Configuration.GetConnectionString("MpkContext")));
 
             // Add services
+            serviceCollection.AddTransient(typeof(IGenericRepository<>), typeof(BaseRepository<>));
+            serviceCollection.AddTransient(typeof(IImporterService<>), typeof(ImporterService<>));
+
+            var containerBuilder = new ContainerBuilder();
+            containerBuilder.Populate(serviceCollection);
+
             var entityBuilders = GetAllTypes(typeof(IEntityBuilder<>));
             foreach (var entityBuilder in entityBuilders)
             {
-                serviceCollection.AddTransient(typeof(IEntityBuilder<IdentifiableEntity<string>>), entityBuilder);
+                var interfaceType = entityBuilder.GetInterfaces().FirstOrDefault();
+                containerBuilder.RegisterType(entityBuilder).As(interfaceType);
             }
 
-            serviceCollection.AddTransient(typeof(IGenericRepository<>), typeof(BaseRepository<>));
-            serviceCollection.AddTransient(typeof(IImporterService<>), typeof(ImporterService<>));
+            containerBuilder.RegisterGeneric(typeof(ImporterService<>)).As(typeof(IImporterService<>));
+
+            Container = containerBuilder.Build();
         }
 
         private static IEnumerable<Type> GetAllTypesOf<T>()
@@ -82,21 +95,26 @@ namespace MPK.Console.DataImporter
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
 
-            // Create service provider
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-
+            // Process data
             var fileNames = Configuration.GetSection("GTFS").GetChildren().ToDictionary(kv => kv.Key, kv => kv.Value);
             var entityModelTypes = GetAllTypesOf<IdentifiableEntity<string>>();
 
-            foreach (var entityType in entityModelTypes)
+            using (var scope = Container.BeginLifetimeScope())
             {
-                var fileName = fileNames[entityType.Name];
+                foreach (var entityType in entityModelTypes)
+                {
+                    var fileName = fileNames[entityType.Name];
+                    if (File.Exists(fileName))
+                    {
+                        var interfaceType = typeof(IImporterService<>).MakeGenericType(entityType);
+                        var entityImporter = scope.Resolve(interfaceType) as IEntityImporter;
 
-                var entityImporter = serviceProvider.GetService(typeof(IImporterService<Stop>)) as IImporterService<Stop>;
-                //entityImporter?.ImportEntitiesFromFile(fileName);
+                        entityImporter?.ImportEntitiesFromFile(fileName);
+                        System.Console.WriteLine($"Processing of {entityType.Name} finished. Press ENTER to continue");
+                        System.Console.ReadKey();
+                    }
+                }
             }
-
-            // Get backup sources for client
             System.Console.ReadLine();
         }
     }

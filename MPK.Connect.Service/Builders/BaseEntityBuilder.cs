@@ -4,6 +4,8 @@ namespace MPK.Connect.Service.Builders
 {
     public abstract class BaseEntityBuilder<T> : IEntityBuilder<T> where T : class
     {
+        protected const string _dateFormatString = "yyyymmdd";
+
         public abstract T Build(string dataString, IDictionary<string, int> mappings);
 
         public virtual IDictionary<string, int> GetEntityMappings(string headerString)

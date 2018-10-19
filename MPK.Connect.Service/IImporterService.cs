@@ -2,8 +2,7 @@
 
 namespace MPK.Connect.Service
 {
-    public interface IImporterService<T> where T : IdentifiableEntity<string>
+    public interface IImporterService<T> : IEntityImporter where T : IdentifiableEntity<string>
     {
-        int ImportEntitiesFromFile(string filePath);
     }
 }

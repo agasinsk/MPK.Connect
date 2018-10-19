@@ -9,7 +9,9 @@ namespace MPK.Connect.DataAccess
     {
         void Add(T entity);
 
-        void AddRange(List<T> entity);
+        int AddRange(List<T> entities);
+
+        bool Contains(T entity);
 
         T Delete(T entity);
 
