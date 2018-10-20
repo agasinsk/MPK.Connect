@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MPK.Connect.Service.Builders;
 
-namespace MPK.Connect.Test.Service
+namespace MPK.Connect.Test.Service.Builders
 {
     [TestClass]
     public class AgencyBuilderTests

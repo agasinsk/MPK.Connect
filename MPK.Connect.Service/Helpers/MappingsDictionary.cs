@@ -9,5 +9,10 @@ namespace MPK.Connect.Service.Helpers
             get => ContainsKey(key) ? base[key] : -1;
             set => base[key] = value;
         }
+
+        public new void Add(string key, int value)
+        {
+            base.Add(key.Trim(), value);
+        }
     }
 }

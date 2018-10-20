@@ -1,5 +1,6 @@
 ﻿using MPK.Connect.Model;
 using MPK.Connect.Model.Enums;
+using MPK.Connect.Service.Helpers;
 using System;
 
 namespace MPK.Connect.Service.Builders
@@ -8,11 +9,11 @@ namespace MPK.Connect.Service.Builders
     {
         public override CalendarDate Build(string dataString)
         {
-            var data = dataString.Replace("\"", "").Split(',');
+            var data = dataString.Replace("\"", "").ToEntityData();
 
             var serviceId = data[_entityMappings["service_id"]];
             var date = GetDateTime(data[_entityMappings["date"]]).GetValueOrDefault();
-            Enum.TryParse(_entityMappings.ContainsKey("exception_type") ? data[_entityMappings["exception_type"]] : string.Empty, out ExceptionRules exception);
+            Enum.TryParse(data[_entityMappings["exception_type"]], out ExceptionRules exception);
 
             var calendarDate = new CalendarDate
             {

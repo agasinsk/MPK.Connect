@@ -1,4 +1,5 @@
-﻿using Calendar = MPK.Connect.Model.Calendar;
+﻿using MPK.Connect.Service.Helpers;
+using Calendar = MPK.Connect.Model.Calendar;
 
 namespace MPK.Connect.Service.Builders
 {
@@ -6,17 +7,18 @@ namespace MPK.Connect.Service.Builders
     {
         public override Calendar Build(string dataString)
         {
-            var calendarData = dataString.Replace("\"", "").Split(',');
-            var serviceId = calendarData[_entityMappings["service_id"]];
-            var monday = calendarData[_entityMappings["monday"]] == "1";
-            var tuesday = calendarData[_entityMappings["tuesday"]] == "1";
-            var wednesday = calendarData[_entityMappings["wednesday"]] == "1";
-            var thursday = calendarData[_entityMappings["thursday"]] == "1";
-            var friday = calendarData[_entityMappings["friday"]] == "1";
-            var saturday = calendarData[_entityMappings["saturday"]] == "1";
-            var sunday = calendarData[_entityMappings["sunday"]] == "1";
-            var start = GetDateTime(calendarData[_entityMappings["start_date"]]).GetValueOrDefault();
-            var end = GetDateTime(calendarData[_entityMappings["end_date"]]).GetValueOrDefault();
+            var data = dataString.Replace("\"", "").ToEntityData();
+
+            var serviceId = data[_entityMappings["service_id"]];
+            var monday = data[_entityMappings["monday"]] == "1";
+            var tuesday = data[_entityMappings["tuesday"]] == "1";
+            var wednesday = data[_entityMappings["wednesday"]] == "1";
+            var thursday = data[_entityMappings["thursday"]] == "1";
+            var friday = data[_entityMappings["friday"]] == "1";
+            var saturday = data[_entityMappings["saturday"]] == "1";
+            var sunday = data[_entityMappings["sunday"]] == "1";
+            var start = GetDateTime(data[_entityMappings["start_date"]]).GetValueOrDefault();
+            var end = GetDateTime(data[_entityMappings["end_date"]]).GetValueOrDefault();
 
             var mappedCalendar = new Calendar
             {
