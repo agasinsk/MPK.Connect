@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using Calendar = MPK.Connect.Model.Calendar;
+﻿using Calendar = MPK.Connect.Model.Calendar;
 
 namespace MPK.Connect.Service.Builders
 {
     public class CalendarBuilder : BaseEntityBuilder<Calendar>
     {
-        public override Calendar Build(string dataString, IDictionary<string, int> mappings)
+        public override Calendar Build(string dataString)
         {
             var calendarData = dataString.Replace("\"", "").Split(',');
-            var serviceId = calendarData[mappings["service_id"]];
-            var monday = calendarData[mappings["monday"]] == "1";
-            var tuesday = calendarData[mappings["tuesday"]] == "1";
-            var wednesday = calendarData[mappings["wednesday"]] == "1";
-            var thursday = calendarData[mappings["thursday"]] == "1";
-            var friday = calendarData[mappings["friday"]] == "1";
-            var saturday = calendarData[mappings["saturday"]] == "1";
-            var sunday = calendarData[mappings["sunday"]] == "1";
-            var start = DateTime.ParseExact(calendarData[mappings["start_date"]], _dateFormatString, CultureInfo.CurrentCulture);
-            var end = DateTime.ParseExact(calendarData[mappings["start_date"]], _dateFormatString, CultureInfo.CurrentCulture);
+            var serviceId = calendarData[_entityMappings["service_id"]];
+            var monday = calendarData[_entityMappings["monday"]] == "1";
+            var tuesday = calendarData[_entityMappings["tuesday"]] == "1";
+            var wednesday = calendarData[_entityMappings["wednesday"]] == "1";
+            var thursday = calendarData[_entityMappings["thursday"]] == "1";
+            var friday = calendarData[_entityMappings["friday"]] == "1";
+            var saturday = calendarData[_entityMappings["saturday"]] == "1";
+            var sunday = calendarData[_entityMappings["sunday"]] == "1";
+            var start = GetDateTime(calendarData[_entityMappings["start_date"]]).GetValueOrDefault();
+            var end = GetDateTime(calendarData[_entityMappings["end_date"]]).GetValueOrDefault();
 
             var mappedCalendar = new Calendar
             {

@@ -1,27 +1,26 @@
 ﻿using MPK.Connect.Model;
 using MPK.Connect.Model.Enums;
 using System;
-using System.Collections.Generic;
 
 namespace MPK.Connect.Service.Builders
 {
     public class StopTimeBuilder : BaseEntityBuilder<StopTime>
     {
-        public override StopTime Build(string dataString, IDictionary<string, int> mappings)
+        public override StopTime Build(string dataString)
         {
             var stopInfos = dataString.Replace("\"", "").Split(',');
-            var tripId = stopInfos[mappings["trip_id"]];
-            var arrival = DateTime.Parse(stopInfos[mappings["arrival_time"]]);
-            var departure = DateTime.Parse(stopInfos[mappings["departure_time"]]);
-            var stopId = stopInfos[mappings["stop_id"]];
-            var stopSequence = int.Parse(stopInfos[mappings["stop_sequence"]]);
-            var stopHeadsign = mappings.ContainsKey("stop_headsign") ? stopInfos[mappings["stop_headsign"]] : null;
+            var tripId = stopInfos[_entityMappings["trip_id"]];
+            var arrival = GetDateTime(stopInfos[_entityMappings["arrival_time"]]).GetValueOrDefault();
+            var departure = GetDateTime(stopInfos[_entityMappings["departure_time"]]).GetValueOrDefault();
+            var stopId = stopInfos[_entityMappings["stop_id"]];
+            var stopSequence = int.Parse(stopInfos[_entityMappings["stop_sequence"]]);
+            var stopHeadsign = _entityMappings.ContainsKey("stop_headsign") ? stopInfos[_entityMappings["stop_headsign"]] : null;
 
-            Enum.TryParse(mappings.ContainsKey("pickup_type") ? stopInfos[mappings["pickup_type"]] : string.Empty, out PickupTypes pickup);
-            Enum.TryParse(mappings.ContainsKey("drop_off_type") ? stopInfos[mappings["drop_off_type"]] : string.Empty, out DropOffTypes dropOff);
-            var distTraveled = mappings.ContainsKey("shape_dist_traveled") ? stopInfos[mappings["shape_dist_traveled"]] : null;
+            Enum.TryParse(_entityMappings.ContainsKey("pickup_type") ? stopInfos[_entityMappings["pickup_type"]] : string.Empty, out PickupTypes pickup);
+            Enum.TryParse(_entityMappings.ContainsKey("drop_off_type") ? stopInfos[_entityMappings["drop_off_type"]] : string.Empty, out DropOffTypes dropOff);
+            var distTraveled = _entityMappings.ContainsKey("shape_dist_traveled") ? stopInfos[_entityMappings["shape_dist_traveled"]] : null;
 
-            Enum.TryParse(mappings.ContainsKey("timepoint") ? stopInfos[mappings["timepoint"]] : string.Empty, out TimePoints timePoint);
+            Enum.TryParse(_entityMappings.ContainsKey("timepoint") ? stopInfos[_entityMappings["timepoint"]] : string.Empty, out TimePoints timePoint);
 
             var mappedStop = new StopTime
             {

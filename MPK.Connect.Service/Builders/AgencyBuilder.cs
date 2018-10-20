@@ -1,21 +1,22 @@
 ﻿using MPK.Connect.Model;
-using System.Collections.Generic;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Builders
 {
     public class AgencyBuilder : BaseEntityBuilder<Agency>
     {
-        public override Agency Build(string dataString, IDictionary<string, int> mappings)
+        public override Agency Build(string dataString)
         {
-            var agencyData = dataString.Replace("\"", string.Empty).Split(',');
-            var id = mappings.ContainsKey("agency_id") ? agencyData[mappings["agency_id"]] : null;
-            var name = agencyData[mappings["agency_name"]];
-            var url = agencyData[mappings["agency_url"]];
-            var timeZone = agencyData[mappings["agency_timezone"]];
-            var language = mappings.ContainsKey("agency_lang") ? agencyData[mappings["agency_lang"]] : null;
-            var phone = mappings.ContainsKey("agency_phone") ? agencyData[mappings["agency_phone"]] : null;
-            var fareUrl = mappings.ContainsKey("agency_fare_url") ? agencyData[mappings["agency_fare_url"]] : null;
-            var email = mappings.ContainsKey("agency_email") ? agencyData[mappings["agency_email"]] : null;
+            var data = dataString.Replace("\"", string.Empty).ToEntityData();
+
+            var id = data[_entityMappings["agency_id"]];
+            var name = data[_entityMappings["agency_name"]];
+            var url = data[_entityMappings["agency_url"]];
+            var timeZone = data[_entityMappings["agency_timezone"]];
+            var language = data[_entityMappings["agency_lang"]];
+            var phone = data[_entityMappings["agency_phone"]];
+            var fareUrl = data[_entityMappings["agency_fare_url"]];
+            var email = data[_entityMappings["agency_email"]];
 
             var agency = new Agency
             {

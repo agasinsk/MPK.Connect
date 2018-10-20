@@ -1,20 +1,19 @@
 ﻿using MPK.Connect.Model;
-using System.Collections.Generic;
 
 namespace MPK.Connect.Service.Builders
 {
     public class FareRuleBuilder : BaseEntityBuilder<FareRule>
     {
-        public override FareRule Build(string dataString, IDictionary<string, int> mappings)
+        public override FareRule Build(string dataString)
         {
             var data = dataString.Replace("\"", "").Split(',');
 
-            var fareId = data[mappings["fare_id"]];
+            var fareId = data[_entityMappings["fare_id"]];
 
-            var routeId = mappings.ContainsKey("route_id") ? data[mappings["route_id"]] : null;
-            var originId = mappings.ContainsKey("origin_id") ? data[mappings["origin_id"]] : null;
-            var destinationId = mappings.ContainsKey("destination_id") ? data[mappings["destination_id"]] : null;
-            var containsId = mappings.ContainsKey("contains_id") ? data[mappings["contains_id"]] : null;
+            var routeId = _entityMappings.ContainsKey("route_id") ? data[_entityMappings["route_id"]] : null;
+            var originId = _entityMappings.ContainsKey("origin_id") ? data[_entityMappings["origin_id"]] : null;
+            var destinationId = _entityMappings.ContainsKey("destination_id") ? data[_entityMappings["destination_id"]] : null;
+            var containsId = _entityMappings.ContainsKey("contains_id") ? data[_entityMappings["contains_id"]] : null;
 
             var fareRule = new FareRule
             {

@@ -1,23 +1,22 @@
 ﻿using MPK.Connect.Model;
 using MPK.Connect.Model.Enums;
 using System;
-using System.Collections.Generic;
 
 namespace MPK.Connect.Service.Builders
 {
     public class FareAttributeBuilder : BaseEntityBuilder<FareAttribute>
     {
-        public override FareAttribute Build(string dataString, IDictionary<string, int> mappings)
+        public override FareAttribute Build(string dataString)
         {
             var data = dataString.Replace("\"", "").Split(',');
 
-            var fareId = data[mappings["fare_id"]];
-            var price = double.Parse(data[mappings["price"]]);
-            var currency = data[mappings["currency_type"]];
-            Enum.TryParse(mappings.ContainsKey("payment_method") ? data[mappings["payment_method"]] : string.Empty, out PaymentMethods payment);
-            var transfers = data[mappings["transfers"]] == string.Empty ? (int?)null : int.Parse(data[mappings["transfers"]]);
-            var agencyId = mappings.ContainsKey("agency_id") ? data[mappings["agency_id"]] : null;
-            var transferDuration = mappings.ContainsKey("transfer_duration") ? long.Parse(data[mappings["transfer_duration"]]) : (long?)null;
+            var fareId = data[_entityMappings["fare_id"]];
+            var price = double.Parse(data[_entityMappings["price"]]);
+            var currency = data[_entityMappings["currency_type"]];
+            Enum.TryParse(_entityMappings.ContainsKey("payment_method") ? data[_entityMappings["payment_method"]] : string.Empty, out PaymentMethods payment);
+            var transfers = data[_entityMappings["transfers"]] == string.Empty ? (int?)null : int.Parse(data[_entityMappings["transfers"]]);
+            var agencyId = _entityMappings.ContainsKey("agency_id") ? data[_entityMappings["agency_id"]] : null;
+            var transferDuration = _entityMappings.ContainsKey("transfer_duration") ? long.Parse(data[_entityMappings["transfer_duration"]]) : (long?)null;
 
             var fareAttribute = new FareAttribute
             {
