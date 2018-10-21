@@ -22,7 +22,7 @@ namespace MPK.Connect.Model
         public DateTime EndTime { get; set; }
 
         [Required]
-        public long HeadwaySecs { get; set; }
+        public int HeadwaySecs { get; set; }
 
         public ExactTimes ExactTimes { get; set; }
 
