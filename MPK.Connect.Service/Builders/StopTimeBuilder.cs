@@ -1,5 +1,6 @@
 ﻿using MPK.Connect.Model;
 using MPK.Connect.Model.Enums;
+using MPK.Connect.Service.Helpers;
 using System;
 
 namespace MPK.Connect.Service.Builders
@@ -8,19 +9,20 @@ namespace MPK.Connect.Service.Builders
     {
         public override StopTime Build(string dataString)
         {
-            var stopInfos = dataString.Replace("\"", "").Split(',');
-            var tripId = stopInfos[_entityMappings["trip_id"]];
-            var arrival = GetDateTime(stopInfos[_entityMappings["arrival_time"]]).GetValueOrDefault();
-            var departure = GetDateTime(stopInfos[_entityMappings["departure_time"]]).GetValueOrDefault();
-            var stopId = stopInfos[_entityMappings["stop_id"]];
-            var stopSequence = int.Parse(stopInfos[_entityMappings["stop_sequence"]]);
-            var stopHeadsign = _entityMappings.ContainsKey("stop_headsign") ? stopInfos[_entityMappings["stop_headsign"]] : null;
+            var data = dataString.Replace("\"", "").ToEntityData();
 
-            Enum.TryParse(_entityMappings.ContainsKey("pickup_type") ? stopInfos[_entityMappings["pickup_type"]] : string.Empty, out PickupTypes pickup);
-            Enum.TryParse(_entityMappings.ContainsKey("drop_off_type") ? stopInfos[_entityMappings["drop_off_type"]] : string.Empty, out DropOffTypes dropOff);
-            var distTraveled = _entityMappings.ContainsKey("shape_dist_traveled") ? stopInfos[_entityMappings["shape_dist_traveled"]] : null;
+            var tripId = data[_entityMappings["trip_id"]];
+            var arrival = GetTime(data[_entityMappings["arrival_time"]]).GetValueOrDefault();
+            var departure = GetTime(data[_entityMappings["departure_time"]]).GetValueOrDefault();
+            var stopId = data[_entityMappings["stop_id"]];
+            var stopSequence = GetInt(data[_entityMappings["stop_sequence"]]).GetValueOrDefault();
+            var stopHeadsign = data[_entityMappings["stop_headsign"]];
 
-            Enum.TryParse(_entityMappings.ContainsKey("timepoint") ? stopInfos[_entityMappings["timepoint"]] : string.Empty, out TimePoints timePoint);
+            Enum.TryParse(data[_entityMappings["pickup_type"]], out PickupTypes pickup);
+            Enum.TryParse(data[_entityMappings["drop_off_type"]], out DropOffTypes dropOff);
+            var distTraveled = GetDouble(data[_entityMappings["shape_dist_traveled"]]);
+
+            Enum.TryParse(data[_entityMappings["timepoint"]], out TimePoints timePoint);
 
             var mappedStop = new StopTime
             {
@@ -32,7 +34,7 @@ namespace MPK.Connect.Service.Builders
                 HeadSign = stopHeadsign,
                 PickupType = pickup,
                 DropOffTypes = dropOff,
-                ShapeDistTraveled = double.Parse(distTraveled),
+                ShapeDistTraveled = distTraveled,
                 TimePoint = timePoint
             };
 

@@ -1,5 +1,6 @@
 ﻿using MPK.Connect.Model;
 using MPK.Connect.Model.Enums;
+using MPK.Connect.Service.Helpers;
 using System;
 
 namespace MPK.Connect.Service.Builders
@@ -8,18 +9,18 @@ namespace MPK.Connect.Service.Builders
     {
         public override Trip Build(string dataString)
         {
-            var data = dataString.Replace("\"", "").Split(',');
+            var data = dataString.Replace("\"", "").ToEntityData();
 
             var routeId = data[_entityMappings["route_id"]];
             var serviceId = data[_entityMappings["service_id"]];
             var tripId = data[_entityMappings["trip_id"]];
-            var headSign = _entityMappings.ContainsKey("trip_headsign") ? data[_entityMappings["trip_headsign"]] : null;
-            var shortName = _entityMappings.ContainsKey("trip_short_name") ? data[_entityMappings["trip_short_name"]] : null;
-            var directionId = _entityMappings.ContainsKey("direction_id") ? int.Parse(data[_entityMappings["direction_id"]]) : (int?)null;
-            var blockId = _entityMappings.ContainsKey("block_id") ? data[_entityMappings["block_id"]] : null;
-            var shapeId = _entityMappings.ContainsKey("shape_id") ? data[_entityMappings["shape_id"]] : null;
-            Enum.TryParse(_entityMappings.ContainsKey("wheelchair_accessible") ? data[_entityMappings["wheelchair_accessible"]] : string.Empty, out WheelchairBoardings wheelchair);
-            Enum.TryParse(_entityMappings.ContainsKey("bikes_allowed") ? data[_entityMappings["bikes_allowed"]] : string.Empty, out BikesAllowed bikesAllowed);
+            var headSign = data[_entityMappings["trip_headsign"]];
+            var shortName = data[_entityMappings["trip_short_name"]];
+            var directionId = GetInt(data[_entityMappings["direction_id"]]);
+            var blockId = data[_entityMappings["block_id"]];
+            var shapeId = data[_entityMappings["shape_id"]];
+            Enum.TryParse(data[_entityMappings["wheelchair_accessible"]], out WheelchairBoardings wheelchair);
+            Enum.TryParse(data[_entityMappings["bikes_allowed"]], out BikesAllowed bikesAllowed);
 
             var mappedStop = new Trip
             {

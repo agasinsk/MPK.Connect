@@ -1,4 +1,6 @@
-﻿namespace MPK.Connect.Service.Helpers
+﻿using System.Linq;
+
+namespace MPK.Connect.Service.Helpers
 {
     public class EntityData
     {
@@ -6,7 +8,7 @@
 
         public EntityData(string[] entityStrings)
         {
-            _entityStrings = entityStrings;
+            _entityStrings = entityStrings.Select(s => s.Trim()).ToArray();
         }
 
         public string this[int index]

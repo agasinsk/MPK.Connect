@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MPK.Connect.Service.Builders;
 using System;
+using System.Linq;
 
 namespace MPK.Connect.Test.Service.Builders
 {
@@ -32,6 +33,7 @@ namespace MPK.Connect.Test.Service.Builders
             Assert.IsFalse(result.Sunday);
             Assert.AreEqual(new DateTime(2018, 6, 11).Date, result.StartDate.Date);
             Assert.AreEqual(new DateTime(2018, 6, 24).Date, result.EndDate.Date);
+            Assert.IsTrue(result.GetRequiredProperties().All(p => p != null));
         }
 
         [TestInitialize]

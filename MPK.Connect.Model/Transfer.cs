@@ -17,7 +17,7 @@ namespace MPK.Connect.Model
         public string ToStopId { get; set; }
 
         public TransferTypes TransferType { get; set; }
-        public long? MinTransferTime { get; set; }
+        public int? MinTransferTime { get; set; }
 
         public virtual Stop FromStop { get; set; }
 

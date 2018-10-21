@@ -33,7 +33,7 @@ namespace MPK.Connect.Model
 
         public DropOffTypes DropOffTypes { get; set; }
 
-        public double ShapeDistTraveled { get; set; }
+        public double? ShapeDistTraveled { get; set; }
 
         public TimePoints TimePoint { get; set; }
 

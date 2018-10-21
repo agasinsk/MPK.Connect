@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MPK.Connect.Service.Builders;
+using System.Linq;
 
 namespace MPK.Connect.Test.Service.Builders
 {
@@ -28,6 +29,7 @@ namespace MPK.Connect.Test.Service.Builders
             Assert.AreEqual("pl", result.Language);
             Assert.IsNull(result.FareUrl);
             Assert.IsNull(result.Email);
+            Assert.IsTrue(result.GetRequiredProperties().All(p => p != null));
         }
 
         [TestInitialize]

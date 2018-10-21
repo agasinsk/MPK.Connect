@@ -12,7 +12,7 @@ namespace MPK.Connect.Service.Builders
             var data = dataString.Replace("\"", "").ToEntityData();
 
             var serviceId = data[_entityMappings["service_id"]];
-            var date = GetDateTime(data[_entityMappings["date"]]).GetValueOrDefault();
+            var date = GetDate(data[_entityMappings["date"]]).GetValueOrDefault();
             Enum.TryParse(data[_entityMappings["exception_type"]], out ExceptionRules exception);
 
             var calendarDate = new CalendarDate

@@ -1,5 +1,6 @@
 ﻿using MPK.Connect.Model;
 using MPK.Connect.Model.Enums;
+using MPK.Connect.Service.Helpers;
 using System;
 
 namespace MPK.Connect.Service.Builders
@@ -8,12 +9,12 @@ namespace MPK.Connect.Service.Builders
     {
         public override Transfer Build(string dataString)
         {
-            var data = dataString.Replace("\"", "").Split(',');
+            var data = dataString.Replace("\"", "").ToEntityData();
 
             var fromStopId = data[_entityMappings["from_stop_id"]];
             var toStopId = data[_entityMappings["to_stop_id"]];
             Enum.TryParse(data[_entityMappings["transfer_type"]], out TransferTypes transferType);
-            var minTransferTime = _entityMappings.ContainsKey("min_transfer_time") ? long.Parse(data[_entityMappings["min_transfer_time"]]) : (long?)null;
+            var minTransferTime = GetInt(data[_entityMappings["min_transfer_time"]]);
 
             var transfer = new Transfer
             {

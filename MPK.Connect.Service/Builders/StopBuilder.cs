@@ -1,5 +1,6 @@
 ﻿using MPK.Connect.Model;
 using MPK.Connect.Model.Enums;
+using MPK.Connect.Service.Helpers;
 using System;
 
 namespace MPK.Connect.Service.Builders
@@ -8,19 +9,20 @@ namespace MPK.Connect.Service.Builders
     {
         public override Stop Build(string dataString)
         {
-            var stopInfos = dataString.Replace("\"", "").Split(',');
-            var id = stopInfos[_entityMappings["stop_id"]];
-            var code = _entityMappings.ContainsKey("stop_code") ? stopInfos[_entityMappings["stop_code"]] : null;
-            var name = stopInfos[_entityMappings["stop_name"]];
-            var description = _entityMappings.ContainsKey("stop_desc") ? stopInfos[_entityMappings["stop_desc"]] : null;
-            var longitude = stopInfos[_entityMappings["stop_lat"]];
-            var latitude = stopInfos[_entityMappings["stop_lon"]];
-            var zoneId = _entityMappings.ContainsKey("zone_id") ? stopInfos[_entityMappings["zone_id"]] : null;
-            var url = _entityMappings.ContainsKey("stop_url") ? stopInfos[_entityMappings["stop_url"]] : null;
-            Enum.TryParse(_entityMappings.ContainsKey("location_type") ? stopInfos[_entityMappings["location_type"]] : string.Empty, out LocationTypes locationType);
-            var parentStation = _entityMappings.ContainsKey("parent_station") ? stopInfos[_entityMappings["parent_station"]] : null;
-            var timeZone = _entityMappings.ContainsKey("stop_timezone") ? stopInfos[_entityMappings["stop_timezone"]] : null;
-            Enum.TryParse(_entityMappings.ContainsKey("wheelchair_boarding") ? stopInfos[_entityMappings["wheelchair_boarding"]] : string.Empty, out WheelchairBoardings wheelchairBoarding);
+            var data = dataString.Replace("\"", "").ToEntityData();
+
+            var id = data[_entityMappings["stop_id"]];
+            var code = data[_entityMappings["stop_code"]];
+            var name = data[_entityMappings["stop_name"]];
+            var description = data[_entityMappings["stop_desc"]];
+            var longitude = GetDouble(data[_entityMappings["stop_lon"]]).GetValueOrDefault();
+            var latitude = GetDouble(data[_entityMappings["stop_lat"]]).GetValueOrDefault();
+            var zoneId = data[_entityMappings["zone_id"]];
+            var url = data[_entityMappings["stop_url"]];
+            Enum.TryParse(data[_entityMappings["location_type"]], out LocationTypes locationType);
+            var parentStation = data[_entityMappings["parent_station"]];
+            var timeZone = data[_entityMappings["stop_timezone"]];
+            Enum.TryParse(data[_entityMappings["wheelchair_boarding"]], out WheelchairBoardings wheelchairBoarding);
 
             var mappedStop = new Stop
             {
@@ -28,8 +30,8 @@ namespace MPK.Connect.Service.Builders
                 Code = code,
                 Name = name,
                 Description = description,
-                Longitude = double.Parse(longitude),
-                Latitude = double.Parse(latitude),
+                Longitude = longitude,
+                Latitude = latitude,
                 ZoneId = zoneId,
                 Url = url,
                 LocationType = locationType,

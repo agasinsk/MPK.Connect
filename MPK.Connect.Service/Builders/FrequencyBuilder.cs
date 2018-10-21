@@ -11,8 +11,8 @@ namespace MPK.Connect.Service.Builders
             var data = dataString.Replace("\"", "").Split(',');
 
             var tripId = data[_entityMappings["trip_id"]];
-            var start = GetDateTime(data[_entityMappings["start_time"]]).GetValueOrDefault();
-            var end = GetDateTime(data[_entityMappings["end_time"]]).GetValueOrDefault();
+            var start = GetDate(data[_entityMappings["start_time"]]).GetValueOrDefault();
+            var end = GetDate(data[_entityMappings["end_time"]]).GetValueOrDefault();
             var headwaySecs = int.Parse(data[_entityMappings["headway_secs"]]);
             Enum.TryParse(_entityMappings.ContainsKey("exact_times") ? data[_entityMappings["exact_times"]] : string.Empty, out ExactTimes exactTimes);
 

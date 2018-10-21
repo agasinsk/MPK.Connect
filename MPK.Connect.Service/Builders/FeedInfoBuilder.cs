@@ -1,4 +1,5 @@
 ﻿using MPK.Connect.Model;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Builders
 {
@@ -6,15 +7,15 @@ namespace MPK.Connect.Service.Builders
     {
         public override FeedInfo Build(string dataString)
         {
-            var data = dataString.Replace("\"", "").Split(',');
+            var data = dataString.Replace("\"", "").ToEntityData();
 
             var feedPublisherName = data[_entityMappings["feed_publisher_name"]];
             var feedPublisherUrl = data[_entityMappings["feed_publisher_url"]];
             var feedLang = data[_entityMappings["feed_lang"]];
 
-            var feedStartDate = _entityMappings.ContainsKey("feed_end_date") ? GetDateTime(data[_entityMappings["feed_start_date"]]) : null;
-            var feedEndDate = _entityMappings.ContainsKey("feed_end_date") ? GetDateTime(data[_entityMappings["feed_end_date"]]) : null;
-            var feedVersion = _entityMappings.ContainsKey("feed_version") ? int.Parse(data[_entityMappings["feed_version"]]) : (int?)null;
+            var feedStartDate = GetDate(data[_entityMappings["feed_start_date"]]);
+            var feedEndDate = GetDate(data[_entityMappings["feed_end_date"]]);
+            var feedVersion = GetInt(data[_entityMappings["feed_version"]]);
 
             var feedInfo = new FeedInfo
             {

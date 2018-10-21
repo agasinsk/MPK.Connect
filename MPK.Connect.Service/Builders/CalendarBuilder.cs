@@ -17,8 +17,8 @@ namespace MPK.Connect.Service.Builders
             var friday = data[_entityMappings["friday"]] == "1";
             var saturday = data[_entityMappings["saturday"]] == "1";
             var sunday = data[_entityMappings["sunday"]] == "1";
-            var start = GetDateTime(data[_entityMappings["start_date"]]).GetValueOrDefault();
-            var end = GetDateTime(data[_entityMappings["end_date"]]).GetValueOrDefault();
+            var start = GetDate(data[_entityMappings["start_date"]]).GetValueOrDefault();
+            var end = GetDate(data[_entityMappings["end_date"]]).GetValueOrDefault();
 
             var mappedCalendar = new Calendar
             {
