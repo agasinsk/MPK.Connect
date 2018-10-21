@@ -6,8 +6,10 @@ namespace MPK.Connect.Model
 {
     public class FareAttribute : IdentifiableEntity<string>
     {
+        public override string Id => FareId;
+
         [Required]
-        public override string Id { get; set; }
+        public string FareId { get; set; }
 
         [Required]
         public double Price { get; set; }
@@ -22,7 +24,7 @@ namespace MPK.Connect.Model
         public int? Transfers { get; set; }
 
         public string AgencyId { get; set; }
-        public long? TransferDuration { get; set; }
+        public int? TransferDuration { get; set; }
 
         public Agency Agency { get; set; }
     }

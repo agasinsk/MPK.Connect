@@ -1,4 +1,5 @@
 ﻿using MPK.Connect.Model;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Builders
 {
@@ -6,14 +7,13 @@ namespace MPK.Connect.Service.Builders
     {
         public override FareRule Build(string dataString)
         {
-            var data = dataString.Replace("\"", "").Split(',');
+            var data = dataString.Replace("\"", "").ToEntityData();
 
             var fareId = data[_entityMappings["fare_id"]];
-
-            var routeId = _entityMappings.ContainsKey("route_id") ? data[_entityMappings["route_id"]] : null;
-            var originId = _entityMappings.ContainsKey("origin_id") ? data[_entityMappings["origin_id"]] : null;
-            var destinationId = _entityMappings.ContainsKey("destination_id") ? data[_entityMappings["destination_id"]] : null;
-            var containsId = _entityMappings.ContainsKey("contains_id") ? data[_entityMappings["contains_id"]] : null;
+            var routeId = data[_entityMappings["route_id"]];
+            var originId = data[_entityMappings["origin_id"]];
+            var destinationId = data[_entityMappings["destination_id"]];
+            var containsId = data[_entityMappings["contains_id"]];
 
             var fareRule = new FareRule
             {

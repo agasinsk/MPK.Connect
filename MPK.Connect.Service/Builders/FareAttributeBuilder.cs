@@ -1,5 +1,6 @@
 ﻿using MPK.Connect.Model;
 using MPK.Connect.Model.Enums;
+using MPK.Connect.Service.Helpers;
 using System;
 
 namespace MPK.Connect.Service.Builders
@@ -8,19 +9,19 @@ namespace MPK.Connect.Service.Builders
     {
         public override FareAttribute Build(string dataString)
         {
-            var data = dataString.Replace("\"", "").Split(',');
+            var data = dataString.Replace("\"", "").ToEntityData();
 
             var fareId = data[_entityMappings["fare_id"]];
-            var price = double.Parse(data[_entityMappings["price"]]);
+            var price = GetDouble(data[_entityMappings["price"]]).GetValueOrDefault();
             var currency = data[_entityMappings["currency_type"]];
-            Enum.TryParse(_entityMappings.ContainsKey("payment_method") ? data[_entityMappings["payment_method"]] : string.Empty, out PaymentMethods payment);
-            var transfers = data[_entityMappings["transfers"]] == string.Empty ? (int?)null : int.Parse(data[_entityMappings["transfers"]]);
-            var agencyId = _entityMappings.ContainsKey("agency_id") ? data[_entityMappings["agency_id"]] : null;
-            var transferDuration = _entityMappings.ContainsKey("transfer_duration") ? long.Parse(data[_entityMappings["transfer_duration"]]) : (long?)null;
+            Enum.TryParse(data[_entityMappings["payment_method"]], out PaymentMethods payment);
+            var transfers = GetInt(data[_entityMappings["transfers"]]);
+            var agencyId = data[_entityMappings["agency_id"]];
+            var transferDuration = GetInt(data[_entityMappings["transfer_duration"]]);
 
             var fareAttribute = new FareAttribute
             {
-                Id = fareId,
+                FareId = fareId,
                 Price = price,
                 CurrencyType = currency,
                 PaymentMethod = payment,
