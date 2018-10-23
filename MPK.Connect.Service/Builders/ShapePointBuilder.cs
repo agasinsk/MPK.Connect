@@ -15,7 +15,7 @@ namespace MPK.Connect.Service.Builders
             var shapePtSequence = GetInt(data[_entityMappings["shape_pt_sequence"]]).GetValueOrDefault();
             var shapeDistTraveled = GetDouble(data[_entityMappings["shape_dist_traveled"]]);
 
-            var shape = new ShapePoint
+            var shapePoint = new ShapePoint
             {
                 ShapeId = shapeId,
                 PointLatitude = shapePtLat,
@@ -23,7 +23,7 @@ namespace MPK.Connect.Service.Builders
                 PointSequence = shapePtSequence,
                 DistTraveled = shapeDistTraveled
             };
-            return shape;
+            return shapePoint;
         }
     }
 }

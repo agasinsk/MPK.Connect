@@ -17,13 +17,12 @@ namespace MPK.Connect.Service
             _shapeRepository = shapeRepository;
         }
 
-        protected override int SaveEntities(List<ShapePoint> entities)
+        protected override int SaveEntities(List<ShapePoint> shapePoints)
         {
-            var distinctShapes = entities.Select(sp => sp.Shape).Distinct(new ShapeComparer()).ToList();
+            var distinctShapes = shapePoints.Select(sp => new Shape { Id = sp.ShapeId }).Distinct(new ShapeComparer()).ToList();
 
             _shapeRepository.BulkMerge(distinctShapes);
-
-            return _repository.BulkMerge(entities);
+            return _repository.BulkMerge(shapePoints);
         }
     }
 }

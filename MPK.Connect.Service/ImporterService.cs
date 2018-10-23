@@ -59,9 +59,9 @@ namespace MPK.Connect.Service
             }
         }
 
-        protected virtual int SaveEntities(List<T> entities)
+        protected virtual int SaveEntities(List<T> shapePoints)
         {
-            return _repository.BulkMerge(entities);
+            return _repository.BulkMerge(shapePoints);
         }
     }
 }
