@@ -4,14 +4,15 @@ using MPK.Connect.Model.Helpers;
 using MPK.Connect.Service.Builders;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace MPK.Connect.Service
 {
     public class ImporterService<T> : IImporterService<T> where T : IdentifiableEntity<string>
     {
+        protected readonly IGenericRepository<T> _repository;
+        protected readonly IEntityBuilder<T> _entityBuilder;
         private readonly ILogger<ImporterService<T>> _logger;
-        private readonly IGenericRepository<T> _repository;
-        private readonly IEntityBuilder<T> _entityBuilder;
 
         public ImporterService(IGenericRepository<T> repository, IEntityBuilder<T> entityBuilder, ILogger<ImporterService<T>> logger)
         {
@@ -38,9 +39,7 @@ namespace MPK.Connect.Service
                 }
                 _logger.LogInformation($"Read {entities.Count} lines of {typeof(T).Name}.");
                 SortEntities(entities);
-
-                entitiesCount = _repository.AddRange(entities);
-                _repository.Save();
+                entitiesCount = SaveEntities(entities);
             }
 
             _logger.LogInformation($"{entitiesCount} entities of type '{typeof(T).Name}' have been successfully saved.");
@@ -50,6 +49,19 @@ namespace MPK.Connect.Service
 
         protected virtual void SortEntities(List<T> entities)
         {
+            var hasDistinctId = entities.FirstOrDefault()?.HasDistinctId();
+            if (hasDistinctId.GetValueOrDefault())
+            {
+                entities = entities
+                    .GroupBy(t => t.Id)
+                    .Select(g => g.First())
+                    .ToList();
+            }
+        }
+
+        protected virtual int SaveEntities(List<T> entities)
+        {
+            return _repository.BulkMerge(entities);
         }
     }
 }

@@ -14,6 +14,7 @@ namespace MPK.Connect.DataAccess
         public DbSet<FareAttribute> FareAttributes { get; set; }
         public DbSet<Frequency> Frequencies { get; set; }
         public DbSet<Route> Routes { get; set; }
+        public DbSet<ShapePoint> ShapePoints { get; set; }
         public DbSet<Shape> Shapes { get; set; }
         public DbSet<Stop> Stops { get; set; }
         public DbSet<StopTime> StopTimes { get; set; }
@@ -30,6 +31,9 @@ namespace MPK.Connect.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ShapePoint>()
+                .HasKey(p => new { p.ShapeId, p.PointSequence });
+
             modelBuilder.Entity<Transfer>()
                 .HasKey(p => new { p.FromStopId, p.ToStopId });
 

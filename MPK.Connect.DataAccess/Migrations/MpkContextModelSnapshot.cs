@@ -98,11 +98,14 @@ namespace MPK.Connect.DataAccess.Migrations
                     b.Property<string>("CurrencyType")
                         .IsRequired();
 
+                    b.Property<string>("FareId")
+                        .IsRequired();
+
                     b.Property<int>("PaymentMethod");
 
                     b.Property<double>("Price");
 
-                    b.Property<long?>("TransferDuration");
+                    b.Property<int?>("TransferDuration");
 
                     b.Property<int?>("Transfers")
                         .IsRequired();
@@ -163,7 +166,7 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.Property<int>("ExactTimes");
 
-                    b.Property<long>("HeadwaySecs");
+                    b.Property<int>("HeadwaySecs");
 
                     b.Property<DateTime>("StartTime");
 
@@ -211,17 +214,26 @@ namespace MPK.Connect.DataAccess.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.HasKey("Id");
+
+                    b.ToTable("Shapes");
+                });
+
+            modelBuilder.Entity("MPK.Connect.Model.ShapePoint", b =>
+                {
+                    b.Property<string>("ShapeId");
+
+                    b.Property<int>("PointSequence");
+
                     b.Property<double?>("DistTraveled");
 
                     b.Property<double>("PointLatitude");
 
                     b.Property<double>("PointLongitude");
 
-                    b.Property<int>("PointSequence");
+                    b.HasKey("ShapeId", "PointSequence");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Shapes");
+                    b.ToTable("ShapePoints");
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.Stop", b =>
@@ -271,7 +283,7 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.Property<int>("PickupType");
 
-                    b.Property<double>("ShapeDistTraveled");
+                    b.Property<double?>("ShapeDistTraveled");
 
                     b.Property<string>("StopId")
                         .IsRequired();
@@ -293,7 +305,7 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.Property<string>("ToStopId");
 
-                    b.Property<long?>("MinTransferTime");
+                    b.Property<int?>("MinTransferTime");
 
                     b.Property<int>("TransferType");
 
@@ -380,6 +392,14 @@ namespace MPK.Connect.DataAccess.Migrations
                     b.HasOne("MPK.Connect.Model.Agency", "Agency")
                         .WithMany()
                         .HasForeignKey("AgencyName");
+                });
+
+            modelBuilder.Entity("MPK.Connect.Model.ShapePoint", b =>
+                {
+                    b.HasOne("MPK.Connect.Model.Shape", "Shape")
+                        .WithMany("Points")
+                        .HasForeignKey("ShapeId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.StopTime", b =>
