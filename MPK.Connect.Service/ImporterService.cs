@@ -60,6 +60,7 @@ namespace MPK.Connect.Service
 
         protected virtual int SaveEntities(List<T> entities)
         {
+            _logger.LogInformation($"Saving entities of type {typeof(T).Name} in the database . . .");
             return _repository.BulkInsert(entities);
         }
     }

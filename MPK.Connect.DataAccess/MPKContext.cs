@@ -39,6 +39,9 @@ namespace MPK.Connect.DataAccess
             modelBuilder.Entity<Shape>()
                 .HasKey(p => new { p.ShapeId, p.PointSequence });
 
+            modelBuilder.Entity<StopTime>()
+                .HasKey(p => new { p.TripId, p.StopId, p.StopSequence });
+
             modelBuilder.Entity<Transfer>()
                 .HasKey(p => new { p.FromStopId, p.ToStopId });
 

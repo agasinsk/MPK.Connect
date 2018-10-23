@@ -11,7 +11,7 @@ namespace MPK.Connect.Model
         [NotMapped]
         public override string Id => $"{TripId}:{StopId}:{ArrivalTime.TimeOfDay}";
 
-        [Key, ForeignKey(nameof(Trip))]
+        [ForeignKey(nameof(Trip))]
         [Required]
         public string TripId { get; set; }
 

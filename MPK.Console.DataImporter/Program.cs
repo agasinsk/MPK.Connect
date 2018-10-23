@@ -119,11 +119,12 @@ namespace MPK.Console.DataImporter
                     var interfaceType = typeof(IImporterService<>).MakeGenericType(entityType);
                     var entityImporter = scope.Resolve(interfaceType) as IEntityImporter;
 
-                    entityImporter?.ImportEntitiesFromFile(fileName);
-                    System.Console.WriteLine($"Processing of {entityType.Name} finished. Press ENTER to continue");
-                    System.Console.ReadKey();
+                    var entitiesSaved = entityImporter?.ImportEntitiesFromFile(fileName);
+
+                    System.Console.WriteLine($"Processing of {entitiesSaved} {entityType.Name} finished.");
                 }
             }
+            System.Console.WriteLine("Processing finished. Press ENTER to continue");
             System.Console.ReadLine();
         }
     }
