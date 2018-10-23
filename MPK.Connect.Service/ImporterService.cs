@@ -23,6 +23,13 @@ namespace MPK.Connect.Service
 
         public int ImportEntitiesFromFile(string filePath)
         {
+            var existingEntitiesCount = _repository.GetAll().Count();
+            if (existingEntitiesCount > 0)
+            {
+                _logger.LogInformation($"Entities of type '{typeof(T).Name}' have been already imported.");
+                return 0;
+            }
+
             var entities = new List<T>();
             int entitiesCount;
 
@@ -49,19 +56,11 @@ namespace MPK.Connect.Service
 
         protected virtual void SortEntities(List<T> entities)
         {
-            var hasDistinctId = entities.FirstOrDefault()?.HasDistinctId();
-            if (hasDistinctId.GetValueOrDefault())
-            {
-                entities = entities
-                    .GroupBy(t => t.Id)
-                    .Select(g => g.First())
-                    .ToList();
-            }
         }
 
-        protected virtual int SaveEntities(List<T> shapePoints)
+        protected virtual int SaveEntities(List<T> entities)
         {
-            return _repository.BulkMerge(shapePoints);
+            return _repository.BulkInsert(entities);
         }
     }
 }

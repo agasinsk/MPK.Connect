@@ -4,14 +4,16 @@ using MPK.Connect.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MPK.Connect.DataAccess.Migrations
 {
     [DbContext(typeof(MpkContext))]
-    partial class MpkContextModelSnapshot : ModelSnapshot
+    [Migration("20181023185420_ShapeBase")]
+    partial class ShapeBase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,7 +223,11 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.Property<double>("PointLongitude");
 
+                    b.Property<string>("ShapeBaseId");
+
                     b.HasKey("ShapeId", "PointSequence");
+
+                    b.HasIndex("ShapeBaseId");
 
                     b.ToTable("Shapes");
                 });
@@ -398,7 +404,7 @@ namespace MPK.Connect.DataAccess.Migrations
                 {
                     b.HasOne("MPK.Connect.Model.ShapeBase", "ShapeBase")
                         .WithMany("Shapes")
-                        .HasForeignKey("ShapeId")
+                        .HasForeignKey("ShapeBaseId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

@@ -7,7 +7,7 @@ namespace MPK.Connect.Test.Service.Builders
     [TestClass]
     public class ShapePointBuilderTests
     {
-        private ShapePointBuilder _builder;
+        private ShapeBuilder _builder;
 
         [TestMethod]
         public void TestBuild()
@@ -31,7 +31,7 @@ namespace MPK.Connect.Test.Service.Builders
         [TestInitialize]
         public void SetUp()
         {
-            _builder = new ShapePointBuilder();
+            _builder = new ShapeBuilder();
             _builder.ReadEntityMappings("shape_id,shape_pt_lat,shape_pt_lon,shape_pt_sequence");
         }
     }

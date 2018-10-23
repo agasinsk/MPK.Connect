@@ -8,21 +8,26 @@ using System.Linq;
 
 namespace MPK.Connect.Service
 {
-    public class ShapePointImporterService : ImporterService<ShapePoint>
+    public class ShapeImporterService : ImporterService<Shape>
     {
-        private readonly IGenericRepository<Shape> _shapeRepository;
+        private readonly IShapeCollectionHelper _shapeCollectionHelper;
+        private readonly IGenericRepository<ShapeBase> _shapeBaseRepository;
 
-        public ShapePointImporterService(IGenericRepository<ShapePoint> repository, IGenericRepository<Shape> shapeRepository, IEntityBuilder<ShapePoint> entityBuilder, ILogger<ImporterService<ShapePoint>> logger) : base(repository, entityBuilder, logger)
+        public ShapeImporterService(IGenericRepository<Shape> repository, IGenericRepository<ShapeBase> shapeBaseRepository, IEntityBuilder<Shape> entityBuilder, ILogger<ImporterService<Shape>> logger, IShapeCollectionHelper shapeCollectionHelper) : base(repository, entityBuilder, logger)
         {
-            _shapeRepository = shapeRepository;
+            _shapeBaseRepository = shapeBaseRepository;
+            _shapeCollectionHelper = shapeCollectionHelper;
         }
 
-        protected override int SaveEntities(List<ShapePoint> shapePoints)
+        protected override int SaveEntities(List<Shape> shapes)
         {
-            var distinctShapes = shapePoints.Select(sp => new Shape { Id = sp.ShapeId }).Distinct(new ShapeComparer()).ToList();
+            var groupedShapes = _shapeCollectionHelper.GroupByShapeId(shapes);
 
-            _shapeRepository.BulkMerge(distinctShapes);
-            return _repository.BulkMerge(shapePoints);
+            var shapeBases = groupedShapes.Keys.ToList();
+            _shapeBaseRepository.BulkInsert(shapeBases);
+
+            var shapePoints = groupedShapes.SelectMany(s => s.Value).ToList();
+            return _repository.BulkInsert(shapePoints);
         }
     }
 }

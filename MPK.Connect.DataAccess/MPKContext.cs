@@ -14,8 +14,8 @@ namespace MPK.Connect.DataAccess
         public DbSet<FareAttribute> FareAttributes { get; set; }
         public DbSet<Frequency> Frequencies { get; set; }
         public DbSet<Route> Routes { get; set; }
-        public DbSet<ShapePoint> ShapePoints { get; set; }
         public DbSet<Shape> Shapes { get; set; }
+        public DbSet<ShapeBase> ShapeBases { get; set; }
         public DbSet<Stop> Stops { get; set; }
         public DbSet<StopTime> StopTimes { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
@@ -31,7 +31,12 @@ namespace MPK.Connect.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ShapePoint>()
+            modelBuilder.Entity<Shape>()
+                .HasOne(m => m.ShapeBase)
+                .WithMany(s => s.Shapes)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Shape>()
                 .HasKey(p => new { p.ShapeId, p.PointSequence });
 
             modelBuilder.Entity<Transfer>()
@@ -53,7 +58,7 @@ namespace MPK.Connect.DataAccess
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionString = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json").Build().GetConnectionString("MpkContext");
+                .AddJsonFile("appsettings.json").Build().GetConnectionString(nameof(MpkContext));
             optionsBuilder.UseSqlServer(connectionString);
         }
     }

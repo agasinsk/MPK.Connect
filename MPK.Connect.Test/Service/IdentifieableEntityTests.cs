@@ -13,17 +13,17 @@ namespace MPK.Connect.Test.Service
         public void TestGetDistinctShapes()
         {
             // Arrange
-            var entities = new List<Shape>
+            var entities = new List<ShapeBase>
             {
-                new Shape{Id = "1"},
-                new Shape{Id = "2"},
-                new Shape{Id = "3"},
-                new Shape{Id = "3"},
-                new Shape{Id = "2"},
+                new ShapeBase{Id = "1"},
+                new ShapeBase{Id = "2"},
+                new ShapeBase{Id = "3"},
+                new ShapeBase{Id = "3"},
+                new ShapeBase{Id = "2"},
             };
 
             // Act
-            var result = entities.Distinct(new ShapeComparer()).ToList();
+            var result = entities.Distinct(new ShapeBaseComparer()).ToList();
 
             // Assert
             Assert.IsNotNull(result);
@@ -35,13 +35,13 @@ namespace MPK.Connect.Test.Service
         public void TestGetsDistinctElement()
         {
             // Arrange
-            var entities = new List<Shape>
+            var entities = new List<ShapeBase>
             {
-                new Shape{Id = "1"},
-                new Shape{Id = "2"},
-                new Shape{Id = "3"},
-                new Shape{Id = "3"},
-                new Shape{Id = "2"},
+                new ShapeBase{Id = "1"},
+                new ShapeBase{Id = "2"},
+                new ShapeBase{Id = "3"},
+                new ShapeBase{Id = "3"},
+                new ShapeBase{Id = "2"},
             };
 
             // Act
@@ -57,14 +57,14 @@ namespace MPK.Connect.Test.Service
         public void TestGetDistinctElementsUsingGroupBy()
         {
             // Arrange
-            var entities = new List<Shape>
+            var entities = new List<ShapeBase>
             {
-                new Shape{Id = "1"},
-                new Shape{Id = "2"},
-                new Shape{Id = "3"},
-                new Shape{Id = "3"},
-                new Shape{Id = "2"},
-                new Shape{Id = "3"},
+                new ShapeBase{Id = "1"},
+                new ShapeBase{Id = "2"},
+                new ShapeBase{Id = "3"},
+                new ShapeBase{Id = "3"},
+                new ShapeBase{Id = "2"},
+                new ShapeBase{Id = "3"},
             };
 
             // Act
@@ -80,7 +80,7 @@ namespace MPK.Connect.Test.Service
         public void TestHasDistinctIdReturnsTrue()
         {
             // Arrange
-            var entity = new Shape();
+            var entity = new ShapeBase();
 
             // Act
             var result = entity.HasDistinctId();

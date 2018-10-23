@@ -6,9 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
+using MPK.Connect.Model;
 using MPK.Connect.Model.Helpers;
 using MPK.Connect.Service;
 using MPK.Connect.Service.Builders;
+using MPK.Connect.Service.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -61,7 +63,6 @@ namespace MPK.Console.DataImporter
 
             // Add services
             serviceCollection.AddTransient(typeof(IGenericRepository<>), typeof(BaseRepository<>));
-            serviceCollection.AddTransient(typeof(IImporterService<>), typeof(ImporterService<>));
 
             var containerBuilder = new ContainerBuilder();
             containerBuilder.Populate(serviceCollection);
@@ -74,6 +75,8 @@ namespace MPK.Console.DataImporter
             }
 
             containerBuilder.RegisterGeneric(typeof(ImporterService<>)).As(typeof(IImporterService<>));
+            containerBuilder.RegisterType(typeof(ShapeImporterService)).As(typeof(IImporterService<Shape>));
+            containerBuilder.RegisterType(typeof(ShapeCollectionHelper)).As(typeof(IShapeCollectionHelper));
 
             Container = containerBuilder.Build();
         }
@@ -103,6 +106,10 @@ namespace MPK.Console.DataImporter
             {
                 foreach (var entityType in entityModelTypes)
                 {
+                    if (!fileNames.ContainsKey(entityType.Name))
+                    {
+                        continue;
+                    }
                     var fileName = fileNames[entityType.Name];
                     if (!File.Exists(fileName))
                     {

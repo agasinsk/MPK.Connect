@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace MPK.Connect.Service.Helpers
 {
-    public class ShapeComparer : IEqualityComparer<Shape>
+    public class ShapeBaseComparer : IEqualityComparer<ShapeBase>
     {
-        public bool Equals(Shape x, Shape y)
+        public bool Equals(ShapeBase x, ShapeBase y)
         {
             return x.Id.Equals(y.Id);
         }
 
-        public int GetHashCode(Shape obj)
+        public int GetHashCode(ShapeBase obj)
         {
             return obj.Id.GetHashCode();
         }

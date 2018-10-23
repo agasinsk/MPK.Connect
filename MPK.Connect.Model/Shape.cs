@@ -1,15 +1,29 @@
 ﻿using MPK.Connect.Model.Helpers;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    [DistinctId]
     public class Shape : IdentifiableEntity<string>
     {
-        [Required]
-        public override string Id { get; set; }
+        [NotMapped]
+        public override string Id => $"{ShapeId}:{PointSequence}";
 
-        public ICollection<ShapePoint> Points { get; set; }
+        [Required]
+        public string ShapeId { get; set; }
+
+        [Required]
+        public double PointLatitude { get; set; }
+
+        [Required]
+        public double PointLongitude { get; set; }
+
+        [Required]
+        public int PointSequence { get; set; }
+
+        public double? DistTraveled { get; set; }
+
+        [ForeignKey("ShapeId")]
+        public ShapeBase ShapeBase { get; set; }
     }
 }

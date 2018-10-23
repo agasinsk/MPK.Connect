@@ -27,7 +27,9 @@ namespace MPK.Connect.Model
         public BikesAllowed BikesAllowed { get; set; }
 
         public Route Route { get; set; }
-        public Shape Shape { get; set; }
+
+        [ForeignKey("ShapeId")]
+        public ShapeBase Shape { get; set; }
 
         [ForeignKey("ServiceId")]
         public Calendar Calendar { get; set; }
