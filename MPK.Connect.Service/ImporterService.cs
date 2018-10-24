@@ -30,24 +30,18 @@ namespace MPK.Connect.Service
                 return 0;
             }
 
-            var entities = new List<T>();
-            int entitiesCount;
+            _logger.LogInformation($"Reading file with {typeof(T).Name}s . . .");
 
-            using (var streamReader = new StreamReader(filePath))
-            {
-                var entityLine = streamReader.ReadLine();
-                _entityBuilder.ReadEntityMappings(entityLine);
+            var entityLines = File.ReadLines(filePath).ToList();
+            _entityBuilder.ReadEntityMappings(entityLines.First());
+            entityLines.RemoveAt(0);
 
-                while ((entityLine = streamReader.ReadLine()) != null)
-                {
-                    var mappedEntity = _entityBuilder.Build(entityLine);
-                    entities.Add(mappedEntity);
-                    _logger.LogInformation($"Read {typeof(T).Name} with id: \"{mappedEntity.Id}\"");
-                }
-                _logger.LogInformation($"Read {entities.Count} lines of {typeof(T).Name}.");
-                SortEntities(entities);
-                entitiesCount = SaveEntities(entities);
-            }
+            _logger.LogInformation($"Mapping to {typeof(T).Name} objects . . .");
+            var mappedEntities = entityLines.Select(line => _entityBuilder.Build(line)).ToList();
+
+            _logger.LogInformation($"Read {mappedEntities.Count} lines of {typeof(T).Name}.");
+            SortEntities(mappedEntities);
+            var entitiesCount = SaveEntities(mappedEntities);
 
             _logger.LogInformation($"{entitiesCount} entities of type '{typeof(T).Name}' have been successfully saved.");
 

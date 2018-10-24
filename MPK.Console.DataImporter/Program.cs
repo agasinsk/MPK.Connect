@@ -106,10 +106,7 @@ namespace MPK.Console.DataImporter
             {
                 foreach (var entityType in entityModelTypes)
                 {
-                    if (!fileNames.ContainsKey(entityType.Name))
-                    {
-                        continue;
-                    }
+                    if (!fileNames.ContainsKey(entityType.Name)) continue;
                     var fileName = fileNames[entityType.Name];
                     if (!File.Exists(fileName))
                     {
@@ -118,9 +115,7 @@ namespace MPK.Console.DataImporter
 
                     var interfaceType = typeof(IImporterService<>).MakeGenericType(entityType);
                     var entityImporter = scope.Resolve(interfaceType) as IEntityImporter;
-
                     var entitiesSaved = entityImporter?.ImportEntitiesFromFile(fileName);
-
                     System.Console.WriteLine($"Processing of {entitiesSaved} {entityType.Name} finished.");
                 }
             }

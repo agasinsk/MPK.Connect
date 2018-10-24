@@ -19,16 +19,15 @@ namespace MPK.Connect.DataAccess
 
         public virtual int AddRange(List<TEntity> entities)
         {
-            var newEntities = entities.Where(e => !Contains(e)).ToList();
-            Context.Set<TEntity>().AddRange(newEntities);
-            return newEntities.Count;
+            // var newEntities = entities.Where(e => !Contains(e)).ToList();
+            Context.Set<TEntity>().AddRange(entities);
+            return entities.Count;
         }
 
         public int BulkInsert(List<TEntity> entities)
         {
-            var newEntities = entities.Where(e => !Contains(e)).ToList();
-            Context.BulkInsert(newEntities, options => options.BatchSize = 100);
-            return newEntities.Count;
+            Context.BulkInsert(entities, options => options.BatchSize = 100);
+            return entities.Count;
         }
 
         public int BulkMerge(List<TEntity> entities)

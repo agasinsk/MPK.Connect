@@ -26,12 +26,13 @@ namespace MPK.Connect.Model
         public WheelchairBoardings WheelchairAccessible { get; set; }
         public BikesAllowed BikesAllowed { get; set; }
 
+        [ForeignKey(nameof(RouteId))]
         public Route Route { get; set; }
 
-        [ForeignKey("ShapeId")]
+        [ForeignKey(nameof(ShapeId))]
         public ShapeBase Shape { get; set; }
 
-        [ForeignKey("ServiceId")]
+        [ForeignKey(nameof(ServiceId))]
         public Calendar Calendar { get; set; }
     }
 }
