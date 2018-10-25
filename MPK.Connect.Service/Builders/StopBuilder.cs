@@ -15,8 +15,8 @@ namespace MPK.Connect.Service.Builders
             var code = data[_entityMappings["stop_code"]];
             var name = data[_entityMappings["stop_name"]];
             var description = data[_entityMappings["stop_desc"]];
-            var longitude = GetDouble(data[_entityMappings["stop_lon"]]).GetValueOrDefault();
-            var latitude = GetDouble(data[_entityMappings["stop_lat"]]).GetValueOrDefault();
+            var longitude = GetDouble(data[_entityMappings["stop_lon"]]).Value;
+            var latitude = GetDouble(data[_entityMappings["stop_lat"]]).Value;
             var zoneId = data[_entityMappings["zone_id"]];
             var url = data[_entityMappings["stop_url"]];
             Enum.TryParse(data[_entityMappings["location_type"]], out LocationTypes locationType);

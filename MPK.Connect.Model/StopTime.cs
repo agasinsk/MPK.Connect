@@ -9,17 +9,17 @@ namespace MPK.Connect.Model
     public class StopTime : IdentifiableEntity<string>
     {
         [NotMapped]
-        public override string Id => $"{TripId}:{StopId}:{ArrivalTime.TimeOfDay}";
+        public override string Id => $"{TripId}:{StopId}:{ArrivalTime}";
 
         [ForeignKey(nameof(Trip))]
         [Required]
         public string TripId { get; set; }
 
         [Required]
-        public DateTime ArrivalTime { get; set; }
+        public TimeSpan ArrivalTime { get; set; }
 
         [Required]
-        public DateTime DepartureTime { get; set; }
+        public TimeSpan DepartureTime { get; set; }
 
         [Required]
         public string StopId { get; set; }

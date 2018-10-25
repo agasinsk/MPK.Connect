@@ -16,10 +16,10 @@ namespace MPK.Connect.Model
         public string TripId { get; set; }
 
         [Required]
-        public DateTime StartTime { get; set; }
+        public TimeSpan StartTime { get; set; }
 
         [Required]
-        public DateTime EndTime { get; set; }
+        public TimeSpan EndTime { get; set; }
 
         [Required]
         public int HeadwaySecs { get; set; }

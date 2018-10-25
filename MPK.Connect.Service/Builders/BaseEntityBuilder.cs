@@ -40,19 +40,24 @@ namespace MPK.Connect.Service.Builders
             return dateParsingSuccessful ? parsedDateTime : (DateTime?)null;
         }
 
-        protected DateTime? GetTime(string dateString)
+        protected TimeSpan? GetTime(string timeString)
         {
-            if (string.IsNullOrEmpty(dateString))
+            if (string.IsNullOrEmpty(timeString))
             {
                 return null;
             }
-            var dateParsingSuccessful = DateTime.TryParseExact(dateString, _timeFormatString, CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsedDateTime);
-            var timedDate = new DateTime()
-                .AddHours(parsedDateTime.Hour)
-                .AddMinutes(parsedDateTime.Minute)
-                .AddSeconds(parsedDateTime.Second);
+            return TimeSpan.Parse(timeString);
+        }
 
-            return dateParsingSuccessful ? timedDate : (DateTime?)null;
+
+        protected double? GetDouble(string doubleString)
+        {
+            if (string.IsNullOrEmpty(doubleString))
+            {
+                return null;
+            }
+
+            return double.Parse(doubleString, CultureInfo.InvariantCulture);
         }
 
         protected int? GetInt(string intString)
@@ -62,17 +67,7 @@ namespace MPK.Connect.Service.Builders
                 return null;
             }
 
-            return int.TryParse(intString, out var parsedInt) ? parsedInt : (int?)null;
-        }
-
-        protected double? GetDouble(string intString)
-        {
-            if (string.IsNullOrEmpty(intString))
-            {
-                return null;
-            }
-
-            return double.TryParse(intString, out var parsedInt) ? parsedInt : (double?)null;
+            return int.Parse(intString, CultureInfo.InvariantCulture);
         }
     }
 }

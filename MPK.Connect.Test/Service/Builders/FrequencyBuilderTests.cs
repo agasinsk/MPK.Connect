@@ -15,7 +15,7 @@ namespace MPK.Connect.Test.Service.Builders
         public void TestBuild()
         {
             // Arrange
-            var dataString = "AWE1,05:30:00,06:30:00,300\r\n";
+            var dataString = "AWE1,05:30:00,13:30:00,300\r\n";
 
             // Act
             var result = _builder.Build(dataString);
@@ -23,8 +23,8 @@ namespace MPK.Connect.Test.Service.Builders
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("AWE1", result.TripId);
-            Assert.AreEqual(new DateTime(1, 1, 1, 5, 30, 0), result.StartTime);
-            Assert.AreEqual(new DateTime(1, 1, 1, 6, 30, 0), result.EndTime);
+            Assert.AreEqual(new TimeSpan(0, 5, 30, 0), result.StartTime);
+            Assert.AreEqual(new TimeSpan(0, 13, 30, 0), result.EndTime);
 
             Assert.AreEqual(300, result.HeadwaySecs);
             Assert.AreEqual(ExactTimes.NotExactlyScheduled, result.ExactTimes);

@@ -117,7 +117,6 @@ namespace MPK.Console.DataImporter
             ConfigureServices(serviceCollection);
 
             // Process data
-
             var dataSources = GetDataSources();
 
             using (var scope = Container.BeginLifetimeScope())

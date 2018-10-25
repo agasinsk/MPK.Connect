@@ -11,33 +11,33 @@ namespace MPK.Connect.Test.Service.Builders
     {
         private StopTimeBuilder _builder;
 
+        [TestInitialize]
+        public void SetUp()
+        {
+            _builder = new StopTimeBuilder();
+            _builder.ReadEntityMappings("trip_id,arrival_time,departure_time,stop_id,stop_sequence,pickup_type,drop_off_type");
+        }
+
         [TestMethod]
         public void TestBuild()
         {
             // Arrange
-            var dataString = "3_6045313,08:11:00,08:11:00,1684,0,0,1";
+            var dataString = "3_6357151,20:55:00,20:55:00,1038,12,0,0";
 
             // Act
             var result = _builder.Build(dataString);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("3_6045313", result.TripId);
-            Assert.AreEqual(new DateTime(1, 1, 1, 8, 11, 0), result.ArrivalTime);
-            Assert.AreEqual(new DateTime(1, 1, 1, 8, 11, 0), result.DepartureTime);
-            Assert.AreEqual("1684", result.StopId);
-            Assert.AreEqual(0, result.StopSequence);
+            Assert.AreEqual("3_6357151", result.TripId);
+            Assert.AreEqual(new TimeSpan(0, 20, 55, 0), result.ArrivalTime);
+            Assert.AreEqual(new TimeSpan(0, 20, 55, 0), result.DepartureTime);
+            Assert.AreEqual("1038", result.StopId);
+            Assert.AreEqual(12, result.StopSequence);
             Assert.AreEqual(PickupTypes.Regular, result.PickupType);
-            Assert.AreEqual(DropOffTypes.NoDropOff, result.DropOffTypes);
+            Assert.AreEqual(DropOffTypes.Regular, result.DropOffTypes);
 
             Assert.IsTrue(result.GetRequiredProperties().All(p => p != null));
-        }
-
-        [TestInitialize]
-        public void SetUp()
-        {
-            _builder = new StopTimeBuilder();
-            _builder.ReadEntityMappings("trip_id,arrival_time,departure_time,stop_id,stop_sequence,pickup_type,drop_off_type");
         }
     }
 }
