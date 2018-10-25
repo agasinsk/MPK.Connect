@@ -36,7 +36,7 @@ namespace MPK.Connect.Service.Builders
             {
                 return null;
             }
-            var dateParsingSuccessful = DateTime.TryParseExact(dateString, _dateFormatString, CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsedDateTime);
+            var dateParsingSuccessful = DateTime.TryParseExact(dateString, _dateFormatString, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDateTime);
             return dateParsingSuccessful ? parsedDateTime : (DateTime?)null;
         }
 
@@ -46,7 +46,16 @@ namespace MPK.Connect.Service.Builders
             {
                 return null;
             }
-            return TimeSpan.Parse(timeString);
+
+            var timeStrings = timeString.Split(':');
+
+            var hours = int.Parse(timeStrings[0]);
+            hours = hours >= 24 ? hours - 24 : hours;
+
+            var minutes = int.Parse(timeStrings[1]);
+            var seconds = int.Parse(timeStrings[2]);
+
+            return new TimeSpan(hours, minutes, seconds);
         }
 
 

@@ -22,7 +22,7 @@ namespace MPK.Connect.Service.Builders
             Enum.TryParse(data[_entityMappings["drop_off_type"]], out DropOffTypes dropOff);
             var distTraveled = GetDouble(data[_entityMappings["shape_dist_traveled"]]);
 
-            Enum.TryParse(data[_entityMappings["timepoint"]], out TimePoints timePoint);
+            var timePoints = Enum.TryParse(data[_entityMappings["timepoint"]], out TimePoints timePoint) ? timePoint : TimePoints.Exact;
 
             var mappedStop = new StopTime
             {
@@ -35,7 +35,7 @@ namespace MPK.Connect.Service.Builders
                 PickupType = pickup,
                 DropOffTypes = dropOff,
                 ShapeDistTraveled = distTraveled,
-                TimePoint = timePoint
+                TimePoint = timePoints
             };
 
             return mappedStop;
