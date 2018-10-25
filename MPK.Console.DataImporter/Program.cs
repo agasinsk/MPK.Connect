@@ -16,14 +16,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using IEntityImporter = MPK.Connect.Service.IEntityImporter;
 
 namespace MPK.Console.DataImporter
 {
     public class Program
     {
-        public static IContainer Container { get; set; }
         public static IConfigurationRoot Configuration { get; set; }
+        public static IContainer Container { get; set; }
 
         public static IEnumerable<Type> GetAllTypes(Type genericType)
         {
@@ -92,6 +91,25 @@ namespace MPK.Console.DataImporter
                 .Where(t => typeof(T).IsAssignableFrom(t));
         }
 
+        private static Dictionary<Type, string> GetDataSources()
+        {
+            var filePaths = GetDataSourcesFromConfiguration();
+            var entityModelTypes = GetAllTypesOf<IdentifiableEntity<string>>().ToDictionary(kv => kv.Name, kv => kv);
+
+            return filePaths.Where(f => entityModelTypes.ContainsKey(f.Key) && File.Exists(f.Value))
+                .ToDictionary(k => entityModelTypes[k.Key], v => v.Value);
+        }
+
+        private static Dictionary<string, string> GetDataSourcesFromConfiguration()
+        {
+            return Configuration.GetSection("GTFS").GetChildren().Select(c =>
+            {
+                var gtfsEntity = new GtfsEntity();
+                c.Bind(gtfsEntity);
+                return gtfsEntity;
+            }).OrderBy(g => g.Order).ToDictionary(kv => kv.Name, kv => kv.FilePath);
+        }
+
         private static void Main(string[] args)
         {
             // Create service collection
@@ -99,23 +117,20 @@ namespace MPK.Console.DataImporter
             ConfigureServices(serviceCollection);
 
             // Process data
-            var fileNames = Configuration.GetSection("GTFS").GetChildren().ToDictionary(kv => kv.Key, kv => kv.Value);
-            var entityModelTypes = GetAllTypesOf<IdentifiableEntity<string>>();
+
+            var dataSources = GetDataSources();
 
             using (var scope = Container.BeginLifetimeScope())
             {
-                foreach (var entityType in entityModelTypes)
+                foreach (var data in dataSources)
                 {
-                    if (!fileNames.ContainsKey(entityType.Name)) continue;
-                    var fileName = fileNames[entityType.Name];
-                    if (!File.Exists(fileName))
-                    {
-                        continue;
-                    }
+                    var entityType = data.Key;
+                    var filePath = data.Value;
 
                     var interfaceType = typeof(IImporterService<>).MakeGenericType(entityType);
                     var entityImporter = scope.Resolve(interfaceType) as IEntityImporter;
-                    var entitiesSaved = entityImporter?.ImportEntitiesFromFile(fileName);
+                    var entitiesSaved = entityImporter?.ImportEntitiesFromFile(filePath);
+
                     System.Console.WriteLine($"Processing of {entitiesSaved} {entityType.Name} finished.");
                 }
             }
