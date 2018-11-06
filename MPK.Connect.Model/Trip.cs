@@ -13,7 +13,6 @@ namespace MPK.Connect.Model
         [Required]
         public string RouteId { get; set; }
 
-        [Required]
         public string ServiceId { get; set; }
 
         public string HeadSign { get; set; }
@@ -30,9 +29,9 @@ namespace MPK.Connect.Model
         public Route Route { get; set; }
 
         [ForeignKey(nameof(ShapeId))]
-        public ShapeBase Shape { get; set; }
+        public virtual ShapeBase Shape { get; set; }
 
         [ForeignKey(nameof(ServiceId))]
-        public Calendar Calendar { get; set; }
+        public virtual Calendar Calendar { get; set; }
     }
 }

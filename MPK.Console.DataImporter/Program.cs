@@ -57,8 +57,8 @@ namespace MPK.Console.DataImporter
             serviceCollection.AddSingleton(Configuration);
 
             // Add dbContext
-            serviceCollection.AddDbContext<MpkContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("MpkContext")));
+            serviceCollection.AddDbContext<MpkContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(MpkContext))))
+                .AddDbContext<SimpleMpkContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(SimpleMpkContext))));
 
             // Add services
             serviceCollection.AddTransient(typeof(IGenericRepository<>), typeof(BaseRepository<>));
@@ -77,6 +77,8 @@ namespace MPK.Console.DataImporter
             containerBuilder.RegisterType(typeof(ShapeImporterService)).As(typeof(IImporterService<Shape>));
             containerBuilder.RegisterType(typeof(ShapeCollectionHelper)).As(typeof(IShapeCollectionHelper));
 
+            containerBuilder.RegisterType(typeof(SimpleMpkContext)).As<IMpkContext>();
+
             Container = containerBuilder.Build();
         }
 
@@ -94,10 +96,26 @@ namespace MPK.Console.DataImporter
         private static Dictionary<Type, string> GetDataSources()
         {
             var filePaths = GetDataSourcesFromConfiguration();
-            var entityModelTypes = GetAllTypesOf<IdentifiableEntity<string>>().ToDictionary(kv => kv.Name, kv => kv);
+            var dbContextEntityTypes = GetDbContextEntityTypes();
+
+            var entityModelTypes = GetAllTypesOf<IdentifiableEntity<string>>()
+                    .Where(t => dbContextEntityTypes.Contains(t))
+                    .ToDictionary(kv => kv.Name, kv => kv);
 
             return filePaths.Where(f => entityModelTypes.ContainsKey(f.Key) && File.Exists(f.Value))
                 .ToDictionary(k => entityModelTypes[k.Key], v => v.Value);
+        }
+
+        private static List<Type> GetDbContextEntityTypes()
+        {
+            using (var scope = Container.BeginLifetimeScope())
+            {
+                var dbContextType = scope.Resolve<IMpkContext>().GetType();
+                var dbContextEntityTypes = dbContextType.GetProperties()
+                    .Where(p => p.PropertyType.GenericTypeArguments.Length > 0)
+                    .Select(p => p.PropertyType.GenericTypeArguments.First()).ToList();
+                return dbContextEntityTypes;
+            }
         }
 
         private static Dictionary<string, string> GetDataSourcesFromConfiguration()

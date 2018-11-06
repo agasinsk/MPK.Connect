@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore;
 using MPK.Connect.Model.Helpers;
 using System;
 using System.Collections.Generic;
@@ -7,10 +8,15 @@ using System.Linq.Expressions;
 
 namespace MPK.Connect.DataAccess
 {
-    public abstract class GenericRepository<TContext, TEntity, TId> :
-        IGenericRepository<TEntity> where TEntity : IdentifiableEntity<TId> where TId : class where TContext : DbContext, new()
+    public abstract class GenericRepository<TEntity, TId> :
+        IGenericRepository<TEntity> where TEntity : IdentifiableEntity<TId> where TId : class
     {
-        public TContext Context { get; set; } = new TContext();
+        protected DbContext Context { get; set; }
+
+        protected GenericRepository(IMpkContext context)
+        {
+            Context = context as DbContext;
+        }
 
         public virtual void Add(TEntity entity)
         {
@@ -25,13 +31,7 @@ namespace MPK.Connect.DataAccess
 
         public int BulkInsert(List<TEntity> entities)
         {
-            Context.BulkInsert(entities, options => options.BatchSize = 1000);
-            return entities.Count;
-        }
-
-        public int BulkMerge(List<TEntity> entities)
-        {
-            Context.BulkMerge(entities, options => options.BatchSize = 1000);
+            Context.BulkInsert(entities);
             return entities.Count;
         }
 

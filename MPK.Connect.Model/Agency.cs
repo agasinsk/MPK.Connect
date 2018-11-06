@@ -5,9 +5,10 @@ namespace MPK.Connect.Model
 {
     public class Agency : IdentifiableEntity<string>
     {
+        [Key]
+        [Required]
         public override string Id { get; set; }
 
-        [Key]
         [Required]
         public string Name { get; set; }
 

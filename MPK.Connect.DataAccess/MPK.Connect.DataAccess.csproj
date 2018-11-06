@@ -5,21 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20181013173440_New-Models.cs" />
-    <Compile Remove="Migrations\20181013174156_New-Models-Update.cs" />
-    <Compile Remove="Migrations\20181013174416_New-Models-Update.cs" />
-    <Compile Remove="Migrations\20181013174537_ModelUpdate.cs" />
-    <Compile Remove="Migrations\20181013175117_ModelsUpdate.cs" />
-    <Compile Remove="Migrations\20181013175309_ModelsUpdate.cs" />
-    <Compile Remove="Migrations\20181013175529_ModelsUpdate.cs" />
-    <Compile Remove="Migrations\20181013180118_ModelsUpdate.cs" />
-    <Compile Remove="Migrations\20181013180630_ModelsUpdate.cs" />
-    <Compile Remove="Migrations\20181014123116_IdInterfaceTest.cs" />
-    <Compile Remove="Migrations\20181014123303_IdInterfaceTest-DifferentKey.cs" />
-    <Compile Remove="Migrations\20181014123622_IdInterfaceTest-DifferentKey.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="EFCore.BulkExtensions" Version="2.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
@@ -29,7 +15,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
-    <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="2.1.34" />
   </ItemGroup>
 
   <ItemGroup>

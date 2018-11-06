@@ -16,9 +16,11 @@ namespace MPK.Connect.Model
         public string TripId { get; set; }
 
         [Required]
+        [Column(TypeName = "time")]
         public TimeSpan ArrivalTime { get; set; }
 
         [Required]
+        [Column(TypeName = "time")]
         public TimeSpan DepartureTime { get; set; }
 
         [Required]

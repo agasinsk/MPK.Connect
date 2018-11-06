@@ -21,16 +21,17 @@ namespace MPK.Connect.DataAccess.Migrations
 
             modelBuilder.Entity("MPK.Connect.Model.Agency", b =>
                 {
-                    b.Property<string>("Name")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Email");
 
                     b.Property<string>("FareUrl");
 
-                    b.Property<string>("Id");
-
                     b.Property<string>("Language");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
 
                     b.Property<string>("Phone");
 
@@ -40,7 +41,7 @@ namespace MPK.Connect.DataAccess.Migrations
                     b.Property<string>("Url")
                         .IsRequired();
 
-                    b.HasKey("Name");
+                    b.HasKey("Id");
 
                     b.ToTable("Agencies");
                 });
@@ -93,8 +94,6 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.Property<string>("AgencyId");
 
-                    b.Property<string>("AgencyName");
-
                     b.Property<string>("CurrencyType")
                         .IsRequired();
 
@@ -112,7 +111,7 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AgencyName");
+                    b.HasIndex("AgencyId");
 
                     b.ToTable("FareAttributes");
                 });
@@ -182,8 +181,6 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.Property<string>("AgencyId");
 
-                    b.Property<string>("AgencyName");
-
                     b.Property<string>("Color");
 
                     b.Property<string>("Description");
@@ -204,7 +201,7 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AgencyName");
+                    b.HasIndex("AgencyId");
 
                     b.ToTable("Routes");
                 });
@@ -277,9 +274,11 @@ namespace MPK.Connect.DataAccess.Migrations
 
                     b.Property<int>("StopSequence");
 
-                    b.Property<TimeSpan>("ArrivalTime");
+                    b.Property<TimeSpan>("ArrivalTime")
+                        .HasColumnType("time");
 
-                    b.Property<TimeSpan>("DepartureTime");
+                    b.Property<TimeSpan>("DepartureTime")
+                        .HasColumnType("time");
 
                     b.Property<int>("DropOffTypes");
 
@@ -363,7 +362,7 @@ namespace MPK.Connect.DataAccess.Migrations
                 {
                     b.HasOne("MPK.Connect.Model.Agency", "Agency")
                         .WithMany()
-                        .HasForeignKey("AgencyName");
+                        .HasForeignKey("AgencyId");
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.FareRule", b =>
@@ -390,7 +389,7 @@ namespace MPK.Connect.DataAccess.Migrations
                 {
                     b.HasOne("MPK.Connect.Model.Agency", "Agency")
                         .WithMany()
-                        .HasForeignKey("AgencyName");
+                        .HasForeignKey("AgencyId");
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.Shape", b =>
