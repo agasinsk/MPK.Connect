@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
 {
@@ -23,6 +23,26 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Agencies", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Calendars",
+                columns: table => new
+                {
+                    ServiceId = table.Column<string>(nullable: false),
+                    Monday = table.Column<bool>(nullable: false),
+                    Tuesday = table.Column<bool>(nullable: false),
+                    Wednesday = table.Column<bool>(nullable: false),
+                    Thursday = table.Column<bool>(nullable: false),
+                    Friday = table.Column<bool>(nullable: false),
+                    Saturday = table.Column<bool>(nullable: false),
+                    Sunday = table.Column<bool>(nullable: false),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Calendars", x => x.ServiceId);
                 });
 
             migrationBuilder.CreateTable(
@@ -97,6 +117,12 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
                         principalTable: "Routes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Trips_Calendars_ServiceId",
+                        column: x => x.ServiceId,
+                        principalTable: "Calendars",
+                        principalColumn: "ServiceId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -145,6 +171,11 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
                 name: "IX_Trips_RouteId",
                 table: "Trips",
                 column: "RouteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trips_ServiceId",
+                table: "Trips",
+                column: "ServiceId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -160,6 +191,9 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
 
             migrationBuilder.DropTable(
                 name: "Routes");
+
+            migrationBuilder.DropTable(
+                name: "Calendars");
 
             migrationBuilder.DropTable(
                 name: "Agencies");

@@ -71,7 +71,7 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
 
                     b.HasKey("ServiceId");
 
-                    b.ToTable("Calendar");
+                    b.ToTable("Calendars");
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.Route", b =>
@@ -104,33 +104,6 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
                     b.HasIndex("AgencyId");
 
                     b.ToTable("Routes");
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.Shape", b =>
-                {
-                    b.Property<string>("ShapeId");
-
-                    b.Property<double?>("DistTraveled");
-
-                    b.Property<double>("PointLatitude");
-
-                    b.Property<double>("PointLongitude");
-
-                    b.Property<int>("PointSequence");
-
-                    b.HasKey("ShapeId");
-
-                    b.ToTable("Shape");
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.ShapeBase", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ShapeBase");
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.Stop", b =>
@@ -227,8 +200,6 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
 
                     b.HasIndex("ServiceId");
 
-                    b.HasIndex("ShapeId");
-
                     b.ToTable("Trips");
                 });
 
@@ -237,14 +208,6 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
                     b.HasOne("MPK.Connect.Model.Agency", "Agency")
                         .WithMany()
                         .HasForeignKey("AgencyId");
-                });
-
-            modelBuilder.Entity("MPK.Connect.Model.Shape", b =>
-                {
-                    b.HasOne("MPK.Connect.Model.ShapeBase", "ShapeBase")
-                        .WithMany("Shapes")
-                        .HasForeignKey("ShapeId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("MPK.Connect.Model.StopTime", b =>
@@ -270,10 +233,6 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
                     b.HasOne("MPK.Connect.Model.Calendar", "Calendar")
                         .WithMany()
                         .HasForeignKey("ServiceId");
-
-                    b.HasOne("MPK.Connect.Model.ShapeBase", "Shape")
-                        .WithMany()
-                        .HasForeignKey("ShapeId");
                 });
 #pragma warning restore 612, 618
         }

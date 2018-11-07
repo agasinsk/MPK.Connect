@@ -7,6 +7,7 @@ namespace MPK.Connect.DataAccess
     public class SimpleMpkContext : DbContext, IMpkContext
     {
         public DbSet<Agency> Agencies { get; set; }
+        public DbSet<Calendar> Calendars { get; set; }
         public DbSet<Route> Routes { get; set; }
         public DbSet<Stop> Stops { get; set; }
         public DbSet<StopTime> StopTimes { get; set; }
@@ -25,11 +26,11 @@ namespace MPK.Connect.DataAccess
             modelBuilder.Entity<StopTime>()
                 .HasKey(p => new { p.TripId, p.StopId, p.StopSequence });
 
-            //modelBuilder.Entity<Trip>()
-            //    .Ignore(t => t.ServiceId)
-            //    .Ignore(t => t.Calendar)
-            //    .Ignore(t => t.Shape)
-            //    .Ignore(t => t.ShapeId);
+            modelBuilder.Ignore<Shape>();
+            modelBuilder.Ignore<ShapeBase>();
+
+            modelBuilder.Entity<Trip>()
+                .Ignore(nameof(Trip.Shape));
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
