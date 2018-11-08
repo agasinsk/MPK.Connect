@@ -1,4 +1,4 @@
-﻿namespace MPK.Connect.Service
+﻿namespace MPK.Connect.Service.Import
 {
     public interface IEntityImporter
     {

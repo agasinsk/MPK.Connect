@@ -6,7 +6,7 @@ using MPK.Connect.Service.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MPK.Connect.Service
+namespace MPK.Connect.Service.Import
 {
     public class ShapeImporterService : ImporterService<Shape>
     {

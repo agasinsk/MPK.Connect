@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace MPK.Connect.Service
+namespace MPK.Connect.Service.Import
 {
     public class ImporterService<T> : IImporterService<T> where T : IdentifiableEntity<string>
     {

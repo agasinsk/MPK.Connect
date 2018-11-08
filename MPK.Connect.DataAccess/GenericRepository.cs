@@ -53,12 +53,12 @@ namespace MPK.Connect.DataAccess
 
         public IQueryable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate)
         {
-            return Context.Set<TEntity>().Where(predicate); ;
+            return Context.Set<TEntity>().Where(predicate);
         }
 
         public virtual IQueryable<TEntity> GetAll()
         {
-            return Context.Set<TEntity>(); ;
+            return Context.Set<TEntity>();
         }
 
         public virtual TEntity GetSingle(TId id)
