@@ -4,18 +4,28 @@ import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
 import Control from 'react-leaflet-control';
 import { Button } from 'react-bootstrap';
 
-const mapCenter = [51.14, 16.981638];
-const zoomLevel = 12;
+const mapCenter = [51.12, 17.04];
+const zoomLevel = 15;
 
 export class StopMap extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { currentZoomLevel: zoomLevel };
+        this.state = {
+            currentZoomLevel: zoomLevel,
+            stops: []
+        };
         this.handleUpPanClick = this.handleUpPanClick.bind(this);
         this.handleRightPanClick = this.handleRightPanClick.bind(this);
         this.handleLeftPanClick = this.handleLeftPanClick.bind(this);
         this.handleDownPanClick = this.handleDownPanClick.bind(this);
+
+        fetch('api/Stop/GetAll')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Received data of stops')
+                this.setState({ stops: data });
+            });
     }
 
     componentDidMount() {
@@ -73,9 +83,17 @@ export class StopMap extends Component {
                         </div>
                     </div>
                 </Control>
-                <Marker position={mapCenter}>
-                    <Popup>A pretty CSS3 popup.</Popup>
-                </Marker>
+                {this.state.stops.map((stop) => {
+                    let position = [stop.latitude, stop.longitude];
+                    return <Marker key={`marker-${stop.id}`} position={position}>
+                        <Popup>
+                            <span>{stop.name} <br /> {stop.latitude}
+                            <br/> {stop.longitude }
+                            </span>
+                        </Popup>
+                    </Marker>
+                }
+                )}
             </Map >
         )
     }
