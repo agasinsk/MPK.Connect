@@ -12,19 +12,27 @@ export class StopMap extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            currentRegionBounds: [],
             currentZoomLevel: zoomLevel,
-            stops: []
+            allStops: [],
+            visibleStops: []
         };
         this.handleUpPanClick = this.handleUpPanClick.bind(this);
         this.handleRightPanClick = this.handleRightPanClick.bind(this);
         this.handleLeftPanClick = this.handleLeftPanClick.bind(this);
         this.handleDownPanClick = this.handleDownPanClick.bind(this);
+        this.handleMapChange = this.handleMapChange.bind(this);
+        this.filterStops = this.filterStops.bind(this);
 
         fetch('api/Stop/GetAll')
             .then(response => response.json())
             .then(data => {
-                console.log('Received data of stops')
-                this.setState({ stops: data });
+                console.log('Received ' + data.length + ' stops.')
+                let filteredStops = this.filterStops(data);
+                this.setState({
+                    allStops: data,
+                    visibleStops: filteredStops
+                });
             });
     }
 
@@ -34,10 +42,24 @@ export class StopMap extends Component {
             const updatedZoomLevel = leafletMap.getZoom();
             this.handleZoomLevelChange(updatedZoomLevel);
         });
+
+        leafletMap.on('moveend ', () => {
+            this.handleMapChange();
+        });
+    }
+
+    handleMapChange()
+    {
+        let filteredStops = this.filterStops(this.state.allStops);
+        this.setState({
+            visibleStops: filteredStops
+        });
     }
 
     handleZoomLevelChange(newZoomLevel) {
-        this.setState({ currentZoomLevel: newZoomLevel });
+        this.setState({
+            currentZoomLevel: newZoomLevel
+        });
     }
 
     handleUpPanClick() {
@@ -59,6 +81,17 @@ export class StopMap extends Component {
         const leafletMap = this.leafletMap.leafletElement;
         leafletMap.panBy([0, 100]);
         window.console.log('Panning down');
+    }
+
+    filterStops(stops) {
+        let bounds = this.leafletMap.leafletElement.getBounds();
+        let visibleStops = stops.filter(function (stop) {
+            return stop.latitude < bounds._northEast.lat
+                && stop.latitude > bounds._southWest.lat
+                && stop.longitude < bounds._northEast.lng
+                && stop.longitude > bounds._southWest.lng;
+        })
+        return visibleStops;
     }
 
     render() {
@@ -83,12 +116,12 @@ export class StopMap extends Component {
                         </div>
                     </div>
                 </Control>
-                {this.state.stops.map((stop) => {
+                {this.state.visibleStops.map((stop) => {
                     let position = [stop.latitude, stop.longitude];
                     return <Marker key={`marker-${stop.id}`} position={position}>
                         <Popup>
                             <span>{stop.name} <br /> {stop.latitude}
-                            <br/> {stop.longitude }
+                                <br /> {stop.longitude}
                             </span>
                         </Popup>
                     </Marker>
