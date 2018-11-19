@@ -1,8 +1,9 @@
-﻿using MPK.Connect.DataAccess;
-using MPK.Connect.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MPK.Connect.DataAccess;
+using MPK.Connect.Model;
+using MPK.Connect.Model.Business;
 
 namespace MPK.Connect.Service.Business
 {
@@ -15,19 +16,46 @@ namespace MPK.Connect.Service.Business
             _stopRepository = stopRepository ?? throw new ArgumentNullException(nameof(stopRepository));
         }
 
-        public List<Stop> GetAllStops()
+        public List<StopDto> GetAllStops()
         {
-            return _stopRepository.GetAll().ToList();
+            return _stopRepository.GetAll()
+                .Select(s => new StopDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Code = s.Code,
+                    Latitude = s.Latitude,
+                    Longitude = s.Longitude
+                })
+                .ToList();
         }
 
-        public Stop GetStopById(string stopId)
+        public StopDto GetStopById(string stopId)
         {
-            return _stopRepository.FindBy(s => s.Id == stopId).FirstOrDefault();
+            return _stopRepository.FindBy(s => s.Id == stopId)
+                .Select(s => new StopDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Code = s.Code,
+                    Latitude = s.Latitude,
+                    Longitude = s.Longitude
+                })
+                .FirstOrDefault();
         }
 
-        public List<Stop> GetStopByName(string stopName)
+        public List<StopDto> GetStopByName(string stopName)
         {
-            return _stopRepository.FindBy(s => s.Name == stopName).ToList();
+            return _stopRepository.FindBy(s => s.Name == stopName)
+                .Select(s => new StopDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Code = s.Code,
+                    Latitude = s.Latitude,
+                    Longitude = s.Longitude
+                })
+                .ToList();
         }
     }
 }

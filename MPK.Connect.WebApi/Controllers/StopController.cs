@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MPK.Connect.Model;
-using MPK.Connect.Service.Business;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using MPK.Connect.Model;
+using MPK.Connect.Model.Business;
+using MPK.Connect.Service.Business;
 
 namespace MPK.Connect.WebApp.Controllers
 {
@@ -18,19 +19,19 @@ namespace MPK.Connect.WebApp.Controllers
         }
 
         [HttpGet("[action]")]
-        public List<Stop> GetAll()
+        public List<StopDto> GetAll()
         {
             return _stopService.GetAllStops();
         }
 
         [HttpGet("[action]")]
-        public Stop GetById(string stopId)
+        public StopDto GetById(string stopId)
         {
             return _stopService.GetStopById(stopId);
         }
 
         [HttpGet("[action]")]
-        public List<Stop> GetByName(string stopName)
+        public List<StopDto> GetByName(string stopName)
         {
             return _stopService.GetStopByName(stopName);
         }

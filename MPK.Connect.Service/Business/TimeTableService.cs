@@ -60,7 +60,7 @@ namespace MPK.Connect.Service.Business
                                 Direction = d.Key,
                                 StopTimes = d.Select(sti => sti.DepartureTime).OrderBy(time => time).ToList()
                             })
-                            .ToList()
+                            .OrderBy(d => d.StopTimes.FirstOrDefault()).ToList()
                     });
 
             return new TimeTable
