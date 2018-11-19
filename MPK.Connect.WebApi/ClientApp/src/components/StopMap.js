@@ -12,7 +12,6 @@ export class StopMap extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentRegionBounds: [],
             currentZoomLevel: zoomLevel,
             allStops: [],
             visibleStops: []
@@ -48,8 +47,7 @@ export class StopMap extends Component {
         });
     }
 
-    handleMapChange()
-    {
+    handleMapChange() {
         let filteredStops = this.filterStops(this.state.allStops);
         this.setState({
             visibleStops: filteredStops
@@ -120,7 +118,8 @@ export class StopMap extends Component {
                     let position = [stop.latitude, stop.longitude];
                     return <Marker key={`marker-${stop.id}`} position={position}>
                         <Popup>
-                            <span>{stop.name} <br /> {stop.latitude}
+                            <span>{stop.name}
+                                <br /> {stop.latitude}
                                 <br /> {stop.longitude}
                             </span>
                         </Popup>
