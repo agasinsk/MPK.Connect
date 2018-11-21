@@ -3,7 +3,7 @@ using MPK.Connect.Model.Enums;
 
 namespace MPK.Connect.Model.DataAccess
 {
-    public class StopTimeInfo
+    public class TimeTableStopTime
     {
         public TimeSpan DepartureTime { get; set; }
         public string RouteId { get; set; }

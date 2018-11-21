@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
-using MPK.Connect.Model.DataAccess;
 using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Business
@@ -38,7 +37,7 @@ namespace MPK.Connect.Service.Business
                 .Include(st => st.Trip.Route)
                 .Where(st => st.StopId == stopId && timeNow <= st.DepartureTime)
                 .Where(st => st.Trip.ServiceId == currentCalendar.ServiceId)
-                .Select(st => new StopTimeInfo
+                .Select(st => new
                 {
                     DepartureTime = st.DepartureTime,
                     TripId = st.TripId,
@@ -66,7 +65,7 @@ namespace MPK.Connect.Service.Business
                                         TripId = sti.TripId
                                     }).OrderBy(std => std.DepartureTime).ToList()
                             })
-                            .OrderBy(d => d.StopTimes.FirstOrDefault()).ToList()
+                            .ToList()
                     });
 
             return new TimeTable

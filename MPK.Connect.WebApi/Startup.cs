@@ -26,6 +26,7 @@ namespace MPK.Connect.WebApp
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<IStopService, StopService>();
             services.AddTransient<ITimeTableService, TimeTableService>();
+            services.AddTransient<IStopTimeService, StopTimeService>();
             services.AddTransient(typeof(IGenericRepository<>), typeof(BaseRepository<>));
 
             services.AddSingleton(new LoggerFactory())
