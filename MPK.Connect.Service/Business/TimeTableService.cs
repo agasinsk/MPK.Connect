@@ -32,19 +32,21 @@ namespace MPK.Connect.Service.Business
             var currentCalendar = GetCurrentCalendar();
 
             var timeNow = DateTime.Now.TimeOfDay;
+            var twoHoursLater = timeNow + TimeSpan.FromHours(2);
             var stopTimes = _stopTimeRepository.GetAll()
                 .Include(st => st.Trip)
                 .Include(st => st.Trip.Route)
-                .Where(st => st.StopId == stopId && timeNow <= st.DepartureTime)
+                .Where(st => st.StopId == stopId && timeNow <= st.DepartureTime && twoHoursLater >= st.DepartureTime)
                 .Where(st => st.Trip.ServiceId == currentCalendar.ServiceId)
                 .Select(st => new
                 {
-                    DepartureTime = st.DepartureTime,
-                    TripId = st.TripId,
+                    st.DepartureTime,
+                    st.TripId,
                     RouteId = st.Trip.Route.Id,
                     RouteType = st.Trip.Route.Type,
                     Direction = st.Trip.HeadSign
                 })
+                .AsNoTracking()
                 .ToList();
 
             var groupedStopTimes = stopTimes
@@ -59,7 +61,7 @@ namespace MPK.Connect.Service.Business
                             {
                                 Direction = d.Key,
                                 StopTimes = d.Select(sti =>
-                                    new StopTimeDto
+                                    new StopTimeCore
                                     {
                                         DepartureTime = sti.DepartureTime,
                                         TripId = sti.TripId

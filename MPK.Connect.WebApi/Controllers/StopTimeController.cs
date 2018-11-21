@@ -17,15 +17,21 @@ namespace MPK.Connect.WebApp.Controllers
         }
 
         [HttpPut]
-        public StopTimeDto UpdateStopTime([FromBody] StopTimeUpdateInfo stopTimeUpdateInfo)
+        [ProducesResponseType(200, Type = typeof(StopTimeDto))]
+        [ProducesResponseType(400)]
+        public IActionResult UpdateStopTime([FromBody] StopTimeUpdateDto stopTimeUpdateDto)
         {
-            return _stopTimeService.UpdateStopTime(stopTimeUpdateInfo);
+            var response = _stopTimeService.UpdateStopTime(stopTimeUpdateDto);
+            return response.GetActionResult();
         }
 
         [HttpDelete]
-        public StopTimeDto DeleteStopTime([FromBody] StopTimeInfo stopTimeUpdateInfo)
+        [ProducesResponseType(200, Type = typeof(StopTimeDto))]
+        [ProducesResponseType(400)]
+        public IActionResult DeleteStopTime([FromBody] StopTimeDto stopTimeUpdateDto)
         {
-            return _stopTimeService.DeleteStopTime(stopTimeUpdateInfo);
+            var response = _stopTimeService.DeleteStopTime(stopTimeUpdateDto);
+            return response.GetActionResult();
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using MPK.Connect.Model.Business;
+using MPK.Connect.Model.Technical;
 
 namespace MPK.Connect.Service.Business
 {
     public interface IStopTimeService
     {
-        StopTimeDto DeleteStopTime(StopTimeInfo stopTimeUpdateInfo);
+        ApiResponse<StopTimeDto> DeleteStopTime(StopTimeDto stopTimeDto);
 
-        StopTimeDto UpdateStopTime(StopTimeUpdateInfo stopTimeUpdateInfo);
+        ApiResponse<StopTimeDto> UpdateStopTime(StopTimeUpdateDto stopTimeUpdateDto);
     }
 }

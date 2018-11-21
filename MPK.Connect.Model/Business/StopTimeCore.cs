@@ -2,10 +2,9 @@
 
 namespace MPK.Connect.Model.Business
 {
-    public class StopTimeInfo
+    public class StopTimeCore
     {
         public string TripId { get; set; }
-        public string StopId { get; set; }
         public TimeSpan DepartureTime { get; set; }
     }
 }

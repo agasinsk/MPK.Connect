@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
+using MPK.Connect.Model.Technical;
 
 namespace MPK.Connect.Service.Business
 {
@@ -18,46 +19,46 @@ namespace MPK.Connect.Service.Business
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public StopTimeDto UpdateStopTime(StopTimeUpdateInfo stopTimeUpdateInfo)
+        public ApiResponse<StopTimeDto> UpdateStopTime(StopTimeUpdateDto stopTimeUpdateDto)
         {
             var stopTime = _stopTimeRepository.FindBy(st =>
-                    st.TripId == stopTimeUpdateInfo.TripId
-                    && st.StopId == stopTimeUpdateInfo.StopId
-                    && st.DepartureTime == stopTimeUpdateInfo.DepartureTime)
+                    st.TripId == stopTimeUpdateDto.TripId
+                    && st.StopId == stopTimeUpdateDto.StopId
+                    && st.DepartureTime == stopTimeUpdateDto.DepartureTime)
                 .SingleOrDefault();
 
             if (stopTime == null)
             {
-                _logger.LogError($"Stop time with {stopTimeUpdateInfo} was not found!");
-                return null;
+                _logger.LogError($"Stop time with {stopTimeUpdateDto} was not found!");
+                return new ErrorResponse<StopTimeDto>(null);
             }
 
-            stopTime.ArrivalTime = stopTimeUpdateInfo.UpdatedDepartureTime;
-            stopTime.DepartureTime = stopTimeUpdateInfo.UpdatedDepartureTime;
+            stopTime.ArrivalTime = stopTimeUpdateDto.UpdatedDepartureTime;
+            stopTime.DepartureTime = stopTimeUpdateDto.UpdatedDepartureTime;
 
             _stopTimeRepository.Save();
 
-            return new StopTimeDto { TripId = stopTime.TripId, DepartureTime = stopTime.DepartureTime };
+            return new OkResponse<StopTimeDto>(stopTimeUpdateDto);
         }
 
-        public StopTimeDto DeleteStopTime(StopTimeInfo stopTimeUpdateInfo)
+        public ApiResponse<StopTimeDto> DeleteStopTime(StopTimeDto stopTimeDto)
         {
             var stopTime = _stopTimeRepository.FindBy(st =>
-                    st.TripId == stopTimeUpdateInfo.TripId
-                    && st.StopId == stopTimeUpdateInfo.StopId
-                    && st.DepartureTime == stopTimeUpdateInfo.DepartureTime)
+                    st.TripId == stopTimeDto.TripId
+                    && st.StopId == stopTimeDto.StopId
+                    && st.DepartureTime == stopTimeDto.DepartureTime)
                 .SingleOrDefault();
 
             if (stopTime == null)
             {
-                _logger.LogError($"Stop time with {stopTimeUpdateInfo} was not found!");
-                return null;
+                _logger.LogError($"Stop time with {stopTimeDto} was not found!");
+                return new ErrorResponse<StopTimeDto>(null, $"Stop time with {stopTimeDto} was not found!");
             }
 
             _stopTimeRepository.Delete(stopTime);
             _stopTimeRepository.Save();
 
-            return new StopTimeDto { TripId = stopTime.TripId, DepartureTime = stopTime.DepartureTime };
+            return new OkResponse<StopTimeDto>(stopTimeDto);
         }
     }
 }
