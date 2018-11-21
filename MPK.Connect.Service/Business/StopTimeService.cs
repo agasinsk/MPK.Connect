@@ -30,7 +30,7 @@ namespace MPK.Connect.Service.Business
             if (stopTime == null)
             {
                 _logger.LogError($"Stop time with {stopTimeUpdateDto} was not found!");
-                return new ErrorResponse<StopTimeDto>(null);
+                return new ErrorResponse<StopTimeDto>(null, $"Stop time with {stopTimeUpdateDto} was not found!");
             }
 
             stopTime.ArrivalTime = stopTimeUpdateDto.UpdatedDepartureTime;
@@ -38,7 +38,7 @@ namespace MPK.Connect.Service.Business
 
             _stopTimeRepository.Save();
 
-            return new OkResponse<StopTimeDto>(stopTimeUpdateDto);
+            return new OkResponse<StopTimeDto>(stopTimeUpdateDto, "Successfully updated stop time!");
         }
 
         public ApiResponse<StopTimeDto> DeleteStopTime(StopTimeDto stopTimeDto)
@@ -58,7 +58,7 @@ namespace MPK.Connect.Service.Business
             _stopTimeRepository.Delete(stopTime);
             _stopTimeRepository.Save();
 
-            return new OkResponse<StopTimeDto>(stopTimeDto);
+            return new OkResponse<StopTimeDto>(stopTimeDto, "Successfully deleted stop time!");
         }
     }
 }
