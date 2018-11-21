@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
@@ -9,10 +10,12 @@ namespace MPK.Connect.Service.Business
     public class StopTimeService : IStopTimeService
     {
         private readonly IGenericRepository<StopTime> _stopTimeRepository;
+        private readonly ILogger<StopTimeService> _logger;
 
-        public StopTimeService(IGenericRepository<StopTime> stopTimeRepository)
+        public StopTimeService(IGenericRepository<StopTime> stopTimeRepository, ILogger<StopTimeService> logger)
         {
             _stopTimeRepository = stopTimeRepository ?? throw new ArgumentNullException(nameof(stopTimeRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public StopTimeDto UpdateStopTime(StopTimeUpdateInfo stopTimeUpdateInfo)
@@ -25,6 +28,7 @@ namespace MPK.Connect.Service.Business
 
             if (stopTime == null)
             {
+                _logger.LogError($"Stop time with {stopTimeUpdateInfo} was not found!");
                 return null;
             }
 
@@ -46,7 +50,8 @@ namespace MPK.Connect.Service.Business
 
             if (stopTime == null)
             {
-                return new StopTimeDto();
+                _logger.LogError($"Stop time with {stopTimeUpdateInfo} was not found!");
+                return null;
             }
 
             _stopTimeRepository.Delete(stopTime);
