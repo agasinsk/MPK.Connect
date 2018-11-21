@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MPK.Connect.Model.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -26,6 +25,6 @@ namespace MPK.Connect.Model.Business
     public class DirectionStopTimes
     {
         public string Direction { get; set; }
-        public List<TimeSpan> StopTimes { get; set; }
+        public List<StopTimeDto> StopTimes { get; set; }
     }
 }

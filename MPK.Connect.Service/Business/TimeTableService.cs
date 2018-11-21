@@ -41,6 +41,7 @@ namespace MPK.Connect.Service.Business
                 .Select(st => new StopTimeInfo
                 {
                     DepartureTime = st.DepartureTime,
+                    TripId = st.TripId,
                     RouteId = st.Trip.Route.Id,
                     RouteType = st.Trip.Route.Type,
                     Direction = st.Trip.HeadSign
@@ -58,7 +59,12 @@ namespace MPK.Connect.Service.Business
                             .Select(d => new DirectionStopTimes
                             {
                                 Direction = d.Key,
-                                StopTimes = d.Select(sti => sti.DepartureTime).OrderBy(time => time).ToList()
+                                StopTimes = d.Select(sti =>
+                                    new StopTimeDto
+                                    {
+                                        DepartureTime = sti.DepartureTime,
+                                        TripId = sti.TripId
+                                    }).OrderBy(std => std.DepartureTime).ToList()
                             })
                             .OrderBy(d => d.StopTimes.FirstOrDefault()).ToList()
                     });
