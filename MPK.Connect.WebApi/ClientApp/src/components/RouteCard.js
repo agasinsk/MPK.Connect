@@ -16,11 +16,11 @@ export class RouteCard extends Component {
           <CardContent className="routeCardButton">
             <div className="MuiButtonBase-root-27 MuiButton-root-1 MuiButton-outlined-9">
               <Typography variant="title">
-                {this.props.routeId}
+                {this.props.route.routeId}
               </Typography>
             </div>
             <div className="MuiButtonBase-root-27 MuiIconButton-root-3 routeTypeIcon">
-              {this.props.routeType === "Tram" ? <TramIcon /> : <DirectionsBusIcon />}
+              {this.props.route.routeType === "Tram" ? <TramIcon /> : <DirectionsBusIcon />}
             </div>
           </CardContent>
         </CardActionArea>

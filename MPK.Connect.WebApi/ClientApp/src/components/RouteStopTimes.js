@@ -1,25 +1,46 @@
 import './RouteCard.css';
 import React, { Component } from 'react';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import TramIcon from '@material-ui/icons/Tram';
 import DirectionsBusIcon from '@material-ui/icons/DirectionsBus';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import { DirectionStopTimes } from './DirectionStopTimes';
 
 export class RouteStopTime extends Component {
- 
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      route: props.route
+    };
+  }
+
   render() {
     return (
       <React.Fragment>
-        <ListItem button className="routeCard">
-            <ListItemIcon>
-            {this.props.routeType === "Tram" ? <TramIcon className="icon" color="primary"/> : <DirectionsBusIcon color="primary"/>}
-            </ListItemIcon>
-            <ListItemText primary={this.props.routeId} />
-        </ListItem>
+        <Card className="routeCard" >
+          <CardActionArea onClick={this.props.onClick}>
+            <CardContent className="routeCardButton">
+              <div className="MuiButtonBase-root-27 MuiButton-root-1 MuiButton-outlined-9">
+                <Typography variant="title">
+                  {this.state.route.routeId}
+                </Typography>
+              </div>
+              <div className="MuiButtonBase-root-27 MuiIconButton-root-3 routeTypeIcon">
+                {this.state.route.routeType === "Tram" ? <TramIcon /> : <DirectionsBusIcon />}
+              </div>
+            </CardContent>
+          </CardActionArea>
+        </Card>
         <Divider />
+        <div>
+          {this.state.route.directions.map((direction) => (
+            <DirectionStopTimes key={direction.direction} direction={direction} />
+          ))}
+        </div>
       </React.Fragment>
     );
   }
