@@ -1,8 +1,8 @@
 import './StopMap.css';
 import React, { Component } from 'react';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
-import Control from 'react-leaflet-control';
-import { Button } from 'react-bootstrap';
+import Button from '@material-ui/core/Button';
+import { TimeTable } from './TimeTable';
 
 const mapCenter = [51.12, 17.04];
 const zoomLevel = 15;
@@ -14,13 +14,16 @@ export class StopMap extends Component {
         this.state = {
             currentZoomLevel: zoomLevel,
             allStops: [],
-            visibleStops: []
+            visibleStops: [],
+            timeTableOpened: false,
+            currentStopId: '1000'
         };
         this.handleUpPanClick = this.handleUpPanClick.bind(this);
         this.handleRightPanClick = this.handleRightPanClick.bind(this);
         this.handleLeftPanClick = this.handleLeftPanClick.bind(this);
         this.handleDownPanClick = this.handleDownPanClick.bind(this);
         this.handleMapChange = this.handleMapChange.bind(this);
+        this.toggleTimeTable = this.toggleTimeTable.bind(this);
         this.filterStops = this.filterStops.bind(this);
 
         fetch('api/Stop/GetAll')
@@ -65,16 +68,19 @@ export class StopMap extends Component {
         leafletMap.panBy([0, -100]);
         window.console.log('Panning up');
     }
+
     handleRightPanClick() {
         const leafletMap = this.leafletMap.leafletElement;
         leafletMap.panBy([100, 0]);
         window.console.log('Panning right');
     }
+
     handleLeftPanClick() {
         const leafletMap = this.leafletMap.leafletElement;
         leafletMap.panBy([-100, 0]);
         window.console.log('Panning left');
     }
+
     handleDownPanClick() {
         const leafletMap = this.leafletMap.leafletElement;
         leafletMap.panBy([0, 100]);
@@ -92,41 +98,40 @@ export class StopMap extends Component {
         return visibleStops;
     }
 
+    toggleTimeTable() {
+        let currentOpened = this.state.timeTableOpened;
+        this.setState({
+          timeTableOpened: !currentOpened,
+        });
+      };
+
     render() {
         window.console.log('this.state.currentZoomLevel ->',
             this.state.currentZoomLevel);
 
         return (
-            <Map ref={m => { this.leafletMap = m; }} center={mapCenter} zoom={zoomLevel}>
-                <TileLayer
-                    attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <Control position="topright">
-                    <div
-                        style={{
-                            backgroundColor: 'black',
-                            padding: '5px',
-                        }}
-                    >
-                        <div style={{ marginLeft: '37px' }}>
-                            <Button bsStyle="primary" onClick={this.handleUpPanClick}>UP</Button>
-                        </div>
-                    </div>
-                </Control>
-                {this.state.visibleStops.map((stop) => {
-                    let position = [stop.latitude, stop.longitude];
-                    return <Marker key={`marker-${stop.id}`} position={position}>
-                        <Popup>
-                            <span>{stop.name}
-                                <br /> {stop.latitude}
-                                <br /> {stop.longitude}
-                            </span>
-                        </Popup>
-                    </Marker>
-                }
-                )}
-            </Map >
-        )
+            <React.Fragment>
+                <Button onClick={this.toggleTimeTable}>Open TimeTable</Button>
+                <TimeTable open={this.state.timeTableOpened} onClose={this.toggleTimeTable} stopId={this.state.currentStopId}></TimeTable>
+                <Map ref={m => { this.leafletMap = m; }} center={mapCenter} zoom={zoomLevel}>
+                    <TileLayer
+                        attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    {this.state.visibleStops.map((stop) => {
+                        let position = [stop.latitude, stop.longitude];
+                        return <Marker key={`marker-${stop.id}`} position={position}>
+                            <Popup>
+                                <span>{stop.name}
+                                    <br /> {stop.latitude}
+                                    <br /> {stop.longitude}
+                                </span>
+                            </Popup>
+                        </Marker>
+                    }
+                    )}
+                </Map>
+            </React.Fragment>
+        );
     }
 }
