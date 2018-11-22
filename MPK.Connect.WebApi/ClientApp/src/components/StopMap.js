@@ -106,13 +106,17 @@ export class StopMap extends Component {
       };
 
     render() {
-        window.console.log('this.state.currentZoomLevel ->',
-            this.state.currentZoomLevel);
+        window.console.log('this.state.currentZoomLevel ->', this.state.currentZoomLevel);
+
+        let timeTable;
+        if (this.state.timeTableOpened) {
+            timeTable = <TimeTable open={this.state.timeTableOpened} onClose={this.toggleTimeTable} stopId={this.state.currentStopId}></TimeTable>
+        } 
 
         return (
             <React.Fragment>
                 <Button onClick={this.toggleTimeTable}>Open TimeTable</Button>
-                <TimeTable open={this.state.timeTableOpened} onClose={this.toggleTimeTable} stopId={this.state.currentStopId}></TimeTable>
+                {timeTable}
                 <Map ref={m => { this.leafletMap = m; }} center={mapCenter} zoom={zoomLevel}>
                     <TileLayer
                         attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"

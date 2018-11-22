@@ -6,26 +6,22 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
 
 export class RouteCard extends Component {
- 
+
   render() {
     return (
       <Card className="routeCard" >
-        <CardActionArea>
-          <CardContent className="routeCardButton">  
-            <Button variant="outlined">
-              <Typography variant="title" component="h2">
-                {this.props.routeId} 
+        <CardActionArea onClick={this.props.onClick}>
+          <CardContent className="routeCardButton">
+            <div className="MuiButtonBase-root-27 MuiButton-root-1 MuiButton-outlined-9">
+              <Typography variant="title">
+                {this.props.routeId}
               </Typography>
-            </Button>
-            <IconButton>
-              <div className="routeTypeIcon">
-                {this.props.routeType === "Tram" ?<TramIcon /> : <DirectionsBusIcon />}
-              </div>
-            </IconButton>
+            </div>
+            <div className="MuiButtonBase-root-27 MuiIconButton-root-3 routeTypeIcon">
+              {this.props.routeType === "Tram" ? <TramIcon /> : <DirectionsBusIcon />}
+            </div>
           </CardContent>
         </CardActionArea>
       </Card>
