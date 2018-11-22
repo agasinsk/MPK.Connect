@@ -8,22 +8,38 @@ import List from '@material-ui/core/List';
 
 export class DirectionStopTimes extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      stopId: props.stopId,
+      direction: props.direction.direction,
+      stopTimes: props.direction.stopTimes
+    };
+  }
+
+  deleteStopTime(stopTime) {
+    let stopTimes = this.state.stopTimes;
+    let stopTimeIndex = stopTimes.indexOf(stopTime);
+    delete stopTimes[stopTimeIndex];
+    this.setState({
+      stopTimes: stopTimes
+    })
+  }
+
   render() {
     return (
-      <div className="directionBackground">
-        <Card>
-          <CardContent>
-            <Typography variant="subtitle1" component="h2">
-              {this.props.direction.direction}
-            </Typography>
-            <List>
-              {this.props.direction.stopTimes.map((stopTime) => (
-                <StopTime key={stopTime.tripId} stopId={this.props.stopId} stopTime={stopTime} />
-              ))}
-            </List>
-          </CardContent>
-        </Card>
-      </div>
+      <Card>
+        <CardContent>
+          <Typography variant="subtitle1" component="h2">
+            {this.state.direction}
+          </Typography>
+          <List>
+            {this.state.stopTimes.map((stopTime) => (
+              <StopTime key={stopTime.tripId} stopId={this.state.stopId} stopTime={stopTime} onDelete={() => this.deleteStopTime(stopTime)} />
+            ))}
+          </List>
+        </CardContent>
+      </Card>
     );
   }
 }

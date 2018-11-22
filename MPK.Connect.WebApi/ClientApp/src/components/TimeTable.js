@@ -27,19 +27,19 @@ export class TimeTable extends Component {
                   departureTime: "14:20:00"
                 },
                 {
-                  tripId: "6_6527011",
+                  tripId: "6_652701175",
                   departureTime: "14:23:00"
                 },
                 {
-                  tripId: "6_6527011",
+                  tripId: "6_65270187",
                   departureTime: "14:26:00"
                 },
                 {
-                  tripId: "6_6527011",
+                  tripId: "6_65270115",
                   departureTime: "14:29:00"
                 },
                 {
-                  tripId: "6_6527033",
+                  tripId: "6_65270333",
                   departureTime: "14:50:00"
                 },
                 {
@@ -47,7 +47,7 @@ export class TimeTable extends Component {
                   departureTime: "15:20:00"
                 },
                 {
-                  tripId: "6_6527013",
+                  tripId: "6_65270133",
                   departureTime: "15:50:00"
                 }
               ]
