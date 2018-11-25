@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPK.Connect.Service", "MPK.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPK.Connect.Test", "MPK.Connect.Test\MPK.Connect.Test.csproj", "{650BE571-7460-4700-BC22-FEDDC1A80A57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPK.Connect.WebApp", "MPK.Connect.WebApi\MPK.Connect.WebApp.csproj", "{FD9EB602-FAF9-4802-A0D2-72A79FAF20DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPK.Connect.WebApp", "MPK.Connect.WebApi\MPK.Connect.WebApp.csproj", "{FD9EB602-FAF9-4802-A0D2-72A79FAF20DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -7,6 +7,8 @@ namespace MPK.Connect.Model.Business
 {
     public class RouteStopTimes
     {
+        public string RouteId { get; set; }
+
         [JsonConverter(typeof(StringEnumConverter))]
         public RouteTypes RouteType { get; set; }
 

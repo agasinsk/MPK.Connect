@@ -14,6 +14,7 @@ export class RouteStopTime extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      stopId: props.stopId,
       route: props.route
     };
   }
@@ -38,7 +39,7 @@ export class RouteStopTime extends Component {
         <Divider />
         <div>
           {this.state.route.directions.map((direction) => (
-            <DirectionStopTimes key={direction.direction} direction={direction} />
+            <DirectionStopTimes key={direction.direction} direction={direction} stopId={this.state.stopId} />
           ))}
         </div>
       </React.Fragment>

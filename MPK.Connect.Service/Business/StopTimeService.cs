@@ -38,7 +38,7 @@ namespace MPK.Connect.Service.Business
 
             _stopTimeRepository.Save();
 
-            return new OkResponse<StopTimeDto>(stopTimeUpdateDto, "Successfully updated stop time!");
+            return new OkResponse<StopTimeDto>(new StopTimeDto { DepartureTime = stopTime.DepartureTime, StopId = stopTime.Id, TripId = stopTime.TripId }, "Successfully updated stop time!");
         }
 
         public ApiResponse<StopTimeDto> DeleteStopTime(StopTimeDto stopTimeDto)

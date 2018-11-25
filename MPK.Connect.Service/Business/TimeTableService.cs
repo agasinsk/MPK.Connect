@@ -51,24 +51,24 @@ namespace MPK.Connect.Service.Business
 
             var groupedStopTimes = stopTimes
                 .GroupBy(st => st.RouteId)
-                .ToDictionary(k => k.Key,
-                    v => new RouteStopTimes
-                    {
-                        RouteType = v.First().RouteType,
-                        Directions = v
-                            .GroupBy(sti => sti.Direction)
-                            .Select(d => new DirectionStopTimes
-                            {
-                                Direction = d.Key,
-                                StopTimes = d.Select(sti =>
-                                    new StopTimeCore
-                                    {
-                                        DepartureTime = sti.DepartureTime,
-                                        TripId = sti.TripId
-                                    }).OrderBy(std => std.DepartureTime).ToList()
-                            })
-                            .ToList()
-                    });
+                .Select(v => new RouteStopTimes
+                {
+                    RouteId = v.Key,
+                    RouteType = v.First().RouteType,
+                    Directions = v.GroupBy(sti => sti.Direction)
+                        .Select(d => new DirectionStopTimes
+                        {
+                            Direction = d.Key,
+                            StopTimes = d.Select(sti =>
+                                new StopTimeCore
+                                {
+                                    DepartureTime = sti.DepartureTime,
+                                    TripId = sti.TripId
+                                }).OrderBy(std => std.DepartureTime).ToList()
+                        })
+                        .ToList()
+                })
+                .ToList();
 
             return new TimeTable
             {

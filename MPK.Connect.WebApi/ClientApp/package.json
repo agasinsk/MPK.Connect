@@ -1,5 +1,5 @@
 {
-  "name": "MPK.Connect.WebApi",
+  "name": "MPK.Connect",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

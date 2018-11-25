@@ -8,6 +8,6 @@ namespace MPK.Connect.Model.Business
         public string StopCode { get; set; }
         public string StopName { get; set; }
 
-        public Dictionary<string, RouteStopTimes> RouteTimes { get; set; }
+        public List<RouteStopTimes> RouteTimes { get; set; }
     }
 }

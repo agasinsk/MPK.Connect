@@ -5,85 +5,20 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { RouteCard } from './RouteCard';
-import { RouteStopTime } from './RouteStopTimes';
+import { RouteStopTime } from './RouteStopTime';
 
 export class TimeTable extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      timeTable: props.timeTable,
       isRouteSelected: false,
       currentRoute: undefined,
-      routes: [
-        {
-          routeId: '31',
-          routeType: 'Tram',
-          directions: [
-            {
-              direction: "PL. JANA PAWŁA II",
-              stopTimes: [
-                {
-                  tripId: "6_6527011",
-                  departureTime: "14:20:00"
-                },
-                {
-                  tripId: "6_652701175",
-                  departureTime: "14:23:00"
-                },
-                {
-                  tripId: "6_65270187",
-                  departureTime: "14:26:00"
-                },
-                {
-                  tripId: "6_65270115",
-                  departureTime: "14:29:00"
-                },
-                {
-                  tripId: "6_65270333",
-                  departureTime: "14:50:00"
-                },
-                {
-                  tripId: "6_6527057",
-                  departureTime: "15:20:00"
-                },
-                {
-                  tripId: "6_65270133",
-                  departureTime: "15:50:00"
-                }
-              ]
-            },
-            {
-              direction: "GAJ",
-              stopTimes: [
-                {
-                  tripId: "6_6527011",
-                  departureTime: "14:20:00"
-                },
-                {
-                  tripId: "6_6527033",
-                  departureTime: "14:50:00"
-                },
-                {
-                  tripId: "6_6527057",
-                  departureTime: "15:20:00"
-                },
-                {
-                  tripId: "6_6527013",
-                  departureTime: "15:50:00"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          routeId: '32',
-          routeType: 'Tram'
-        },
-        {
-          routeId: '101',
-          routeType: 'Bus'
-        }],
-      stopId: props.stopId
+      routes: props.timeTable.routeTimes,
+      stopId: props.timeTable.stopId,
+      stopName: props.timeTable.stopName,
+      stopCode: props.timeTable.stopCode
     };
 
     this.handleRouteSelected = this.handleRouteSelected.bind(this);
@@ -112,7 +47,7 @@ export class TimeTable extends Component {
 
     if (this.state.isRouteSelected) {
       timeTableDetail = <div>
-        <RouteStopTime route={this.state.currentRoute} onClick={() => this.handleRouteUnselected(this.state.currentRoute)} />
+        <RouteStopTime stopId={this.state.stopId} route={this.state.currentRoute} onClick={() => this.handleRouteUnselected(this.state.currentRoute)} />
       </div>;
     }
     else {
@@ -127,10 +62,10 @@ export class TimeTable extends Component {
       <Drawer open={this.props.open} onClose={this.props.onClose} className="timeTable">
         <Paper className="stopInfo" elevation={1}>
           <Typography variant="headline" component="h5" align="center">
-            GALERIA DOMINIKAŃSKA
+            {this.state.stopName}
           </Typography>
           <Button variant="outlined">
-            21120
+            {this.state.stopCode}
           </Button>
         </Paper>
         {timeTableDetail}

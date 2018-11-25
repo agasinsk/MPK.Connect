@@ -1,6 +1,6 @@
 {
-  "short_name": "MPK.Connect.WebApi",
-  "name": "MPK.Connect.WebApi",
+  "short_name": "MPK Connect",
+  "name": "MPK Connect",
   "icons": [
     {
       "src": "favicon.ico",
