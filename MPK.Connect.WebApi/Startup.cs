@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Service.Business;
+using MPK.Connect.Service.Business.Graph;
 
 namespace MPK.Connect.WebApp
 {
@@ -26,6 +27,7 @@ namespace MPK.Connect.WebApp
             services.AddTransient<IStopService, StopService>();
             services.AddTransient<ITimeTableService, TimeTableService>();
             services.AddTransient<IStopTimeService, StopTimeService>();
+            services.AddTransient<IStopMapManager, StopMapManager>();
             services.AddTransient(typeof(IGenericRepository<>), typeof(BaseRepository<>));
 
             services.AddSingleton(new LoggerFactory())
