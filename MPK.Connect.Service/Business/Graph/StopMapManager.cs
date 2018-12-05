@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Graph;
@@ -20,7 +21,7 @@ namespace MPK.Connect.Service.Business.Graph
 
         public void InitializeGraph()
         {
-            var dbStops = _stopRepository.GetAll().ToDictionary(s => s.Id, s => new StopGraphNode(s));
+            var dbStops = _stopRepository.GetAll().AsNoTracking().ToDictionary(s => s.Id, s => new StopGraphNode(s));
 
             var primitiveGraph = new Dictionary<string, StopGraphNode>(dbStops);
 
@@ -29,6 +30,7 @@ namespace MPK.Connect.Service.Business.Graph
             var dbStopTimes = _stopTimeRepository.GetAll()
                 .Where(st => now < st.DepartureTime && st.DepartureTime < oneHourLater)
                 .Select(st => new { st.StopId, st.TripId, st.DepartureTime, st.StopSequence })
+                .AsNoTracking()
                 .ToList();
 
             var trips = dbStopTimes.GroupBy(st => st.TripId).ToDictionary(k => k.Key, v => v.OrderBy(st => st.StopSequence));
@@ -42,9 +44,11 @@ namespace MPK.Connect.Service.Business.Graph
                     var destination = tripTimes[i + 1];
                     var cost = source.DepartureTime - now + (destination.DepartureTime - source.DepartureTime);
 
-                    primitiveGraph[source.StopId].Neighbors.Add(new StopGraphEdge { Cost = cost, StopId = destination.StopId, TripId = trip.Key });
+                    primitiveGraph[source.StopId].Neighbors.Add(new StopGraphEdge { Cost = cost.Minutes, StopId = destination.StopId, TripId = trip.Key });
                 }
             }
+
+            var path = primitiveGraph.FindShortestPath("1418", "2033");
         }
     }
 }
