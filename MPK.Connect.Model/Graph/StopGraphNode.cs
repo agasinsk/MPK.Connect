@@ -4,9 +4,8 @@ namespace MPK.Connect.Model.Graph
 {
     public class StopGraphNode
     {
-        public Stop Stop { get; set; }
-
         public ICollection<StopGraphEdge> Neighbors { get; set; }
+        public Stop Stop { get; set; }
 
         public StopGraphNode()
         {

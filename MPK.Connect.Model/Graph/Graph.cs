@@ -1,59 +1,56 @@
-﻿using System.Collections;
+﻿using MPK.Connect.Model.Helpers;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace MPK.Connect.Model.Graph
 {
-    public class Graph<T> : IEnumerable<T>
+    public class Graph<TId, T> : IEnumerable<T> where T : IdentifiableEntity<TId>
     {
-        public NodeCollection<T> Nodes { get; }
-
-        public int Count => Nodes.Count;
+        public Dictionary<TId, GraphNode<TId, T>> Nodes { get; }
 
         public Graph() : this(null)
         {
         }
 
-        public Graph(NodeCollection<T> nodeSet)
+        public Graph(Dictionary<TId, GraphNode<TId, T>> nodeSet)
         {
-            Nodes = nodeSet ?? new NodeCollection<T>();
-        }
-
-        public void AddNodes(IEnumerable<T> nodes)
-        {
-            var graphNodes = nodes.Select(v => new GraphNode<T>(v));
-            Nodes.AddRange(graphNodes);
-        }
-
-        public void AddNodes(IEnumerable<GraphNode<T>> nodes)
-        {
-            Nodes.AddRange(nodes);
-        }
-
-        public void AddNode(GraphNode<T> node)
-        {
-            Nodes.Add(node);
-        }
-
-        public void AddNode(T value)
-        {
-            Nodes.Add(new GraphNode<T>(value));
+            Nodes = nodeSet ?? new Dictionary<TId, GraphNode<TId, T>>();
         }
 
         public void AddDirectedEdge(T source, T destination, int edgeCost = 0)
         {
-            var sourceNode = Nodes.FindByValue(source) as GraphNode<T>;
-            sourceNode?.Neighbors.Add(Nodes.FindByValue(destination));
-            sourceNode?.Costs.Add(edgeCost);
+            var sourceNode = Nodes[source.Id];
+            sourceNode?.Neighbors.Add(new GraphEdge<TId>(source.Id, destination.Id, edgeCost));
         }
 
-        public void AddDirectedEdge(GraphNode<T> sourceNode, GraphNode<T> destinationNode, int edgeCost = 0)
+        public void AddNode(GraphNode<TId, T> newNode)
         {
-            sourceNode.Neighbors.Add(destinationNode);
-            sourceNode.Costs.Add(edgeCost);
+            Nodes[newNode.Id] = newNode;
         }
 
-        public void AddUndirectedEdge(GraphNode<T> sourceNode, GraphNode<T> destinationNode, int edgeCost = 0)
+        public void AddNode(T value)
+        {
+            Nodes[value.Id] = new GraphNode<TId, T>(value);
+        }
+
+        public void AddNodes(IEnumerable<T> values)
+        {
+            foreach (var value in values)
+            {
+                Nodes[value.Id] = new GraphNode<TId, T>(value);
+            }
+        }
+
+        public void AddNodes(IEnumerable<GraphNode<TId, T>> nodes)
+        {
+            foreach (var node in nodes)
+            {
+                Nodes[node.Id] = node;
+            }
+        }
+
+        public void AddUndirectedEdge(OldGraphNode<T> sourceNode, OldGraphNode<T> destinationNode, int edgeCost = 0)
         {
             sourceNode.Neighbors.Add(destinationNode);
             sourceNode.Costs.Add(edgeCost);
@@ -64,43 +61,35 @@ namespace MPK.Connect.Model.Graph
 
         public bool Contains(T value)
         {
-            return Nodes.FindByValue(value) != null;
-        }
-
-        public bool Remove(T value)
-        {
-            // first remove the node sourceNode the nodeset
-            var nodeToRemove = Nodes.FindByValue(value);
-            if (nodeToRemove == null)
-            {
-                return false;
-            }
-            Nodes.Remove(nodeToRemove);
-
-            // enumerate through each node in the nodeSet, removing edges to this node
-            foreach (var node in Nodes)
-            {
-                var graphNode = node as GraphNode<T>;
-                var index = graphNode.Neighbors.IndexOf(nodeToRemove);
-                if (index != -1)
-                {
-                    // remove the reference to the node and associated cost
-                    graphNode.Neighbors.RemoveAt(index);
-                    graphNode.Costs.RemoveAt(index);
-                }
-            }
-
-            return true;
+            return Nodes.ContainsKey(value.Id);
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            return Nodes.Select(n => n.Value).GetEnumerator();
+            return Nodes.Select(n => n.Value.Value).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public bool Remove(T value)
+        {
+            // first remove the node sourceNode the nodeset
+            if (Nodes.ContainsKey(value.Id))
+            {
+                Nodes.Remove(value.Id);
+            }
+
+            // enumerate through each node in the nodeSet, removing edges to this node
+            foreach (var node in Nodes)
+            {
+                var graphNode = node.Value;
+                //graphNode.Neighbors.Remove();
+            }
+
+            return true;
         }
     }
 }

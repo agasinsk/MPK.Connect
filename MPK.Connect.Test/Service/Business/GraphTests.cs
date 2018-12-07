@@ -34,7 +34,7 @@ namespace MPK.Connect.Test.Service.Business
 
             // Act
             var result = _graph.Nodes;
-            var neighbors = (result.First() as GraphNode<StopDto>)?.Neighbors;
+            var neighbors = (result.First() as OldGraphNode<StopDto>)?.Neighbors;
 
             // Assert
             Assert.AreEqual(stops.Count, result.Count);

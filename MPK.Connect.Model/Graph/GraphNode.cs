@@ -1,24 +1,28 @@
-﻿using System.Collections.Generic;
+﻿using MPK.Connect.Model.Helpers;
+using System.Collections.Generic;
 
 namespace MPK.Connect.Model.Graph
 {
-    public class GraphNode<T> : Node<T>
+    public class GraphNode<TId, T> : IdentifiableEntity<TId> where T : IdentifiableEntity<TId>
     {
-        private List<int> costs;
-
-        public List<int> Costs => costs ?? (costs = new List<int>());
-        public new NodeCollection<T> Neighbors => base.Neighbors ?? (base.Neighbors = new NodeCollection<T>());
+        public override TId Id => Value.Id;
+        public ICollection<GraphEdge<TId>> Neighbors { get; set; }
+        public T Value { get; set; }
 
         public GraphNode()
         {
         }
 
-        public GraphNode(T value) : base(value)
+        public GraphNode(T value)
         {
+            Value = value;
+            Neighbors = new List<GraphEdge<TId>>();
         }
 
-        public GraphNode(T value, NodeCollection<T> neighbors) : base(value, neighbors)
+        public GraphNode(T value, ICollection<GraphEdge<TId>> neighbors)
         {
+            Value = value;
+            Neighbors = neighbors;
         }
     }
 }
