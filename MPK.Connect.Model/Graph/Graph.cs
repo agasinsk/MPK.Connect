@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace MPK.Connect.Model.Graph
 {
-    public class Graph<TId, T> : IEnumerable<T> where T : IdentifiableEntity<TId>
+    public class Graph<TId, T> : IEnumerable<T> where T : IdentifiableEntity<TId> where TId : class
     {
         public Dictionary<TId, GraphNode<TId, T>> Nodes { get; }
 
@@ -50,15 +50,6 @@ namespace MPK.Connect.Model.Graph
             }
         }
 
-        public void AddUndirectedEdge(OldGraphNode<T> sourceNode, OldGraphNode<T> destinationNode, int edgeCost = 0)
-        {
-            sourceNode.Neighbors.Add(destinationNode);
-            sourceNode.Costs.Add(edgeCost);
-
-            destinationNode.Neighbors.Add(sourceNode);
-            destinationNode.Costs.Add(edgeCost);
-        }
-
         public bool Contains(T value)
         {
             return Nodes.ContainsKey(value.Id);
@@ -74,19 +65,93 @@ namespace MPK.Connect.Model.Graph
             return GetEnumerator();
         }
 
-        public bool Remove(T value)
+        public IEnumerable<GraphNode<TId, T>> LetDijkstraFindShortestPath(TId source, TId destination)
+        {
+            // Initialize distance and route tables
+            var distances = new Dictionary<TId, int>();
+            var routes = new Dictionary<TId, TId>();
+
+            foreach (var stopId in Nodes.Keys)
+            {
+                distances[stopId] = int.MaxValue;
+            }
+
+            distances[source] = 0;
+
+            var stopIds = new List<TId>(Nodes.Keys);	// nodes == Q
+
+            /**** START DIJKSTRA ****/
+            while (stopIds.Count > 0)
+            {
+                // get the minimum node
+                var minDist = int.MaxValue;
+                TId minimumStopId = null;
+                foreach (var stopId in stopIds)
+                {
+                    if (distances[stopId] <= minDist)
+                    {
+                        minDist = distances[stopId];
+                        minimumStopId = stopId;
+                    }
+                }
+
+                // remove it from the set Q
+                stopIds.Remove(minimumStopId);
+
+                // iterate through all of u's neighbors
+                var minimumNode = Nodes[minimumStopId];
+                if (minimumNode.Neighbors != null)
+                {
+                    // relax each edge
+                    foreach (var neighbor in minimumNode.Neighbors)
+                    {
+                        var distTouCity = distances[minimumStopId];
+                        var distTovCity = distances[neighbor.DestinationId];
+
+                        if (distTovCity > distTouCity + neighbor.Cost)
+                        {
+                            // update distance and route
+                            distances[neighbor.DestinationId] = distTouCity + neighbor.Cost;
+                            routes[neighbor.DestinationId] = minimumNode.Id;
+                        }
+                    }
+                }
+            }
+            /**** END DIJKSTRA ****/
+
+            // Track the path
+            var traceBackSteps = new List<GraphNode<TId, T>>();
+            var destinationNode = Nodes[destination];
+            traceBackSteps.Add(destinationNode);
+            var currentNodeId = destinationNode.Id;
+            do
+            {
+                currentNodeId = routes[currentNodeId];
+                var currentNode = Nodes[currentNodeId];
+                traceBackSteps.Add(currentNode);
+            } while (currentNodeId != source);
+
+            traceBackSteps.Reverse();
+            return traceBackSteps;
+        }
+
+        public bool Remove(T valueToRemove)
         {
             // first remove the node sourceNode the nodeset
-            if (Nodes.ContainsKey(value.Id))
+            if (Nodes.ContainsKey(valueToRemove.Id))
             {
-                Nodes.Remove(value.Id);
+                Nodes.Remove(valueToRemove.Id);
             }
 
             // enumerate through each node in the nodeSet, removing edges to this node
             foreach (var node in Nodes)
             {
                 var graphNode = node.Value;
-                //graphNode.Neighbors.Remove();
+                var neighbor = graphNode.Neighbors.FirstOrDefault(n => n.DestinationId.Equals(valueToRemove.Id));
+                if (neighbor != null)
+                {
+                    graphNode.Neighbors.Remove(neighbor);
+                }
             }
 
             return true;

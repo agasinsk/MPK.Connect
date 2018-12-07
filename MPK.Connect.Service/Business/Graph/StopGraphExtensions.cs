@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using MPK.Connect.Model.Graph;
+﻿using MPK.Connect.Model.Graph;
+using System.Collections.Generic;
 
 namespace MPK.Connect.Service.Business.Graph
 {
