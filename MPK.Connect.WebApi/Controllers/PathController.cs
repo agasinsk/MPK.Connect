@@ -20,8 +20,7 @@ namespace MPK.Connect.WebApp.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            _stopMapManager.InitializeGraph();
-            return new string[] { "value1", "value2" };
+            return _stopMapManager.InitializeGraph();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MPK.Connect.Model.Graph;
 
 namespace MPK.Connect.Service.Business.Graph
@@ -9,16 +10,16 @@ namespace MPK.Connect.Service.Business.Graph
             string destination)
         {
             // Initialize distance and route tables
-            var distances = new Dictionary<string, int>();
+            var distances = new Dictionary<string, TravelCost>();
             var routes = new Dictionary<string, StopGraphNode>();
 
             foreach (var stopId in graph.Keys)
             {
-                distances[stopId] = int.MaxValue;
+                distances[stopId] = new TravelCost { Cost = int.MaxValue, DepartureTime = TimeSpan.MaxValue };
                 routes[stopId] = null;
             }
 
-            distances[source] = 0;
+            distances[source] = new TravelCost(0, DateTime.Now.TimeOfDay);
 
             var stopIds = new List<string>(graph.Keys);	// nodes == Q
 
@@ -30,9 +31,9 @@ namespace MPK.Connect.Service.Business.Graph
                 string minimumStopId = null;
                 foreach (var stopId in stopIds)
                 {
-                    if (distances[stopId] <= minDist)
+                    if (distances[stopId].Cost <= minDist)
                     {
-                        minDist = distances[stopId];
+                        minDist = distances[stopId].Cost;
                         minimumStopId = stopId;
                     }
                 }
@@ -50,11 +51,11 @@ namespace MPK.Connect.Service.Business.Graph
                         var distTouCity = distances[minimumStopId];
                         var distTovCity = distances[neighbor.StopId];
 
-                        if (distTovCity > distTouCity + neighbor.Cost)
+                        if (distTovCity.Cost > distTouCity.Cost + neighbor.Cost && distTovCity.DepartureTime > neighbor.DepartureTime)
                         {
                             // update distance and route
-                            distances[neighbor.StopId] = distTouCity + neighbor.Cost;
-                            routes[neighbor.StopId] = minimumNode;
+                            distances[neighbor.StopId] = new TravelCost(distTouCity.Cost + neighbor.Cost, neighbor.DepartureTime);
+                            routes[neighbor.StopId] = new StopGraphNode(minimumNode.Stop, new List<StopGraphEdge> { neighbor });
                         }
                     }
                 }
@@ -64,7 +65,7 @@ namespace MPK.Connect.Service.Business.Graph
             // Track the path
             var traceBackSteps = new List<StopGraphNode>();
             var destinationNode = graph[destination];
-            traceBackSteps.Add(destinationNode);
+            traceBackSteps.Add(new StopGraphNode(destinationNode.Stop));
             var currentNode = destinationNode;
             do
             {

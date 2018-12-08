@@ -1,7 +1,9 @@
-﻿namespace MPK.Connect.Service.Business.Graph
+﻿using System.Collections.Generic;
+
+namespace MPK.Connect.Service.Business.Graph
 {
     public interface IStopMapManager
     {
-        void InitializeGraph();
+        IEnumerable<string> InitializeGraph();
     }
 }
