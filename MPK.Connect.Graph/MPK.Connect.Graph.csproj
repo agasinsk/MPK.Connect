@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MPK.Connect.DataAccess\MPK.Connect.DataAccess.csproj" />
+    <ProjectReference Include="..\MPK.Connect.Service\MPK.Connect.Service.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +32,12 @@
     <Reference Include="Microsoft.Extensions.Logging.Abstractions">
       <HintPath>..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.logging.abstractions\2.1.1\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

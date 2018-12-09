@@ -21,15 +21,23 @@ namespace MPK.Connect.Service.Business.Graph
 
         public IEnumerable<string> InitializeGraph()
         {
-            var dbStops = _stopRepository.GetAll().AsNoTracking().ToDictionary(s => s.Id, s => new StopGraphNode(s));
+            var primitiveGraph = GetGraph();
 
+            var path = primitiveGraph.FindShortestPath("1418", "2033");
+
+            return path.Select(n => $"{n.SourceStopId} -> {n.DestinationStopId} : trip {n.TripId} : time {n.ArrivalTime}").ToList();
+        }
+
+        private Dictionary<string, StopGraphNode> GetGraph()
+        {
+            var dbStops = _stopRepository.GetAll().AsNoTracking().ToDictionary(s => s.Id, s => new StopGraphNode(s));
             var primitiveGraph = new Dictionary<string, StopGraphNode>(dbStops);
 
             var now = DateTime.Now.TimeOfDay;
             var oneHourLater = now + TimeSpan.FromHours(1);
             var dbStopTimes = _stopTimeRepository.GetAll()
                 .Where(st => now < st.DepartureTime && st.DepartureTime < oneHourLater)
-                .Select(st => new { st.StopId, st.TripId, st.DepartureTime, st.StopSequence })
+                .Select(st => new { st.StopId, st.TripId, st.ArrivalTime, st.DepartureTime, st.StopSequence })
                 .AsNoTracking()
                 .ToList();
 
@@ -47,31 +55,16 @@ namespace MPK.Connect.Service.Business.Graph
                     primitiveGraph[source.StopId].Neighbors.Add(new StopGraphEdge
                     {
                         Cost = cost.Minutes,
-                        DepartureTime = destination.DepartureTime,
-                        StopId = destination.StopId,
+                        ArrivalTime = destination.ArrivalTime,
+                        DepartureTime = source.DepartureTime,
+                        SourceStopId = source.StopId,
+                        DestinationStopId = destination.StopId,
                         TripId = trip.Key
                     });
                 }
             }
 
-            var path = primitiveGraph.FindShortestPath("1418", "2033");
-
-            return path.Select(n => $"{n.Stop.Name} -> {n.Neighbors.FirstOrDefault()?.StopId} : trip {n.Neighbors.FirstOrDefault()?.TripId} : time {n.Neighbors.FirstOrDefault()?.DepartureTime}").ToList();
-        }
-
-        public IEnumerable<string> InitializeStopTimeGraph()
-        {
-            var primitiveGraph = new Dictionary<string, StopTimeGraphNode>();
-
-            var now = DateTime.Now.TimeOfDay;
-            var oneHourLater = now + TimeSpan.FromHours(1);
-            var dbStopTimes = _stopTimeRepository.GetAll()
-                .Where(st => now < st.DepartureTime && st.DepartureTime < oneHourLater)
-                .Select(st => new { st.StopId, st.TripId, st.DepartureTime, st.StopSequence })
-                .AsNoTracking()
-                .ToList();
-
-            return new List<string>();
+            return primitiveGraph;
         }
     }
 }

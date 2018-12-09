@@ -1,21 +1,34 @@
-﻿using MPK.Connect.Model.Helpers;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MPK.Connect.Model.Helpers;
 
 namespace MPK.Connect.Model.Graph
 {
     public class Graph<TId, T> : IEnumerable<T> where T : IdentifiableEntity<TId> where TId : class
     {
         public Dictionary<TId, GraphNode<TId, T>> Nodes { get; }
+        public Dictionary<TId, GraphNode<TId, T>>.KeyCollection Keys => Nodes.Keys;
 
-        public Graph() : this(null)
+        public Graph()
         {
         }
 
         public Graph(Dictionary<TId, GraphNode<TId, T>> nodeSet)
         {
             Nodes = nodeSet ?? new Dictionary<TId, GraphNode<TId, T>>();
+        }
+
+        public Graph(Dictionary<TId, T> nodeSet)
+        {
+            var nodes = nodeSet.ToDictionary(k => k.Key, v => new GraphNode<TId, T>(v.Value));
+            Nodes = nodes;
+        }
+
+        public GraphNode<TId, T> this[TId key]
+        {
+            get => Nodes[key];
+            set => Nodes[key] = value;
         }
 
         public void AddDirectedEdge(T source, T destination, int edgeCost = 0)
@@ -57,12 +70,7 @@ namespace MPK.Connect.Model.Graph
 
         public IEnumerator<T> GetEnumerator()
         {
-            return Nodes.Select(n => n.Value.Value).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            return Nodes.Select(n => n.Value.Data).GetEnumerator();
         }
 
         public IEnumerable<GraphNode<TId, T>> LetDijkstraFindShortestPath(TId source, TId destination)
@@ -71,41 +79,42 @@ namespace MPK.Connect.Model.Graph
             var distances = new Dictionary<TId, int>();
             var routes = new Dictionary<TId, TId>();
 
-            foreach (var stopId in Nodes.Keys)
+            foreach (var nodeId in Nodes.Keys)
             {
-                distances[stopId] = int.MaxValue;
+                distances[nodeId] = int.MaxValue;
             }
 
             distances[source] = 0;
 
-            var stopIds = new List<TId>(Nodes.Keys);	// nodes == Q
+            // nodes == Q
+            var nodesIds = new List<TId>(Nodes.Keys);
 
             /**** START DIJKSTRA ****/
-            while (stopIds.Count > 0)
+            while (nodesIds.Count > 0)
             {
                 // get the minimum node
-                var minDist = int.MaxValue;
-                TId minimumStopId = null;
-                foreach (var stopId in stopIds)
+                var minimumDistance = int.MaxValue;
+                TId minimumNodeId = null;
+                foreach (var nodeId in nodesIds)
                 {
-                    if (distances[stopId] <= minDist)
+                    if (distances[nodeId] <= minimumDistance)
                     {
-                        minDist = distances[stopId];
-                        minimumStopId = stopId;
+                        minimumDistance = distances[nodeId];
+                        minimumNodeId = nodeId;
                     }
                 }
 
                 // remove it from the set Q
-                stopIds.Remove(minimumStopId);
+                nodesIds.Remove(minimumNodeId);
 
                 // iterate through all of u's neighbors
-                var minimumNode = Nodes[minimumStopId];
+                var minimumNode = Nodes[minimumNodeId];
                 if (minimumNode.Neighbors != null)
                 {
                     // relax each edge
                     foreach (var neighbor in minimumNode.Neighbors)
                     {
-                        var distTouCity = distances[minimumStopId];
+                        var distTouCity = distances[minimumNodeId];
                         var distTovCity = distances[neighbor.DestinationId];
 
                         if (distTovCity > distTouCity + neighbor.Cost)
@@ -155,6 +164,11 @@ namespace MPK.Connect.Model.Graph
             }
 
             return true;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

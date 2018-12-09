@@ -1,6 +1,6 @@
-﻿using MPK.Connect.Model.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using MPK.Connect.Model.Enums;
 using MPK.Connect.Model.Helpers;
-using System.ComponentModel.DataAnnotations;
 
 namespace MPK.Connect.Model
 {
@@ -28,5 +28,10 @@ namespace MPK.Connect.Model
         public string ParentStation { get; set; }
         public string Timezone { get; set; }
         public WheelchairBoardings WheelchairBoarding { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
