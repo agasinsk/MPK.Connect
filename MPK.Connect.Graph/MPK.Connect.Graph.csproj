@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.8.1" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.3.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MPK.Connect.DataAccess\MPK.Connect.DataAccess.csproj" />
     <ProjectReference Include="..\MPK.Connect.Service\MPK.Connect.Service.csproj" />
   </ItemGroup>
