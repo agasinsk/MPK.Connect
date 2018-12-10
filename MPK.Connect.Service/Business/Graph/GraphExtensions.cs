@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using MPK.Connect.Model.Business;
+﻿using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Graph;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business.Graph
 {
     public static class GraphExtensions
     {
-        public static IEnumerable<T> A_Star<TId, T>(this Graph<TId, T> graph, T source, T destination)
+        public static Path<T> A_Star<TId, T>(this Graph<TId, T> graph, T source, T destination)
             where T : LocalizableEntity<TId> where TId : class
         {
             // Initialize
@@ -19,13 +19,13 @@ namespace MPK.Connect.Service.Business.Graph
 
             var cameFrom = new Dictionary<TId, GraphNode<TId, T>>();
             var dictionary = graph.Nodes.ToDictionary(k => k.Key, v => double.MaxValue);
-            var costFromSourceToNode =
+            var costFromSource =
                 new Dictionary<TId, double>(dictionary)
                 {
                     [source.Id] = 0
                 };
 
-            var totalCostFromSourceToNode =
+            var totalCostFromSource =
                 new Dictionary<TId, double>(graph.Nodes.ToDictionary(k => k.Key, v => double.MaxValue))
                 {
                     [source.Id] = source.GetDistanceTo(destination)
@@ -33,12 +33,15 @@ namespace MPK.Connect.Service.Business.Graph
 
             while (nodesToExtend.Any())
             {
-                var nodeWithLowestCostId = nodesToExtend.Aggregate((l, r) => totalCostFromSourceToNode[l.Key] < totalCostFromSourceToNode[r.Key] ? l : r).Key;
+                var nodeWithLowestCostId = nodesToExtend.Aggregate((l, r) => totalCostFromSource[l.Key] < totalCostFromSource[r.Key] ? l : r).Key;
                 if (nodeWithLowestCostId.Equals(destination.Id))
                 {
                     // reconstruct path
-                    var totalPath = new List<T>();
+                    var totalPath = new Path<T>();
+
                     var currentNodeId = nodeWithLowestCostId;
+                    var destinationNode = graph.Nodes[currentNodeId];
+                    totalPath.Add(destinationNode.Data);
                     while (cameFrom.ContainsKey(currentNodeId))
                     {
                         var node = cameFrom[currentNodeId];
@@ -46,6 +49,8 @@ namespace MPK.Connect.Service.Business.Graph
                         totalPath.Add(node.Data);
                     }
 
+                    totalPath.Reverse();
+                    totalPath.Cost = costFromSource[destination.Id];
                     return totalPath;
                 }
 
@@ -64,27 +69,27 @@ namespace MPK.Connect.Service.Business.Graph
                     }
 
                     // The distance from start to a neighbor
-                    var tentative_gScore = costFromSourceToNode[currentNode.Id] + neighborEdge.Cost;
+                    var tentative_gScore = costFromSource[currentNode.Id] + neighborEdge.Cost;
 
                     if (!nodesToExtend.ContainsKey(neighbor.Id))
                     {
                         nodesToExtend.Add(neighbor.Id, neighbor);
                     }
-                    else if (tentative_gScore >= costFromSourceToNode[neighbor.Id])
+                    else if (tentative_gScore >= costFromSource[neighbor.Id])
                     {
                         continue;
                     }
 
                     // This path is the best until now. Record it!
                     cameFrom[neighbor.Id] = currentNode;
-                    costFromSourceToNode[neighbor.Id] = tentative_gScore;
+                    costFromSource[neighbor.Id] = tentative_gScore;
 
-                    totalCostFromSourceToNode[neighbor.Id] =
-                        costFromSourceToNode[neighbor.Id] + neighbor.Data.GetDistanceTo(destination);
+                    totalCostFromSource[neighbor.Id] =
+                        costFromSource[neighbor.Id] + neighbor.Data.GetDistanceTo(destination);
                 }
             }
 
-            return new List<T>();
+            return new Path<T>();
         }
     }
 }

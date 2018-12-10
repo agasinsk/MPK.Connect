@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +8,10 @@ using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Service.Business.Graph;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace MPK.Connect.Graph
 {
@@ -67,9 +68,21 @@ namespace MPK.Connect.Graph
                 var graphMana = new GraphManager(stopRepo, stopTimeRepo, calendarRepo);
                 var graphBounds = new StopMapBounds(51.112457, 17.025346, 51.105209, 17.033606);
                 var graph = graphMana.GetGraph(graphBounds);
-                var source = graph.Nodes.FirstOrDefault(s => s.Value.Data.Stop.Name == "Rynek").Value.Data;
-                var destination = graph.Nodes.FirstOrDefault(s => s.Value.Data.Stop.Name == "Narodowe Forum Muzyki").Value.Data;
-                var path = graph.A_Star(source, destination);
+                var source = graph.Nodes
+                    .Where(s => s.Value.Data.Stop.Name == "Rynek")
+                    .OrderBy(s => s.Value.Data.DepartureTime).First().Value;
+                var destinations = graph.Nodes
+                    .Where(s => s.Value.Data.Stop.Name == "Narodowe Forum Muzyki" && s.Value.Data.DepartureTime > source.Data.DepartureTime)
+                    .OrderBy(s => s.Value.Data.DepartureTime)
+                    .Select(s => s.Value)
+                    .ToList();
+
+                var paths = new List<IEnumerable<StopTimeInfo>>();
+                foreach (var destination in destinations)
+                {
+                    var path = graph.A_Star(source.Data, destination.Data);
+                    paths.Add(path);
+                }
             }
 
             Console.WriteLine("Hello World!");

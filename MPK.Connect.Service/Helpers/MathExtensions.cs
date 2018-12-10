@@ -1,13 +1,26 @@
-﻿using System;
-using MPK.Connect.Model;
+﻿using MPK.Connect.Model;
+using System;
 
 namespace MPK.Connect.Service.Helpers
 {
     public static class MathExtensions
     {
-        public static double ToRadians(this double angle)
+        public static double GetDistance(double sourceLatitude, double sourceLongitude, double destinationLatitude, double destinationLongitude)
         {
-            return angle * 2 * Math.PI / 360;
+            const double earthRadius = 6371; //km
+
+            var φ1 = sourceLatitude.ToRadians();
+            var φ2 = destinationLatitude.ToRadians();
+            var Δφ = (destinationLatitude - sourceLatitude).ToRadians();
+            var Δλ = (destinationLongitude - sourceLongitude).ToRadians();
+
+            var a = Math.Sin(Δφ / 2) * Math.Sin(Δφ / 2) +
+                    Math.Cos(φ1) * Math.Cos(φ2) *
+                    Math.Sin(Δλ / 2) * Math.Sin(Δλ / 2);
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+
+            var distance = earthRadius * c;
+            return distance;
         }
 
         public static double GetDistanceTo(this Stop source, Stop destination)
@@ -31,6 +44,11 @@ namespace MPK.Connect.Service.Helpers
 
             var distance = earthRadius * c;
             return distance;
+        }
+
+        public static double ToRadians(this double angle)
+        {
+            return angle * 2 * Math.PI / 360;
         }
     }
 }
