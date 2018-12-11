@@ -4,15 +4,14 @@ namespace MPK.Connect.Model.Business
 {
     public class StopTimeInfo : LocalizableEntity<string>
     {
-        public override string Id => $"{StopId}|{TripId}|{DepartureTime}";
-        public string TripId { get; set; }
-        public string Route { get; set; }
-        public string StopId { get; set; }
-        public int StopSequence { get; set; }
         public TimeSpan ArrivalTime { get; set; }
         public TimeSpan DepartureTime { get; set; }
-
+        public override string Id => $"{StopId}|{TripId}|{DepartureTime}";
+        public string Route { get; set; }
         public StopDto Stop { get; set; }
+        public string StopId { get; set; }
+        public int StopSequence { get; set; }
+        public string TripId { get; set; }
 
         public override double GetDistanceTo(LocalizableEntity<string> otherEntity)
         {

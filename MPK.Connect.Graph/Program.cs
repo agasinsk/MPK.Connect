@@ -67,18 +67,18 @@ namespace MPK.Connect.Graph
                 var stopRepo = scope.Resolve<IGenericRepository<Stop>>();
                 var calendarRepo = scope.Resolve<IGenericRepository<Calendar>>();
                 var graphMana = new GraphManager(stopRepo, stopTimeRepo, calendarRepo);
-                var graphBounds = new StopMapBounds(51.112457, 17.025346, 51.105209, 17.033606);
+                var graphBounds = new StopMapBounds(51.112457, 17.025346, 51.103965, 17.040524);
                 var graph = graphMana.GetGraph(graphBounds);
                 var source = graph.Nodes
                     .Where(s => s.Value.Data.Stop.Name == "Rynek")
                     .OrderBy(s => s.Value.Data.DepartureTime).First().Value;
                 var destinations = graph.Nodes
-                    .Where(s => s.Value.Data.Stop.Name == "Narodowe Forum Muzyki" && s.Value.Data.DepartureTime > source.Data.DepartureTime)
+                    .Where(s => s.Value.Data.Stop.Name == "GALERIA DOMINIKAŃSKA" && s.Value.Data.DepartureTime > source.Data.DepartureTime)
                     .OrderBy(s => s.Value.Data.DepartureTime)
                     .Select(s => s.Value)
                     .ToList();
 
-                var probablePath = graph.AStar(source.Data, "Narodowe Forum Muzyki");
+                var probablePath = graph.AStar(source.Data, "GALERIA DOMINIKAŃSKA");
 
                 var paths = new List<Path<StopTimeInfo>>();
                 foreach (var destination in destinations)
@@ -87,7 +87,7 @@ namespace MPK.Connect.Graph
                     paths.Add(path);
                 }
 
-                paths = paths.Where(p => p.Any()).ToList();
+                paths = paths.Where(p => p.Any()).OrderBy(p => p.Cost).ToList();
             }
 
             Console.WriteLine("Hello World!");

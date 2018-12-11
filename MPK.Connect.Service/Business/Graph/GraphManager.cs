@@ -11,22 +11,27 @@ namespace MPK.Connect.Service.Business.Graph
 {
     public class GraphManager
     {
+        private readonly TimeSpan _additionalStopChangeTime = TimeSpan.FromMinutes(1);
+        private readonly TimeSpan _additionalTransferTime = TimeSpan.FromMinutes(1);
         private readonly IGenericRepository<Calendar> _calendarRepository;
+        private readonly TimeSpan _minimumSwitchingTime = TimeSpan.FromMinutes(1);
         private readonly IGenericRepository<Stop> _stopRepository;
         private readonly IGenericRepository<StopTime> _stopTimeRepository;
-        private readonly TimeSpan EPSILON = TimeSpan.FromMinutes(1);
 
         public GraphManager(IGenericRepository<Stop> stopRepository, IGenericRepository<StopTime> stopTimeRepository, IGenericRepository<Calendar> calendarRepository)
         {
-            _stopRepository = stopRepository;
-            _stopTimeRepository = stopTimeRepository;
-            _calendarRepository = calendarRepository;
+            _stopRepository = stopRepository ?? throw new ArgumentNullException(nameof(stopRepository));
+            _stopTimeRepository = stopTimeRepository ?? throw new ArgumentNullException(nameof(stopTimeRepository));
+            _calendarRepository = calendarRepository ?? throw new ArgumentNullException(nameof(calendarRepository));
         }
 
         public Graph<string, StopTimeInfo> GetGraph(StopMapBounds graphBounds = null)
         {
             var dbStops = _stopRepository.GetAll()
-                .Where(s => s.Latitude < graphBounds.MaxLatitude && s.Latitude > graphBounds.MinLatitude && s.Longitude > graphBounds.MaxLongitude && s.Longitude < graphBounds.MinLongitude)
+                .Where(s => s.Latitude < graphBounds.MaxLatitude &&
+                            s.Latitude > graphBounds.MinLatitude &&
+                            s.Longitude > graphBounds.MaxLongitude &&
+                            s.Longitude < graphBounds.MinLongitude)
                 .Select(s => new StopDto
                 {
                     Id = s.Id,
@@ -48,8 +53,7 @@ namespace MPK.Connect.Service.Business.Graph
 
             if (graphBounds != null)
             {
-                dbStopTimesQuery = dbStopTimesQuery.Where(st =>
-                   dbStops.ContainsKey(st.StopId));
+                dbStopTimesQuery = dbStopTimesQuery.Where(st => dbStops.ContainsKey(st.StopId));
             }
 
             var dbStopTimes = dbStopTimesQuery
@@ -63,7 +67,6 @@ namespace MPK.Connect.Service.Business.Graph
                     ArrivalTime = st.ArrivalTime,
                     StopSequence = st.StopSequence,
                 })
-                .OrderBy(st => st.DepartureTime)
                 .AsNoTracking()
                 .ToDictionary(k => k.Id);
 
@@ -75,10 +78,10 @@ namespace MPK.Connect.Service.Business.Graph
             var graph = new Graph<string, StopTimeInfo>(dbStopTimes);
 
             // Create a directed edge for every bus route segment
-            var trips = dbStopTimes.Values.GroupBy(st => st.TripId).ToDictionary(k => k.Key, v => v.OrderBy(st => st.DepartureTime).ThenBy(st => st.StopSequence));
-            foreach (var trip in trips)
+            var stopTimesGroupedByTrips = dbStopTimes.Values.GroupBy(st => st.TripId).ToDictionary(k => k.Key, v => v.OrderBy(st => st.StopSequence));
+            foreach (var tripStopTimes in stopTimesGroupedByTrips)
             {
-                var tripTimes = trip.Value.ToList();
+                var tripTimes = tripStopTimes.Value.ToList();
                 for (var i = 0; i < tripTimes.Count - 1; i++)
                 {
                     var source = tripTimes[i];
@@ -91,46 +94,45 @@ namespace MPK.Connect.Service.Business.Graph
 
             // TODO: Add edges corresponding to "staying on the bus at a stop"
 
-            // TODO: Add edges corresponding to "switching stop of the same name"
-            var namedStops = dbStopTimes.Values.GroupBy(st => st.Stop.Name).ToDictionary(k => k.Key, v => v.OrderBy(st => st.DepartureTime));
-            foreach (var stop in namedStops)
+            // Add edges corresponding to switching stops of the same name
+            var stopTimesGroupedByStopName = dbStopTimes.Values.GroupBy(st => st.Stop.Name).ToDictionary(k => k.Key, v => v.AsEnumerable());
+            foreach (var stopTimesGroup in stopTimesGroupedByStopName)
             {
-                var namedStopTimes = stop.Value.ToList();
-                foreach (var namedStopTime in namedStopTimes)
+                var stopTimesWithTheSameStopName = stopTimesGroup.Value.ToList();
+                foreach (var sourceStopTime in stopTimesWithTheSameStopName)
                 {
-                    var stopTimesAfterThis = namedStopTimes.Where(st => st.DepartureTime > namedStopTime.DepartureTime && st.StopId != namedStopTime.StopId).ToList();
-                    var source = namedStopTime;
-                    foreach (var destination in stopTimesAfterThis)
+                    var stopTimesAfterSource = stopTimesWithTheSameStopName.Where(st => sourceStopTime.DepartureTime < st.DepartureTime && st.StopId != sourceStopTime.StopId);
+                    foreach (var destination in stopTimesAfterSource)
                     {
-                        if (source.DepartureTime < destination.DepartureTime)
-                        {
-                            var cost = destination.DepartureTime - source.DepartureTime;
-                            if (source.TripId != destination.TripId)
-                            {
-                                cost += EPSILON;
-                            }
+                        var cost = destination.DepartureTime - sourceStopTime.DepartureTime;
 
-                            graph[source.Id].Neighbors.Add(new GraphEdge<string>(source.Id, destination.Id, cost.Minutes));
-                        }
+                        // TODO: consider adding distance as a factor for additional cost
+                        //var distance = source.GetDistanceTo(destination);
+                        //if (distance > 0.2 && cost.Minutes < 2)
+                        //{
+                        //    cost += _additionalStopChangeTime;
+                        //}
+
+                        graph[sourceStopTime.Id].Neighbors.Add(new GraphEdge<string>(sourceStopTime.Id, destination.Id, cost.Minutes));
                     }
                 }
             }
 
-            // Add edges corresponding to "switching buses"
-            var stopTransfers = dbStopTimes.Values.GroupBy(st => st.StopId).ToDictionary(k => k.Key, v => v.OrderBy(st => st.DepartureTime));
-            foreach (var stopTransfer in stopTransfers)
+            // Add edges corresponding to switching buses (trips)
+            var stopTimesGroupedByStopId = dbStopTimes.Values.GroupBy(st => st.StopId).ToDictionary(k => k.Key, v => v.OrderBy(st => st.DepartureTime));
+            foreach (var stopTransfers in stopTimesGroupedByStopId)
             {
-                var stopTransferTimes = stopTransfer.Value.ToList();
+                var stopTransferTimes = stopTransfers.Value.ToList();
                 for (var i = 0; i < stopTransferTimes.Count - 1; i++)
                 {
                     var source = stopTransferTimes[i];
                     var destination = stopTransferTimes[i + 1];
-                    if (source.DepartureTime < destination.DepartureTime)
+                    if (source.DepartureTime + _minimumSwitchingTime < destination.DepartureTime)
                     {
                         var cost = destination.DepartureTime - source.DepartureTime;
                         if (source.TripId != destination.TripId)
                         {
-                            cost += EPSILON;
+                            cost += _additionalTransferTime;
                         }
 
                         graph[source.Id].Neighbors.Add(new GraphEdge<string>(source.Id, destination.Id, cost.Minutes));
