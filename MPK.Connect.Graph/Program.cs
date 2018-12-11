@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
+using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.Graph;
 using System;
 using System.Collections.Generic;
@@ -77,12 +78,16 @@ namespace MPK.Connect.Graph
                     .Select(s => s.Value)
                     .ToList();
 
-                var paths = new List<IEnumerable<StopTimeInfo>>();
+                var probablePath = graph.AStar(source.Data, "Narodowe Forum Muzyki");
+
+                var paths = new List<Path<StopTimeInfo>>();
                 foreach (var destination in destinations)
                 {
                     var path = graph.A_Star(source.Data, destination.Data);
                     paths.Add(path);
                 }
+
+                paths = paths.Where(p => p.Any()).ToList();
             }
 
             Console.WriteLine("Hello World!");

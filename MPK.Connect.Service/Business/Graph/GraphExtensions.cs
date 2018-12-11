@@ -91,5 +91,92 @@ namespace MPK.Connect.Service.Business.Graph
 
             return new Path<T>();
         }
+
+        public static Path<StopTimeInfo> AStar(this Graph<string, StopTimeInfo> graph, StopTimeInfo source, string destination)
+
+        {
+            var probableDestination =
+                graph.Nodes.Values.FirstOrDefault(n => n.Data.Stop.Name.Contains(destination))?.Data;
+
+            // Initialize
+            var nodesAlreadyExtended = new List<GraphNode<string, StopTimeInfo>>();
+            var nodesToExtend = new Dictionary<string, GraphNode<string, StopTimeInfo>>
+            {
+                { source.Id, graph.Nodes[source.Id] }
+            };
+
+            var cameFrom = new Dictionary<string, GraphNode<string, StopTimeInfo>>();
+            var dictionary = graph.Nodes.ToDictionary(k => k.Key, v => double.MaxValue);
+            var costFromSource =
+                new Dictionary<string, double>(dictionary)
+                {
+                    [source.Id] = 0
+                };
+
+            var totalCostFromSource =
+                new Dictionary<string, double>(graph.Nodes.ToDictionary(k => k.Key, v => double.MaxValue))
+                {
+                    [source.Id] = source.GetDistanceTo(probableDestination)
+                };
+
+            while (nodesToExtend.Any())
+            {
+                var nodeWithLowestCostId = nodesToExtend.Aggregate((l, r) => totalCostFromSource[l.Key] < totalCostFromSource[r.Key] ? l : r).Key;
+                var currentNode = graph.Nodes[nodeWithLowestCostId];
+                if (currentNode.Data.Stop.Name.Contains(destination))
+                {
+                    // reconstruct path
+                    var totalPath = new Path<StopTimeInfo>();
+
+                    var currentNodeId = nodeWithLowestCostId;
+                    var destinationNode = graph.Nodes[currentNodeId];
+                    totalPath.Add(destinationNode.Data);
+                    while (cameFrom.ContainsKey(currentNodeId))
+                    {
+                        var node = cameFrom[currentNodeId];
+                        currentNodeId = node.Id;
+                        totalPath.Add(node.Data);
+                    }
+
+                    totalPath.Reverse();
+                    totalPath.Cost = costFromSource[probableDestination.Id];
+                    return totalPath;
+                }
+
+                nodesToExtend.Remove(currentNode.Id);
+                nodesAlreadyExtended.Add(currentNode);
+
+                foreach (var neighborEdge in currentNode.Neighbors)
+                {
+                    var neighbor = graph.Nodes[neighborEdge.DestinationId];
+                    // Ignore the neighbor which is already evaluated
+                    if (nodesAlreadyExtended.Contains(neighbor))
+                    {
+                        continue;
+                    }
+
+                    // The distance from start to a neighbor
+                    var tentative_gScore = costFromSource[currentNode.Id] + neighborEdge.Cost;
+
+                    if (!nodesToExtend.ContainsKey(neighbor.Id))
+                    {
+                        nodesToExtend.Add(neighbor.Id, neighbor);
+                    }
+                    else if (tentative_gScore >= costFromSource[neighbor.Id])
+                    {
+                        continue;
+                    }
+
+                    // This path is the best until now. Record it!
+                    cameFrom[neighbor.Id] = currentNode;
+                    costFromSource[neighbor.Id] = tentative_gScore;
+
+                    totalCostFromSource[neighbor.Id] =
+                        costFromSource[neighbor.Id] + neighbor.Data.GetDistanceTo(probableDestination);
+                }
+            }
+
+            return new Path<StopTimeInfo>();
+        }
     }
 }
