@@ -5,6 +5,6 @@ namespace MPK.Connect.Service.Business.Graph
 {
     public interface IGraphBuilder
     {
-        Graph<string, StopTimeInfo> GetGraph(CoordinatesBounds graphBounds = null);
+        Graph<string, StopTimeInfo> GetGraph(CoordinateBounds graphBounds = null);
     }
 }

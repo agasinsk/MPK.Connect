@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MPK.Connect.Model.Graph
+﻿namespace MPK.Connect.Model.Graph
 {
     public class GraphEdge<TId>
     {
@@ -19,19 +17,6 @@ namespace MPK.Connect.Model.Graph
 
         public GraphEdge()
         {
-        }
-    }
-
-    public class StopGraphEdge<TId> : GraphEdge<TId>
-    {
-        public TimeSpan ArrivalTime { get; set; }
-        public TimeSpan DepartureTime { get; set; }
-        public string RouteId { get; set; }
-        public string TripId { get; set; }
-
-        public override string ToString()
-        {
-            return $"-> {DestinationId} | {RouteId} | {DepartureTime} | {Cost} min.";
         }
     }
 }

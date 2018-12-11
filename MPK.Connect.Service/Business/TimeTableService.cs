@@ -1,18 +1,18 @@
-﻿using System;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Service.Helpers;
+using System;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business
 {
     public class TimeTableService : ITimeTableService
     {
-        private readonly IGenericRepository<StopTime> _stopTimeRepository;
-        private readonly IGenericRepository<Stop> _stopRepository;
         private readonly IGenericRepository<Calendar> _calendarRepository;
+        private readonly IGenericRepository<Stop> _stopRepository;
+        private readonly IGenericRepository<StopTime> _stopTimeRepository;
 
         public TimeTableService(IGenericRepository<StopTime> stopTimeRepository, IGenericRepository<Stop> stopRepository, IGenericRepository<Calendar> calendarRepository)
         {

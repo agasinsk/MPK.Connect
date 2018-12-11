@@ -1,6 +1,6 @@
 ﻿namespace MPK.Connect.Model.Business
 {
-    public class CoordinatesBounds
+    public class CoordinateBounds
     {
         public double MaxLatitude { get; set; }
 
@@ -8,11 +8,18 @@
         public double MinLatitude { get; set; }
         public double MinLongitude { get; set; }
 
-        public CoordinatesBounds()
+        public CoordinateBounds()
         {
         }
 
-        public CoordinatesBounds(double maxLatitude, double maxLongitude, double minLatitude, double minLongitude)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="maxLatitude"></param>
+        /// <param name="maxLongitude"></param>
+        /// <param name="minLatitude"></param>
+        /// <param name="minLongitude"></param>
+        public CoordinateBounds(double maxLatitude, double maxLongitude, double minLatitude, double minLongitude)
         {
             MaxLatitude = maxLatitude;
             MaxLongitude = maxLongitude;

@@ -33,7 +33,7 @@ namespace MPK.Connect.Service.Business.Graph
         /// </summary>
         /// <param name="graphBounds">Geographical limits for stop locations</param>
         /// <returns>Graph of stop times</returns>
-        public Graph<string, StopTimeInfo> GetGraph(CoordinatesBounds graphBounds = null)
+        public Graph<string, StopTimeInfo> GetGraph(CoordinateBounds graphBounds = null)
         {
             // Get stops matching the bounds
             var dbStops = GetStops(graphBounds);
@@ -78,7 +78,7 @@ namespace MPK.Connect.Service.Business.Graph
                     {
                         var cost = destination.DepartureTime - sourceStopTime.DepartureTime;
 
-                        // TODO: consider adding distance as a factor for additional cost
+                        // TODO: Consider adding distance as a factor for additional cost
                         //var distance = source.GetDistanceTo(destination);
                         //if (distance > 0.2 && cost.Minutes < 2)
                         //{
@@ -158,7 +158,7 @@ namespace MPK.Connect.Service.Business.Graph
         /// </summary>
         /// <param name="coordinateBounds">The geographical bounds</param>
         /// <returns>Stops within bounds</returns>
-        private Dictionary<string, StopDto> GetStops(CoordinatesBounds coordinateBounds = null)
+        private Dictionary<string, StopDto> GetStops(CoordinateBounds coordinateBounds = null)
         {
             var dbStopsQuery = _stopRepository.GetAll();
 
