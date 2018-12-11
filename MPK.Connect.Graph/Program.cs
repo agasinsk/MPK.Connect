@@ -66,9 +66,9 @@ namespace MPK.Connect.Graph
                 var stopTimeRepo = scope.Resolve<IGenericRepository<StopTime>>();
                 var stopRepo = scope.Resolve<IGenericRepository<Stop>>();
                 var calendarRepo = scope.Resolve<IGenericRepository<Calendar>>();
-                var graphMana = new GraphManager(stopRepo, stopTimeRepo, calendarRepo);
-                var graphBounds = new StopMapBounds(51.112457, 17.025346, 51.103965, 17.040524);
-                var graph = graphMana.GetGraph(graphBounds);
+                var graphBuilder = new GraphBuilder(stopRepo, stopTimeRepo, calendarRepo);
+                var graphBounds = new CoordinatesBounds(51.112457, 17.025346, 51.103965, 17.040524);
+                var graph = graphBuilder.GetGraph(graphBounds);
                 var source = graph.Nodes
                     .Where(s => s.Value.Data.Stop.Name == "Rynek")
                     .OrderBy(s => s.Value.Data.DepartureTime).First().Value;

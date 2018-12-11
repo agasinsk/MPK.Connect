@@ -15,13 +15,12 @@ namespace MPK.Connect.Model.Business
 
         public override double GetDistanceTo(LocalizableEntity<string> otherEntity)
         {
-            if (otherEntity is StopTimeInfo)
+            if (otherEntity is StopTimeInfo stopTimeInfo)
             {
-                var stopTimeInfo = otherEntity as StopTimeInfo;
                 return Stop.GetDistanceTo(stopTimeInfo.Stop);
             }
 
-            return 0;
+            return double.MaxValue;
         }
 
         public override string ToString()

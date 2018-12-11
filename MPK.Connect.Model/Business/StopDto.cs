@@ -1,19 +1,15 @@
-﻿using System;
-using MPK.Connect.Model.Helpers;
+﻿using MPK.Connect.Model.Helpers;
+using System;
 
 namespace MPK.Connect.Model.Business
 {
-    public class StopDto
+    public class StopDto : IdentifiableEntity<string>
     {
-        public string Id { get; set; }
-
         public string Code { get; set; }
 
-        public string Name { get; set; }
-
         public double Latitude { get; set; }
-
         public double Longitude { get; set; }
+        public string Name { get; set; }
 
         public double GetDistanceTo(StopDto destination)
         {

@@ -1,20 +1,18 @@
 ﻿namespace MPK.Connect.Model.Business
 {
-    public class StopMapBounds
+    public class CoordinatesBounds
     {
         public double MaxLatitude { get; set; }
 
-        public double MinLatitude { get; set; }
-
         public double MaxLongitude { get; set; }
-
+        public double MinLatitude { get; set; }
         public double MinLongitude { get; set; }
 
-        public StopMapBounds()
+        public CoordinatesBounds()
         {
         }
 
-        public StopMapBounds(double maxLatitude, double maxLongitude, double minLatitude, double minLongitude)
+        public CoordinatesBounds(double maxLatitude, double maxLongitude, double minLatitude, double minLongitude)
         {
             MaxLatitude = maxLatitude;
             MaxLongitude = maxLongitude;
