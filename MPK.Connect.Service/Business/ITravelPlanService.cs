@@ -4,6 +4,6 @@ namespace MPK.Connect.Service.Business
 {
     public interface ITravelPlanService
     {
-        string GetTravelPlan(Location sourceLocation, Location destinationLocation);
+        TravelPlan GetTravelPlan(Location sourceLocation, Location destinationLocation);
     }
 }

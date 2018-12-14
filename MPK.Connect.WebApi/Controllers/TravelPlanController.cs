@@ -17,7 +17,7 @@ namespace MPK.Connect.WebApp.Controllers
         }
 
         [HttpGet]
-        public string Get([FromBody] TravelLocations travelLocations)
+        public TravelPlan Get([FromBody] TravelLocations travelLocations)
         {
             return _travelPlanService.GetTravelPlan(travelLocations.Source, travelLocations.Destination);
         }
