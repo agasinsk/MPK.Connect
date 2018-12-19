@@ -67,24 +67,46 @@ namespace MPK.Connect.Graph
                 var stopRepo = scope.Resolve<IGenericRepository<Stop>>();
                 var calendarRepo = scope.Resolve<IGenericRepository<Calendar>>();
                 var graphBuilder = new GraphBuilder(stopRepo, stopTimeRepo, calendarRepo);
-                var graphBounds = new CoordinateLimits(51.112457, 17.025346, 51.103965, 17.040524);
-                var graph = graphBuilder.GetGraph(graphBounds);
+                var graphBounds = new CoordinateLimits(51.112457, 16.97820, 51.09294, 17.040524);
+                var graph = graphBuilder.GetGraph();
                 var source = graph.Nodes
-                    .Where(s => s.Value.Data.Stop.Name == "Rynek")
+                    .Where(s => s.Value.Data.Stop.Name == "FAT")
                     .OrderBy(s => s.Value.Data.DepartureTime).First().Value;
-                var destinations = graph.Nodes
-                    .Where(s => s.Value.Data.Stop.Name == "GALERIA DOMINIKAŃSKA" && s.Value.Data.DepartureTime > source.Data.DepartureTime)
-                    .OrderBy(s => s.Value.Data.DepartureTime)
-                    .Select(s => s.Value)
-                    .ToList();
 
-                var probablePath = graph.AStar(source.Data, "GALERIA DOMINIKAŃSKA");
+                var sources = graph.Nodes.Values
+                    .Where(s => s.Data.Stop.Name.Trim().ToLower() == "FAT".Trim().ToLower())
+                    .GroupBy(s => s.Data.Route)
+                    .ToDictionary(k => k.Key, v => v.OrderBy(st => st.Data.DepartureTime).First());
+
+                var destinations = graph.Nodes.Values
+                    .Where(s => s.Data.Stop.Name == "Galeria Dominikańska" && s.Data.DepartureTime > source.Data.DepartureTime)
+                    .OrderBy(s => s.Data.DepartureTime)
+                    .GroupBy(s => s.Data.Route)
+                    .ToDictionary(k => k.Key, v => v.OrderBy(st => st.Data.DepartureTime).First());
+
+                var probablepaths = new List<Path<StopTimeInfo>>();
+                foreach (var src in sources.Values)
+                {
+                    var path = graph.AStar(src.Data, "Galeria Dominikańska");
+                    if (path.Any())
+                    {
+                        probablepaths.Add(path);
+                    }
+                }
+
+                var probablePath = graph.AStar(source.Data, "Kwiska");
 
                 var paths = new List<Path<StopTimeInfo>>();
-                foreach (var destination in destinations)
+                foreach (var src in sources.Values)
                 {
-                    var path = graph.A_Star(source.Data, destination.Data);
-                    paths.Add(path);
+                    foreach (var destination in destinations.Values)
+                    {
+                        var path = graph.A_Star(src.Data, destination.Data);
+                        if (path.Any())
+                        {
+                            paths.Add(path);
+                        }
+                    }
                 }
 
                 paths = paths.Where(p => p.Any()).OrderBy(p => p.Cost).ToList();

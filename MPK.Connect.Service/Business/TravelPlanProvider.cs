@@ -13,10 +13,10 @@ namespace MPK.Connect.Service.Business
 {
     public class TravelPlanProvider : ITravelPlanProvider
     {
-        private readonly IPathFinder _pathFinder;
+        private readonly IStopPathFinder _pathFinder;
         private readonly IMapper _mapper;
 
-        public TravelPlanProvider(IPathFinder pathFinder, IMapper mapper)
+        public TravelPlanProvider(IStopPathFinder pathFinder, IMapper mapper)
         {
             _pathFinder = pathFinder ?? throw new ArgumentNullException(nameof(pathFinder));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -24,30 +24,18 @@ namespace MPK.Connect.Service.Business
 
         public IEnumerable<TravelPlan> GetTravelPlans(Graph<string, StopTimeInfo> graph, Location sourceLocation, Location destinationLocation)
         {
-            // Get source node
-            var source = graph.Nodes
-                .Where(s => s.Value.Data.Stop.Name.Trim().ToLower() == sourceLocation.Name.Trim().ToLower())
-                .OrderBy(s => s.Value.Data.DepartureTime).First().Value;
-
-            var sources = graph.Nodes
-                .Where(s => s.Value.Data.Stop.Name.Trim().ToLower() == sourceLocation.Name.Trim().ToLower())
-                .OrderBy(s => s.Value.Data.DepartureTime)
-                .Select(s => s.Value)
-                .ToList();
-
-            // Get all destinations
-            var destinations = graph.Nodes
-                .Where(s => s.Value.Data.Stop.Name.Trim().ToLower() == destinationLocation.Name.Trim().ToLower()
-                            && s.Value.Data.DepartureTime > source.Data.DepartureTime)
-                .OrderBy(s => s.Value.Data.DepartureTime)
-                .Select(s => s.Value)
+            // Get source nodes
+            var sources = graph.Nodes.Values
+                .Where(s => s.Data.Stop.Name.Trim().ToLower() == sourceLocation.Name.Trim().ToLower())
+                .GroupBy(s => s.Data.Route)
+                .Select(g => g.OrderBy(st => st.Data.DepartureTime).First())
                 .ToList();
 
             // Search for shortest path to subsequent destinations
             var paths = new ConcurrentBag<Path<StopTimeInfo>>();
-            Parallel.ForEach(destinations, destination =>
+            Parallel.ForEach(sources, source =>
             {
-                var path = _pathFinder.FindShortestPath(graph, source.Data, destination.Data);
+                var path = _pathFinder.FindShortestPath(graph, source.Data, destinationLocation.Name);
                 if (path.Any())
                 {
                     paths.Add(path);

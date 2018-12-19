@@ -86,7 +86,7 @@ namespace MPK.Connect.Service.Business.Graph
         public static Path<StopTimeInfo> AStar(this Graph<string, StopTimeInfo> graph, StopTimeInfo source, string destination)
         {
             var probableDestination =
-                graph.Nodes.Values.FirstOrDefault(n => n.Data.Stop.Name.Contains(destination))?.Data;
+                graph.Nodes.Values.FirstOrDefault(n => n.Data.Stop.Name.Trim().ToLower().Contains(destination.Trim().ToLower()))?.Data;
 
             // Initialize
             var nodesAlreadyExtended = new List<GraphNode<string, StopTimeInfo>>();
@@ -113,7 +113,7 @@ namespace MPK.Connect.Service.Business.Graph
             {
                 var nodeWithLowestCostId = nodesToExtend.Aggregate((l, r) => totalCostFromSource[l.Key] < totalCostFromSource[r.Key] ? l : r).Key;
                 var currentNode = graph.Nodes[nodeWithLowestCostId];
-                if (currentNode.Data.Stop.Name.Contains(destination))
+                if (currentNode.Data.Stop.Name.Trim().ToLower().Contains(destination.Trim().ToLower()))
                 {
                     // reconstruct path
                     var totalPath = new Path<StopTimeInfo>();

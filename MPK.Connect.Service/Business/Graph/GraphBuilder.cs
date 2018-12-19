@@ -73,10 +73,10 @@ namespace MPK.Connect.Service.Business.Graph
                 var stopTimesWithTheSameStopName = stopTimesGroup.Value.ToList();
                 foreach (var sourceStopTime in stopTimesWithTheSameStopName)
                 {
-                    var stopTimesAfterSource = stopTimesWithTheSameStopName.Where(st => sourceStopTime.DepartureTime < st.DepartureTime && st.StopId != sourceStopTime.StopId);
+                    var stopTimesAfterSource = stopTimesWithTheSameStopName.Where(st => sourceStopTime.DepartureTime + _minimumSwitchingTime < st.DepartureTime && st.StopId != sourceStopTime.StopId);
                     foreach (var destination in stopTimesAfterSource)
                     {
-                        var cost = destination.DepartureTime - sourceStopTime.DepartureTime;
+                        var cost = destination.DepartureTime - sourceStopTime.DepartureTime + _additionalStopChangeTime;
 
                         // TODO: Consider adding distance as a factor for additional cost
                         //var distance = source.GetDistanceTo(destination);
@@ -92,7 +92,7 @@ namespace MPK.Connect.Service.Business.Graph
         }
 
         /// <summary>
-        /// Groups stop times by stop id and creates edges corrensponding to switching the trips (routes)
+        /// Groups stop times by stop id and creates edges corresponding to switching the trips (routes)
         /// </summary>
         /// <param name="dbStopTimes">Stop times</param>
         /// <param name="graph">Graph</param>

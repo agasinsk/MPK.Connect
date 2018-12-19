@@ -20,10 +20,7 @@ namespace MPK.Connect.Service.Business
 
         public IEnumerable<TravelPlan> GetTravelPlans(Location sourceLocation, Location destinationLocation)
         {
-            // TODO: find a way to limit graph within coordinates\
-            var coordinateLimits = _coordinateLimitsProvider.GetCoordinateLimits(sourceLocation, destinationLocation);
-
-            var graph = _graphBuilder.GetGraph(coordinateLimits);
+            var graph = _graphBuilder.GetGraph();
 
             return _travelPlanProvider.GetTravelPlans(graph, sourceLocation, destinationLocation);
         }
