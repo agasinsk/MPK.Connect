@@ -1,7 +1,7 @@
-﻿using MPK.Connect.Model.Business;
-using MPK.Connect.Model.Graph;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using MPK.Connect.Model.Business;
+using MPK.Connect.Model.Graph;
 
 namespace MPK.Connect.Service.Business.Graph
 {
@@ -37,7 +37,7 @@ namespace MPK.Connect.Service.Business.Graph
                 var currentNodeWithMinimumDistance = nodesToExtend.Aggregate((l, r) => totalDistanceFromSource[l.Key] < totalDistanceFromSource[r.Key] ? l : r).Value;
 
                 // Reconstruct path if destination is reached
-                if (currentNodeWithMinimumDistance.Id == destination.Id)
+                if (currentNodeWithMinimumDistance.Id.Equals(destination.Id))
                 {
                     var pathIds = ReconstructPath(destination, cameFrom);
                     var nodes = pathIds.Select(n => graph.Nodes[n].Data).ToList();
