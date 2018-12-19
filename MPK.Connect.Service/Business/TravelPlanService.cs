@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
@@ -10,15 +11,17 @@ namespace MPK.Connect.Service.Business
     public class TravelPlanService : ITravelPlanService
     {
         private readonly IGraphBuilder _graphBuilder;
+        private readonly ITravelPlanProvider _travelPlanProvider;
         private readonly IGenericRepository<StopTime> _stopRepository;
 
-        public TravelPlanService(IGraphBuilder graphBuilder, IGenericRepository<StopTime> stopTimeRepository)
+        public TravelPlanService(IGraphBuilder graphBuilder, IGenericRepository<StopTime> stopTimeRepository, ITravelPlanProvider travelPlanProvider)
         {
             _graphBuilder = graphBuilder ?? throw new ArgumentNullException(nameof(graphBuilder));
-            _stopRepository = stopTimeRepository ?? throw new ArgumentNullException(nameof(stopTimeRepository)); ;
+            _stopRepository = stopTimeRepository ?? throw new ArgumentNullException(nameof(stopTimeRepository));
+            _travelPlanProvider = travelPlanProvider ?? throw new ArgumentNullException(nameof(travelPlanProvider));
         }
 
-        public TravelPlan GetTravelPlan(Location sourceLocation, Location destinationLocation)
+        public IEnumerable<TravelPlan> GetTravelPlans(Location sourceLocation, Location destinationLocation)
         {
             var graph = _graphBuilder.GetGraph();
 
@@ -27,28 +30,10 @@ namespace MPK.Connect.Service.Business
                 n.Data.Stop.Name.Trim().ToLower() == sourceLocation.Name.Trim().ToLower());
 
             var destination = graph.Nodes.Values.FirstOrDefault(n =>
-                n.Data.Stop.Name.Trim().ToLower() == destinationLocation.Name.Trim().ToLower());
+                String.Equals(n.Data.Stop.Name.Trim(), destinationLocation.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
 
             // TODO: Add new path provider/manager/whatever (maybe paralell for many destinations)
-            var path = graph.A_Star(source.Data, destination.Data);
-
-            //
-            var now = DateTime.Now;
-            var startHour = path.FirstOrDefault().DepartureTime;
-            var start = new DateTime(now.Year, now.Month, now.Day, startHour.Hours, startHour.Minutes, startHour.Seconds);
-            var endHour = path.FirstOrDefault().DepartureTime;
-            var end = new DateTime(now.Year, now.Month, now.Day, endHour.Hours, endHour.Minutes, endHour.Seconds);
-
-            var travelPlan = new TravelPlan
-            {
-                Source = sourceLocation,
-                Destination = destinationLocation,
-                Id = new Guid().ToString(),
-                StartTime = start,
-                EndTime = end,
-                Stops = path
-            };
-            return travelPlan;
+            return _travelPlanProvider.GetTravelPlans(graph, sourceLocation, destinationLocation);
         }
     }
 }

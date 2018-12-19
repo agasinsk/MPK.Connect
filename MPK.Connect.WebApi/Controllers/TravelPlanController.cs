@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
@@ -17,11 +18,11 @@ namespace MPK.Connect.WebApp.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(TravelPlan))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<TravelPlan>))]
         [ProducesResponseType(400)]
-        public TravelPlan Get([FromBody] TravelLocations travelLocations)
+        public IEnumerable<TravelPlan> Get([FromBody] TravelLocations travelLocations)
         {
-            return _travelPlanService.GetTravelPlan(travelLocations.Source, travelLocations.Destination);
+            return _travelPlanService.GetTravelPlans(travelLocations.Source, travelLocations.Destination);
         }
     }
 }
