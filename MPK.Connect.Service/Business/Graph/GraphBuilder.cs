@@ -31,12 +31,12 @@ namespace MPK.Connect.Service.Business.Graph
         /// Builds graph based on specified geographical limits and time bounds
         /// Nodes are StopTime entities, the edges are connections between StopTimes
         /// </summary>
-        /// <param name="graphBounds">Geographical limits for stop locations</param>
+        /// <param name="graphLimits">Geographical limits for stop locations</param>
         /// <returns>Graph of stop times</returns>
-        public Graph<string, StopTimeInfo> GetGraph(CoordinateBounds graphBounds = null)
+        public Graph<string, StopTimeInfo> GetGraph(CoordinateLimits graphLimits = null)
         {
             // Get stops matching the bounds
-            var dbStops = GetStops(graphBounds);
+            var dbStops = GetStops(graphLimits);
 
             // Get calendar matching current day of the week
             var currentCalendar = GetCurrentCalendar();
@@ -156,19 +156,19 @@ namespace MPK.Connect.Service.Business.Graph
         /// <summary>
         /// Get stops within the provided bounds
         /// </summary>
-        /// <param name="coordinateBounds">The geographical bounds</param>
+        /// <param name="coordinateLimits">The geographical bounds</param>
         /// <returns>Stops within bounds</returns>
-        private Dictionary<string, StopDto> GetStops(CoordinateBounds coordinateBounds = null)
+        private Dictionary<string, StopDto> GetStops(CoordinateLimits coordinateLimits = null)
         {
             var dbStopsQuery = _stopRepository.GetAll();
 
-            if (coordinateBounds != null)
+            if (coordinateLimits != null)
             {
                 dbStopsQuery = dbStopsQuery
-                    .Where(s => s.Latitude < coordinateBounds.MaxLatitude &&
-                                s.Latitude > coordinateBounds.MinLatitude &&
-                                s.Longitude > coordinateBounds.MaxLongitude &&
-                                s.Longitude < coordinateBounds.MinLongitude);
+                    .Where(s => s.Latitude < coordinateLimits.UpperLeftLatitude &&
+                                s.Latitude > coordinateLimits.LowerRightLatitude &&
+                                s.Longitude > coordinateLimits.UpperLeftLongitude &&
+                                s.Longitude < coordinateLimits.LowerRightLongitude);
             }
 
             return dbStopsQuery

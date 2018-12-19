@@ -5,6 +5,7 @@ using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Business.Profiles
 {
@@ -33,8 +34,10 @@ namespace MPK.Connect.Service.Business.Profiles
             CreateMap<Path<StopTimeInfo>, TravelPlan>()
                 .ForMember(dst => dst.Destination, tp => tp.MapFrom(src => src.Any() ? src.Last().Stop : null))
                 .ForMember(dst => dst.Source, tp => tp.MapFrom(src => src.Any() ? src.First().Stop : null))
-                .ForMember(dst => dst.StartTime, tp => tp.MapFrom(src => src.Any() ? src.First().DepartureTime : TimeSpan.Zero))
-                .ForMember(dst => dst.EndTime, tp => tp.MapFrom(src => src.Any() ? src.Last().DepartureTime : TimeSpan.Zero))
+                .ForMember(dst => dst.StartTime, tp => tp.MapFrom(src => src.Any() ? src.First().DepartureTime.ToDateTime() : DateTime.MinValue))
+                .ForMember(dst => dst.EndTime, tp => tp.MapFrom(src => src.Any() ? src.Last().DepartureTime.ToDateTime() : DateTime.MinValue))
+                .ForMember(dst => dst.Duration, tp => tp.MapFrom(src => src.Cost))
+                .ForMember(dst => dst.RouteIds, tp => tp.MapFrom(src => src.Select(sti => sti.Route).Distinct()))
                 .ForMember(dst => dst.Stops, tp => tp.MapFrom(src => src))
                 .ForAllOtherMembers(dst => dst.Ignore());
         }

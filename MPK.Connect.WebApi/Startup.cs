@@ -69,6 +69,7 @@ namespace MPK.Connect.WebApp
             services.AddTransient<IGraphBuilder, GraphBuilder>();
             services.AddTransient<IPathFinder, AStarPathFinder>();
             services.AddTransient<ITravelPlanProvider, TravelPlanProvider>();
+            services.AddTransient<ICoordinateLimitsProvider, CoordinateLimitsProvider>();
             services.AddTransient(typeof(IGenericRepository<>), typeof(BaseRepository<>));
 
             services.AddSingleton(new LoggerFactory())

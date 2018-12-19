@@ -29,6 +29,12 @@ namespace MPK.Connect.Service.Business
                 .Where(s => s.Value.Data.Stop.Name.Trim().ToLower() == sourceLocation.Name.Trim().ToLower())
                 .OrderBy(s => s.Value.Data.DepartureTime).First().Value;
 
+            var sources = graph.Nodes
+                .Where(s => s.Value.Data.Stop.Name.Trim().ToLower() == sourceLocation.Name.Trim().ToLower())
+                .OrderBy(s => s.Value.Data.DepartureTime)
+                .Select(s => s.Value)
+                .ToList();
+
             // Get all destinations
             var destinations = graph.Nodes
                 .Where(s => s.Value.Data.Stop.Name.Trim().ToLower() == destinationLocation.Name.Trim().ToLower()
@@ -37,7 +43,7 @@ namespace MPK.Connect.Service.Business
                 .Select(s => s.Value)
                 .ToList();
 
-            // Search for shortest path to various destinations
+            // Search for shortest path to subsequent destinations
             var paths = new ConcurrentBag<Path<StopTimeInfo>>();
             Parallel.ForEach(destinations, destination =>
             {

@@ -1,4 +1,8 @@
-﻿using Autofac;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -9,10 +13,6 @@ using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.Graph;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace MPK.Connect.Graph
 {
@@ -67,7 +67,7 @@ namespace MPK.Connect.Graph
                 var stopRepo = scope.Resolve<IGenericRepository<Stop>>();
                 var calendarRepo = scope.Resolve<IGenericRepository<Calendar>>();
                 var graphBuilder = new GraphBuilder(stopRepo, stopTimeRepo, calendarRepo);
-                var graphBounds = new CoordinateBounds(51.112457, 17.025346, 51.103965, 17.040524);
+                var graphBounds = new CoordinateLimits(51.112457, 17.025346, 51.103965, 17.040524);
                 var graph = graphBuilder.GetGraph(graphBounds);
                 var source = graph.Nodes
                     .Where(s => s.Value.Data.Stop.Name == "Rynek")
