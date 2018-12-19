@@ -2,7 +2,7 @@
 {
     public class TravelLocations
     {
-        public Location Destination { get; }
-        public Location Source { get; }
+        public Location Destination { get; set; }
+        public Location Source { get; set; }
     }
 }

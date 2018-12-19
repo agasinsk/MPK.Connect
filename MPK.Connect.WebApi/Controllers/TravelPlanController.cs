@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
-using System;
 
 namespace MPK.Connect.WebApp.Controllers
 {
@@ -17,6 +17,8 @@ namespace MPK.Connect.WebApp.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(TravelPlan))]
+        [ProducesResponseType(400)]
         public TravelPlan Get([FromBody] TravelLocations travelLocations)
         {
             return _travelPlanService.GetTravelPlan(travelLocations.Source, travelLocations.Destination);

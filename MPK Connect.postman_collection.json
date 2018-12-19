@@ -1,0 +1,237 @@
+{
+	"info": {
+		"_postman_id": "140fc471-2159-4242-bdb2-bf16f8ff4a70",
+		"name": "MPK Connect",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Stop",
+			"item": [
+				{
+					"name": "Get by name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://localhost:44396/api/Stop/GetByName?stopName=Rynek",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44396",
+							"path": [
+								"api",
+								"Stop",
+								"GetByName"
+							],
+							"query": [
+								{
+									"key": "stopName",
+									"value": "Rynek"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://localhost:44396/api/Stop/GetById?stopId=999",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44396",
+							"path": [
+								"api",
+								"Stop",
+								"GetById"
+							],
+							"query": [
+								{
+									"key": "stopId",
+									"value": "999"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://localhost:44396/api/Stop/GetAll",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44396",
+							"path": [
+								"api",
+								"Stop",
+								"GetAll"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TimeTable",
+			"item": [
+				{
+					"name": "Get time table for stop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://localhost:44396/api/TimeTable/1064",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44396",
+							"path": [
+								"api",
+								"TimeTable",
+								"1064"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TravelPlan",
+			"item": [
+				{
+					"name": "Get travel plan",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"source\":\t{\n\t\t\"name\":\t\"Pl. Grunwaldzki\"\n\t\t\n\t},\n\t\"destination\":{\n\t\t\"name\": \"Kwiska\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "https://localhost:44396/api/TravelPlan",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44396",
+							"path": [
+								"api",
+								"TravelPlan"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "StopTime",
+			"item": [
+				{
+					"name": "Update stop time",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\n \t\"stopId\": \"1428\",\n \t\"tripId\": \"6_6515598\",\n \t\"departureTime\": \"11:43:30\"\n }"
+						},
+						"url": {
+							"raw": "https://localhost:44396/api/StopTime",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44396",
+							"path": [
+								"api",
+								"StopTime"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete stop time",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\n \t\"stopId\": \"1428\",\n \t\"tripId\": \"6_6515598\",\n \t\"departureTime\": \"11:43:00\"\n }"
+						},
+						"url": {
+							"raw": "https://localhost:44396/api/StopTime",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "44396",
+							"path": [
+								"api",
+								"StopTime"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

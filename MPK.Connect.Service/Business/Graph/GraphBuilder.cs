@@ -1,12 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MPK.Connect.Service.Business.Graph
 {
@@ -15,7 +15,7 @@ namespace MPK.Connect.Service.Business.Graph
         private readonly TimeSpan _additionalStopChangeTime = TimeSpan.FromMinutes(1);
         private readonly TimeSpan _additionalTransferTime = TimeSpan.FromMinutes(1);
         private readonly IGenericRepository<Calendar> _calendarRepository;
-        private readonly TimeSpan _maxStopTimeDepartureTime = TimeSpan.FromHours(1);
+        private readonly TimeSpan _maxStopTimeDepartureTime = TimeSpan.FromHours(0.5);
         private readonly TimeSpan _minimumSwitchingTime = TimeSpan.FromMinutes(1);
         private readonly IGenericRepository<Stop> _stopRepository;
         private readonly IGenericRepository<StopTime> _stopTimeRepository;
