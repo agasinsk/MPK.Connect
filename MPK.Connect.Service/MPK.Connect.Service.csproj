@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MPK.Connect.DataAccess\MPK.Connect.DataAccess.csproj" />
     <ProjectReference Include="..\MPK.Connect.Model\MPK.Connect.Model.csproj" />
   </ItemGroup>

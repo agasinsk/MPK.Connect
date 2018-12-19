@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,8 @@ namespace MPK.Connect.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddAutoMapper();
+
             services.AddTransient<IStopService, StopService>();
             services.AddTransient<ITimeTableService, TimeTableService>();
             services.AddTransient<IStopTimeService, StopTimeService>();
