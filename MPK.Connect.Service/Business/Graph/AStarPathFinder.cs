@@ -16,7 +16,7 @@ namespace MPK.Connect.Service.Business.Graph
         /// <param name="source">Source node</param>
         /// <param name="destination">Destination</param>
         /// <returns>Shortest path between source and destination</returns>
-        public IEnumerable<T> FindShortestPath<TId, T>(Graph<TId, T> graph, T source, T destination)
+        public Path<T> FindShortestPath<TId, T>(Graph<TId, T> graph, T source, T destination)
             where TId : class
             where T : LocalizableEntity<TId>
         {

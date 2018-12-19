@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
@@ -22,10 +24,12 @@ namespace MPK.Connect.Service.Business
 
         public IEnumerable<TravelPlan> GetTravelPlans(Graph<string, StopTimeInfo> graph, Location sourceLocation, Location destinationLocation)
         {
+            // Get source node
             var source = graph.Nodes
                 .Where(s => s.Value.Data.Stop.Name.Trim().ToLower() == sourceLocation.Name.Trim().ToLower())
                 .OrderBy(s => s.Value.Data.DepartureTime).First().Value;
 
+            // Get all destinations
             var destinations = graph.Nodes
                 .Where(s => s.Value.Data.Stop.Name.Trim().ToLower() == destinationLocation.Name.Trim().ToLower()
                             && s.Value.Data.DepartureTime > source.Data.DepartureTime)
@@ -33,16 +37,18 @@ namespace MPK.Connect.Service.Business
                 .Select(s => s.Value)
                 .ToList();
 
-            var paths = new List<Path<StopTimeInfo>>();
-            foreach (var destination in destinations)
+            // Search for shortest path to various destinations
+            var paths = new ConcurrentBag<Path<StopTimeInfo>>();
+            Parallel.ForEach(destinations, destination =>
             {
-                var path = graph.A_Star(source.Data, destination.Data);
-                paths.Add(path);
-            }
+                var path = _pathFinder.FindShortestPath(graph, source.Data, destination.Data);
+                if (path.Any())
+                {
+                    paths.Add(path);
+                }
+            });
 
-            paths = paths.Where(p => p.Any()).OrderBy(p => p.Cost).ToList();
-            var mappedTravelPlans = _mapper.Map<List<TravelPlan>>(paths);
-            return mappedTravelPlans;
+            return _mapper.Map<List<TravelPlan>>(paths.OrderBy(p => p.Cost));
         }
     }
 }

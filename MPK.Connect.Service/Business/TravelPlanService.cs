@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business.TravelPlan;
@@ -23,16 +22,9 @@ namespace MPK.Connect.Service.Business
 
         public IEnumerable<TravelPlan> GetTravelPlans(Location sourceLocation, Location destinationLocation)
         {
+            // TODO: find a way to limit graph within coordinates
             var graph = _graphBuilder.GetGraph();
 
-            // TODO: Select best fit for source and destination location
-            var source = graph.Nodes.Values.FirstOrDefault(n =>
-                n.Data.Stop.Name.Trim().ToLower() == sourceLocation.Name.Trim().ToLower());
-
-            var destination = graph.Nodes.Values.FirstOrDefault(n =>
-                String.Equals(n.Data.Stop.Name.Trim(), destinationLocation.Name.Trim(), StringComparison.CurrentCultureIgnoreCase));
-
-            // TODO: Add new path provider/manager/whatever (maybe paralell for many destinations)
             return _travelPlanProvider.GetTravelPlans(graph, sourceLocation, destinationLocation);
         }
     }
