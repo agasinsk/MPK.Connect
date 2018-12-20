@@ -10,6 +10,11 @@ namespace MPK.Connect.Model.Business
         public double Longitude { get; set; }
         public string Name { get; set; }
 
+        public override string ToString()
+        {
+            return $"{Name}:{Code}";
+        }
+
         public double GetDistanceTo(StopDto destination)
         {
             if (destination == null || destination == this)

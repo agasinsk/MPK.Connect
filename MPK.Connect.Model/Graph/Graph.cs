@@ -78,6 +78,11 @@ namespace MPK.Connect.Model.Graph
             return Nodes.ContainsKey(value.Id);
         }
 
+        public IEnumerable<GraphNode<TId, T>> GetNeighbors(TId sourceId)
+        {
+            return Nodes[sourceId].Neighbors.Select(n => Nodes[n.DestinationId]).ToList();
+        }
+
         public IEnumerator<T> GetEnumerator()
         {
             return Nodes.Select(n => n.Value.Data).GetEnumerator();

@@ -69,10 +69,55 @@ namespace MPK.Connect.Graph
                 var calendarRepo = scope.Resolve<IGenericRepository<Calendar>>();
                 var graphBuilder = new GraphBuilder(stopRepo, stopTimeRepo, calendarRepo);
                 var graphBounds = new CoordinateLimits(51.112457, 16.97820, 51.09294, 17.040524);
+
                 var graph = graphBuilder.GetGraph();
+
+                var srcs = graph.Nodes.Values
+                    .Where(s => s.Data.StopDto.Name.TrimToLower() == "FAT".TrimToLower())
+                    .GroupBy(s => s.Data.StopDto)
+                    .ToDictionary(k => k.Key, g => g.Select(s => s.Id).ToList());
+
+                var end = graph.Nodes.Values.First(s => s.Data.StopDto.Name.TrimToLower() == "Galeria Dominikańska".TrimToLower()).Data.StopDto;
+
+                var distanceFromStopToDestination = srcs.First().Key.GetDistanceTo(end);
+                var distancesToStops = new Dictionary<string, double>();
+                foreach (var stop in srcs)
+                {
+                    foreach (var stoptimeid in stop.Value)
+                    {
+                        var neighborStops = graph.GetNeighbors(stoptimeid)
+                            .Select(n => n.Data.StopDto)
+                            .Where(n => n.Name.TrimToLower() != "FAT".TrimToLower())
+                            .ToList();
+
+                        foreach (var neighborStop in neighborStops)
+                        {
+                            var distanceToDestination = end.GetDistanceTo(neighborStop);
+                            if (distancesToStops.ContainsKey(stop.Key.Id) && distanceToDestination < distancesToStops[stop.Key.Id])
+                            {
+                                distancesToStops[stop.Key.Id] = distanceToDestination;
+                            }
+                            else
+                            {
+                                distancesToStops[stop.Key.Id] = distanceToDestination;
+                            }
+                        }
+                    }
+                }
+
+                var closestStops = distancesToStops.Where(s => s.Value < distanceFromStopToDestination).OrderBy(s => s.Value).ToList();
+                var closestStopsKeys = distancesToStops.Where(s => s.Value < distanceFromStopToDestination).OrderBy(s => s.Value).Select(k => k.Key).ToList();
+
+                var filteredSrcs = graph.Nodes.Values
+                    .Where(s => closestStopsKeys.Contains(s.Data.StopId))
+                    .GroupBy(s => s.Data.StopId)
+                    .Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First())
+                    //.SelectMany(g => g.GroupBy(st => st.Data.Route).Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First()))
+                    .ToList();
+
                 var source = graph.Nodes
-                    .Where(s => s.Value.Data.StopDto.Name == "FAT")
-                    .OrderBy(s => s.Value.Data.DepartureTime).First().Value;
+                   .Where(s => s.Value.Data.StopDto.Name == "FAT")
+                   .OrderBy(s => s.Value.Data.DepartureTime).First().Value;
 
                 var sources = graph.Nodes.Values
                     .Where(s => s.Data.StopDto.Name.TrimToLower() == "FAT".TrimToLower())
