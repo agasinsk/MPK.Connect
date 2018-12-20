@@ -24,7 +24,7 @@ namespace MPK.Connect.Service.Business
 
         public IEnumerable<TravelPlan> GetTravelPlans(Graph<string, StopTimeInfo> graph, Location sourceLocation, Location destinationLocation)
         {
-            // Get source nodes
+            // Get source nodes by
             var sources = graph.Nodes.Values
                 .Where(s => s.Data.Stop.Name.Trim().ToLower() == sourceLocation.Name.Trim().ToLower())
                 .GroupBy(s => s.Data.Route)

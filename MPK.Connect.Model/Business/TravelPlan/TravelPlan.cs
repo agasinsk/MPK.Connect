@@ -7,10 +7,10 @@ namespace MPK.Connect.Model.Business.TravelPlan
     {
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public double Duration { get; set; }
+        public IEnumerable<string> RouteIds { get; set; }
         public StopDto Source { get; set; }
         public StopDto Destination { get; set; }
-        public IEnumerable<string> RouteIds { get; set; }
-        public double Duration { get; set; }
         public IEnumerable<StopTimeInfo> Stops { get; set; }
     }
 }

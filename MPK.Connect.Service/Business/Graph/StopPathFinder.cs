@@ -11,7 +11,7 @@ namespace MPK.Connect.Service.Business.Graph
         {
             var probableDestination = graph.Nodes.Values
                     .Where(n => n.Data.Stop.Name.Trim().ToLower().Contains(destinationName.Trim().ToLower()) && n.Data.DepartureTime > source.DepartureTime)
-                .OrderByDescending(n => n.Data.DepartureTime > source.DepartureTime)
+                .OrderByDescending(n => n.Data.DepartureTime)
                 .FirstOrDefault().Data;
 
             // Initialize extended list

@@ -15,7 +15,7 @@ namespace MPK.Connect.Service.Business.Graph
         private readonly TimeSpan _additionalStopChangeTime = TimeSpan.FromMinutes(1);
         private readonly TimeSpan _additionalTransferTime = TimeSpan.FromMinutes(1);
         private readonly IGenericRepository<Calendar> _calendarRepository;
-        private readonly TimeSpan _maxStopTimeDepartureTime = TimeSpan.FromHours(0.5);
+        private readonly TimeSpan _maxStopTimeDepartureTime = TimeSpan.FromHours(1);
         private readonly TimeSpan _minimumSwitchingTime = TimeSpan.FromMinutes(1);
         private readonly IGenericRepository<Stop> _stopRepository;
         private readonly IGenericRepository<StopTime> _stopTimeRepository;
@@ -76,7 +76,7 @@ namespace MPK.Connect.Service.Business.Graph
                     var stopTimesAfterSource = stopTimesWithTheSameStopName.Where(st => sourceStopTime.DepartureTime + _minimumSwitchingTime < st.DepartureTime && st.StopId != sourceStopTime.StopId);
                     foreach (var destination in stopTimesAfterSource)
                     {
-                        var cost = destination.DepartureTime - sourceStopTime.DepartureTime + _additionalStopChangeTime;
+                        var cost = destination.DepartureTime - sourceStopTime.DepartureTime;
 
                         // TODO: Consider adding distance as a factor for additional cost
                         //var distance = source.GetDistanceTo(destination);
@@ -205,6 +205,7 @@ namespace MPK.Connect.Service.Business.Graph
                     StopId = st.StopId,
                     TripId = st.TripId,
                     Route = st.Trip.Route.ShortName,
+                    RouteType = st.Trip.Route.Type,
                     DepartureTime = st.DepartureTime,
                     ArrivalTime = st.ArrivalTime,
                     StopSequence = st.StopSequence

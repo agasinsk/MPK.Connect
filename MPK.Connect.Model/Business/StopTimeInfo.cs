@@ -1,4 +1,7 @@
 ﻿using System;
+using MPK.Connect.Model.Enums;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace MPK.Connect.Model.Business
 {
@@ -8,6 +11,10 @@ namespace MPK.Connect.Model.Business
         public TimeSpan DepartureTime { get; set; }
         public override string Id => $"{StopId}|{TripId}|{DepartureTime}";
         public string Route { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public RouteTypes RouteType { get; set; }
+
         public StopDto Stop { get; set; }
         public string StopId { get; set; }
         public int StopSequence { get; set; }
