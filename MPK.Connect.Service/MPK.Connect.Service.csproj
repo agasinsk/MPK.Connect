@@ -6,6 +6,11 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="morelinq" Version="3.0.0" />
+    <PackageReference Include="MoreLinq.Source.MoreEnumerable.DistinctBy" Version="1.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
