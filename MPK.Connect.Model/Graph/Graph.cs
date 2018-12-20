@@ -1,23 +1,18 @@
-﻿using MPK.Connect.Model.Helpers;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MPK.Connect.Model.Helpers;
 
 namespace MPK.Connect.Model.Graph
 {
     public class Graph<TId, T> : IEnumerable<T> where T : IdentifiableEntity<TId> where TId : class
     {
-        public Dictionary<TId, GraphNode<TId, T>>.KeyCollection Keys => Nodes.Keys;
         public Dictionary<TId, GraphNode<TId, T>> Nodes { get; }
-
-        public GraphNode<TId, T> this[TId key]
-        {
-            get => Nodes[key];
-            set => Nodes[key] = value;
-        }
+        public Dictionary<TId, GraphNode<TId, T>>.KeyCollection Keys => Nodes.Keys;
 
         public Graph()
         {
+            Nodes = new Dictionary<TId, GraphNode<TId, T>>();
         }
 
         public Graph(Dictionary<TId, GraphNode<TId, T>> nodeSet)
@@ -29,6 +24,12 @@ namespace MPK.Connect.Model.Graph
         {
             var nodes = nodeSet.ToDictionary(k => k.Key, v => new GraphNode<TId, T>(v.Value));
             Nodes = nodes;
+        }
+
+        public GraphNode<TId, T> this[TId key]
+        {
+            get => Nodes[key];
+            set => Nodes[key] = value;
         }
 
         public void AddDirectedEdge(T source, T destination, double edgeCost = 0)
@@ -82,11 +83,6 @@ namespace MPK.Connect.Model.Graph
             return Nodes.Select(n => n.Value.Data).GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
         public bool Remove(T valueToRemove)
         {
             // first remove the node sourceNode the nodeset
@@ -107,6 +103,11 @@ namespace MPK.Connect.Model.Graph
             }
 
             return true;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

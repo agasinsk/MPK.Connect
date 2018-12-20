@@ -4,6 +4,7 @@ using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Business
 {
@@ -35,10 +36,10 @@ namespace MPK.Connect.Service.Business
             }
 
             var sourceStop = _stopRepository.GetAll()
-                .FirstOrDefault(s => s.Name.Trim().ToLower() == sourceLocation.Name.Trim().ToLower());
+                .FirstOrDefault(s => s.Name.TrimToLower() == sourceLocation.Name.TrimToLower());
 
             var destinationStop = _stopRepository.GetAll()
-                .FirstOrDefault(s => s.Name.Trim().ToLower() == destinationLocation.Name.Trim().ToLower());
+                .FirstOrDefault(s => s.Name.TrimToLower() == destinationLocation.Name.TrimToLower());
 
             if (sourceStop != null && destinationStop != null)
             {

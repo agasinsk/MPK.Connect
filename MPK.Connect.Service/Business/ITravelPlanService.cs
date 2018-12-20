@@ -5,6 +5,6 @@ namespace MPK.Connect.Service.Business
 {
     public interface ITravelPlanService
     {
-        IEnumerable<TravelPlan> GetTravelPlans(Location sourceLocation, Location destinationLocation);
+        IEnumerable<TravelPlan> GetTravelPlans(Location source, Location destination);
     }
 }

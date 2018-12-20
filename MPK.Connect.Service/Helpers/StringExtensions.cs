@@ -13,5 +13,10 @@
             var data = dataString.Split(',');
             return new EntityData(data);
         }
+
+        public static string TrimToLower(this string source)
+        {
+            return source.Trim().ToLower();
+        }
     }
 }

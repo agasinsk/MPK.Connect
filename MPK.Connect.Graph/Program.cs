@@ -13,6 +13,7 @@ using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.Graph;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Graph
 {
@@ -74,7 +75,7 @@ namespace MPK.Connect.Graph
                     .OrderBy(s => s.Value.Data.DepartureTime).First().Value;
 
                 var sources = graph.Nodes.Values
-                    .Where(s => s.Data.Stop.Name.Trim().ToLower() == "FAT".Trim().ToLower())
+                    .Where(s => s.Data.Stop.Name.TrimToLower() == "FAT".TrimToLower())
                     .GroupBy(s => s.Data.Route)
                     .ToDictionary(k => k.Key, v => v.OrderBy(st => st.Data.DepartureTime).First());
 

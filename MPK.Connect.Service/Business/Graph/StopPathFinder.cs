@@ -2,6 +2,7 @@
 using System.Linq;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Graph;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Business.Graph
 {
@@ -10,9 +11,10 @@ namespace MPK.Connect.Service.Business.Graph
         public Path<StopTimeInfo> FindShortestPath(Graph<string, StopTimeInfo> graph, StopTimeInfo source, string destinationName)
         {
             var probableDestination = graph.Nodes.Values
-                    .Where(n => n.Data.Stop.Name.Trim().ToLower().Contains(destinationName.Trim().ToLower()) && n.Data.DepartureTime > source.DepartureTime)
+                    .Where(n => n.Data.Stop.Name.TrimToLower().Contains(destinationName.TrimToLower()) &&
+                                n.Data.DepartureTime > source.DepartureTime)
                 .OrderByDescending(n => n.Data.DepartureTime)
-                .FirstOrDefault().Data;
+                .FirstOrDefault()?.Data;
 
             // Initialize extended list
             var nodesAlreadyExtended = new List<GraphNode<string, StopTimeInfo>>();
@@ -40,7 +42,7 @@ namespace MPK.Connect.Service.Business.Graph
                 var currentNodeWithMinimumDistance = nodesToExtend.Aggregate((l, r) => totalDistanceFromSource[l.Key] < totalDistanceFromSource[r.Key] ? l : r).Value;
 
                 // Reconstruct path if destination is reached
-                if (currentNodeWithMinimumDistance.Data.Stop.Name.Trim().ToLower().Contains(destinationName.Trim().ToLower()) || currentNodeWithMinimumDistance.Id.Equals(probableDestination.Id))
+                if (currentNodeWithMinimumDistance.Data.Stop.Name.TrimToLower().Contains(destinationName.TrimToLower()) || currentNodeWithMinimumDistance.Id.Equals(probableDestination?.Id))
                 {
                     // reconstruct path
                     var totalPath = new Path<StopTimeInfo>();
