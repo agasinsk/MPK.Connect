@@ -27,18 +27,22 @@ namespace MPK.Connect.Service.Business
 
             var graph = _graphBuilder.GetGraph();
 
-            if (string.IsNullOrEmpty(source.Name))
+            if (string.IsNullOrEmpty(source.Name) || string.IsNullOrEmpty(destination.Name))
             {
-                var stops = graph.Nodes.Select(st => st.Value.Data.Stop).DistinctBy(s => s.Id).ToList();
-                var sourceStop = stops.Aggregate((l, r) => l.GetDistanceTo(source.Latitude.Value, source.Longitude.Value) < r.GetDistanceTo(source.Latitude.Value, source.Longitude.Value) ? l : r);
-                source.Name = sourceStop.Name;
-            }
-
-            if (string.IsNullOrEmpty(destination.Name))
-            {
-                var stops = graph.Nodes.Select(st => st.Value.Data.Stop).DistinctBy(s => s.Id).ToList();
-                var destinationStop = stops.Aggregate((l, r) => l.GetDistanceTo(destination.Latitude.Value, destination.Longitude.Value) < r.GetDistanceTo(destination.Latitude.Value, destination.Longitude.Value) ? l : r);
-                destination.Name = destinationStop.Name;
+                var stops = graph.Nodes.Select(st => st.Value.Data.StopDto).DistinctBy(s => s.Id).ToList();
+                if (string.IsNullOrEmpty(source.Name))
+                {
+                    var sourceStop = stops.Aggregate((l, r) =>
+                        l.GetDistanceTo(source.Latitude.Value, source.Longitude.Value) <
+                        r.GetDistanceTo(source.Latitude.Value, source.Longitude.Value)
+                            ? l : r);
+                    source.Name = sourceStop.Name;
+                }
+                if (string.IsNullOrEmpty(destination.Name))
+                {
+                    var destinationStop = stops.Aggregate((l, r) => l.GetDistanceTo(destination.Latitude.Value, destination.Longitude.Value) < r.GetDistanceTo(destination.Latitude.Value, destination.Longitude.Value) ? l : r);
+                    destination.Name = destinationStop.Name;
+                }
             }
 
             return _travelPlanProvider.GetTravelPlans(graph, source, destination);

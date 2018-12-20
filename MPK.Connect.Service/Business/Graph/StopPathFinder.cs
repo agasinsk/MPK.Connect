@@ -11,7 +11,7 @@ namespace MPK.Connect.Service.Business.Graph
         public Path<StopTimeInfo> FindShortestPath(Graph<string, StopTimeInfo> graph, StopTimeInfo source, string destinationName)
         {
             var probableDestination = graph.Nodes.Values
-                    .Where(n => n.Data.Stop.Name.TrimToLower().Contains(destinationName.TrimToLower()) &&
+                    .Where(n => n.Data.StopDto.Name.TrimToLower().Contains(destinationName.TrimToLower()) &&
                                 n.Data.DepartureTime > source.DepartureTime)
                 .OrderByDescending(n => n.Data.DepartureTime)
                 .FirstOrDefault()?.Data;
@@ -41,25 +41,11 @@ namespace MPK.Connect.Service.Business.Graph
                 // Get node with minimum distance
                 var currentNodeWithMinimumDistance = nodesToExtend.Aggregate((l, r) => totalDistanceFromSource[l.Key] < totalDistanceFromSource[r.Key] ? l : r).Value;
 
-                // Reconstruct path if destination is reached
-                if (currentNodeWithMinimumDistance.Data.Stop.Name.TrimToLower().Contains(destinationName.TrimToLower()) || currentNodeWithMinimumDistance.Id.Equals(probableDestination?.Id))
+                // If destination is reached
+                if (currentNodeWithMinimumDistance.Data.StopDto.Name.TrimToLower().Contains(destinationName.TrimToLower()) || currentNodeWithMinimumDistance.Id.Equals(probableDestination?.Id))
                 {
-                    // reconstruct path
-                    var totalPath = new Path<StopTimeInfo>();
-
-                    var currentNodeId = currentNodeWithMinimumDistance.Id;
-                    var destinationNode = graph.Nodes[currentNodeId];
-                    totalPath.Add(destinationNode.Data);
-                    while (cameFrom.ContainsKey(currentNodeId))
-                    {
-                        var node = cameFrom[currentNodeId];
-                        currentNodeId = node.Id;
-                        totalPath.Add(node.Data);
-                    }
-
-                    totalPath.Reverse();
-                    totalPath.Cost = distanceFromSource[totalPath.Last().Id];
-                    return totalPath;
+                    // Reconstruct path
+                    return ReconstructPath(currentNodeWithMinimumDistance, graph, cameFrom, source.StopDto.Name);
                 }
 
                 nodesToExtend.Remove(currentNodeWithMinimumDistance.Id);
@@ -98,29 +84,32 @@ namespace MPK.Connect.Service.Business.Graph
             return new Path<StopTimeInfo>();
         }
 
-        /// <summary>
-        /// Reconstructs path from destination to source
-        /// </summary>
-        /// <typeparam name="TId">Type of id</typeparam>
-        /// <typeparam name="T">Type of graph node values</typeparam>
-        /// <param name="destination">Destination node</param>
-        /// <param name="cameFrom">Collection of associations between subsequent graph nodes</param>
-        /// <returns>Path from source to destination</returns>
-        private IEnumerable<TId> ReconstructPath<TId, T>(T destination, Dictionary<TId, GraphNode<TId, T>> cameFrom)
-            where TId : class
-            where T : LocalizableEntity<TId>
+        private static Path<StopTimeInfo> ReconstructPath(GraphNode<string, StopTimeInfo> destinationNode, Graph<string, StopTimeInfo> graph, Dictionary<string, GraphNode<string, StopTimeInfo>> cameFrom, string sourceName)
         {
-            var path = new List<TId> { destination.Id };
-            var currentId = destination.Id;
-            while (cameFrom.ContainsKey(currentId))
+            // reconstruct path
+            var totalPath = new Path<StopTimeInfo>();
+
+            // Add destination node
+            var currentNode = graph.Nodes[destinationNode.Id];
+            totalPath.Add(currentNode.Data);
+
+            var currentNodeId = currentNode.Id;
+
+            while (cameFrom.ContainsKey(currentNodeId))
             {
-                var node = cameFrom[currentId];
-                currentId = node.Id;
-                path.Add(node.Id);
+                currentNode = cameFrom[currentNodeId];
+                currentNodeId = currentNode.Id;
+                totalPath.Add(currentNode.Data);
+
+                if (currentNode.Data.StopDto.Name.TrimToLower() == sourceName.TrimToLower())
+                {
+                    break;
+                }
             }
 
-            path.Reverse();
-            return path;
+            totalPath.Reverse();
+            totalPath.Cost = (totalPath.Last().ArrivalTime - totalPath.First().DepartureTime).Minutes;
+            return totalPath;
         }
     }
 }

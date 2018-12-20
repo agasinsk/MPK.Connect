@@ -71,16 +71,16 @@ namespace MPK.Connect.Graph
                 var graphBounds = new CoordinateLimits(51.112457, 16.97820, 51.09294, 17.040524);
                 var graph = graphBuilder.GetGraph();
                 var source = graph.Nodes
-                    .Where(s => s.Value.Data.Stop.Name == "FAT")
+                    .Where(s => s.Value.Data.StopDto.Name == "FAT")
                     .OrderBy(s => s.Value.Data.DepartureTime).First().Value;
 
                 var sources = graph.Nodes.Values
-                    .Where(s => s.Data.Stop.Name.TrimToLower() == "FAT".TrimToLower())
+                    .Where(s => s.Data.StopDto.Name.TrimToLower() == "FAT".TrimToLower())
                     .GroupBy(s => s.Data.Route)
                     .ToDictionary(k => k.Key, v => v.OrderBy(st => st.Data.DepartureTime).First());
 
                 var destinations = graph.Nodes.Values
-                    .Where(s => s.Data.Stop.Name == "Galeria Dominikańska" && s.Data.DepartureTime > source.Data.DepartureTime)
+                    .Where(s => s.Data.StopDto.Name == "Galeria Dominikańska" && s.Data.DepartureTime > source.Data.DepartureTime)
                     .OrderBy(s => s.Data.DepartureTime)
                     .GroupBy(s => s.Data.Route)
                     .ToDictionary(k => k.Key, v => v.OrderBy(st => st.Data.DepartureTime).First());

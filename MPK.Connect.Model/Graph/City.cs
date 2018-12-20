@@ -1,5 +1,5 @@
-﻿using MPK.Connect.Model.Business;
-using System;
+﻿using System;
+using MPK.Connect.Model.Business;
 
 namespace MPK.Connect.Model.Graph
 {
@@ -80,6 +80,11 @@ namespace MPK.Connect.Model.Graph
             }
 
             return Double.MaxValue;
+        }
+
+        public override double GetDistanceTo(double latitude, double longitude)
+        {
+            throw new NotImplementedException();
         }
 
         public override string ToString()

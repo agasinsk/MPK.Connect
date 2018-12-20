@@ -67,7 +67,7 @@ namespace MPK.Connect.Service.Business.Graph
         /// <param name="graph">Graph</param>
         private void CreateDirectedEdgesForSwitchingStopsWithSameName(Dictionary<string, StopTimeInfo> dbStopTimes, Graph<string, StopTimeInfo> graph)
         {
-            var stopTimesGroupedByStopName = dbStopTimes.Values.GroupBy(st => st.Stop.Name).ToDictionary(k => k.Key, v => v.AsEnumerable());
+            var stopTimesGroupedByStopName = dbStopTimes.Values.GroupBy(st => st.StopDto.Name).ToDictionary(k => k.Key, v => v.AsEnumerable());
             foreach (var stopTimesGroup in stopTimesGroupedByStopName)
             {
                 var stopTimesWithTheSameStopName = stopTimesGroup.Value.ToList();
@@ -198,12 +198,13 @@ namespace MPK.Connect.Service.Business.Graph
             var dbStopTimes = _stopTimeRepository.GetAll()
                 .Where(st => now < st.DepartureTime && st.DepartureTime < later)
                 .Where(st => st.Trip.ServiceId == serviceId)
-                .Where(st => dbStops.ContainsKey(st.StopId))
                 .Select(st => new StopTimeInfo
                 {
                     Id = st.Id,
                     StopId = st.StopId,
                     TripId = st.TripId,
+                    Direction = st.Trip.HeadSign,
+                    DirectionId = st.Trip.DirectionId,
                     Route = st.Trip.Route.ShortName,
                     RouteType = st.Trip.Route.Type,
                     DepartureTime = st.DepartureTime,
@@ -216,7 +217,7 @@ namespace MPK.Connect.Service.Business.Graph
             // Assign valid stop to stopTime
             foreach (var stopTimeInfo in dbStopTimes)
             {
-                stopTimeInfo.Value.Stop = dbStops[stopTimeInfo.Value.StopId];
+                stopTimeInfo.Value.StopDto = dbStops[stopTimeInfo.Value.StopId];
             }
 
             return dbStopTimes;

@@ -35,6 +35,22 @@ namespace MPK.Connect.Test.Service.Business
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException), "Empty name in location was allowed.")]
+        public void TestIfGetTravelPlansThrowsExceptionWhenSourceLocationNameIsEmpty()
+        {
+            // Arrange
+            var source = new Location();
+            var destination = new Location("B");
+
+            // Act
+            _travelPlanService.GetTravelPlans(source, destination);
+
+            // Assert
+            _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<CoordinateLimits>()), Times.Never);
+            _travelPlanProviderMock.Verify(p => p.GetTravelPlans(It.IsAny<Graph<string, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(ArgumentException), "Empty latitude in location was allowed.")]
         public void TestIfGetTravelPlansThrowsExceptionWhenLocationLatitudeIsEmpty()
         {
@@ -86,7 +102,7 @@ namespace MPK.Connect.Test.Service.Business
                     Id = "1",
                     StopId = "1",
                     DepartureTime = TimeSpan.FromHours(12),
-                    Stop = new StopDto()
+                    StopDto = new StopDto()
                     {
                         Id = "1",
                         Latitude = 10.1,
@@ -99,7 +115,7 @@ namespace MPK.Connect.Test.Service.Business
                     Id = "2",
                     StopId = "2",
                     DepartureTime = TimeSpan.FromHours(12),
-                    Stop = new StopDto()
+                    StopDto = new StopDto()
                     {
                         Id = "2",
                         Latitude = 20.2,
@@ -112,7 +128,7 @@ namespace MPK.Connect.Test.Service.Business
                     Id = "3",
                     StopId = "3",
                     DepartureTime = TimeSpan.FromHours(12),
-                    Stop = new StopDto()
+                    StopDto = new StopDto()
                     {
                         Id = "3",
                         Latitude = 12.1,
@@ -125,7 +141,7 @@ namespace MPK.Connect.Test.Service.Business
                     Id = "4",
                     StopId = "4",
                     DepartureTime = TimeSpan.FromHours(12),
-                    Stop = new StopDto()
+                    StopDto = new StopDto()
                     {
                         Id = "4",
                         Latitude = 24.2,

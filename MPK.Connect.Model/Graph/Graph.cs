@@ -85,13 +85,13 @@ namespace MPK.Connect.Model.Graph
 
         public bool Remove(T valueToRemove)
         {
-            // first remove the node sourceNode the nodeset
+            // Remove the node from the node set
             if (Nodes.ContainsKey(valueToRemove.Id))
             {
                 Nodes.Remove(valueToRemove.Id);
             }
 
-            // enumerate through each node in the nodeSet, removing edges to this node
+            // Removing edges to this node
             foreach (var node in Nodes)
             {
                 var graphNode = node.Value;

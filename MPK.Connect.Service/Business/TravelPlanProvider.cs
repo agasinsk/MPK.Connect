@@ -32,11 +32,12 @@ namespace MPK.Connect.Service.Business
         /// <returns>Collection of probable paths from source to destination</returns>
         public IEnumerable<TravelPlan> GetTravelPlans(Graph<string, StopTimeInfo> graph, Location sourceLocation, Location destinationLocation)
         {
+            // TODO: experiment with different approaches to selecting starting nodes
             // Get source nodes
             var sources = graph.Nodes.Values
-                .Where(s => s.Data.Stop.Name.TrimToLower() == sourceLocation.Name.TrimToLower())
-                .GroupBy(s => s.Data.Route)
-                .Select(g => g.OrderBy(st => st.Data.DepartureTime).First())
+                .Where(s => s.Data.StopDto.Name.TrimToLower() == sourceLocation.Name.TrimToLower())
+                .GroupBy(s => s.Data.StopId)
+                .SelectMany(g => g.OrderBy(st => st.Data.DepartureTime).Take(2))
                 .ToList();
 
             // Search for shortest path from subsequent sources to destination
@@ -50,7 +51,11 @@ namespace MPK.Connect.Service.Business
                 }
             });
 
-            return _mapper.Map<List<TravelPlan>>(paths.OrderBy(p => p.Cost));
+            var filteredPaths = paths.OrderBy(p => p.First().DepartureTime)
+                .ThenBy(p => p.Cost)
+                .ToList();
+
+            return _mapper.Map<List<TravelPlan>>(filteredPaths);
         }
     }
 }

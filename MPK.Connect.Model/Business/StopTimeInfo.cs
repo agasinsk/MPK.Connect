@@ -9,30 +9,48 @@ namespace MPK.Connect.Model.Business
     {
         public TimeSpan ArrivalTime { get; set; }
         public TimeSpan DepartureTime { get; set; }
+
+        [JsonIgnore]
         public override string Id => $"{StopId}|{TripId}|{DepartureTime}";
+
         public string Route { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public RouteTypes RouteType { get; set; }
 
-        public StopDto Stop { get; set; }
+        [JsonIgnore]
+        public int? DirectionId { get; set; }
+
+        public string Direction { get; set; }
+
+        [JsonProperty("stopInfo")]
+        public StopDto StopDto { get; set; }
+
+        [JsonIgnore]
         public string StopId { get; set; }
+
         public int StopSequence { get; set; }
+
         public string TripId { get; set; }
 
         public override double GetDistanceTo(LocalizableEntity<string> otherEntity)
         {
             if (otherEntity is StopTimeInfo stopTimeInfo)
             {
-                return Stop.GetDistanceTo(stopTimeInfo.Stop);
+                return StopDto.GetDistanceTo(stopTimeInfo.StopDto);
             }
 
             return double.MaxValue;
         }
 
+        public override double GetDistanceTo(double latitude, double longitude)
+        {
+            return StopDto.GetDistanceTo(latitude, longitude);
+        }
+
         public override string ToString()
         {
-            return $"{Stop.Name}, {Route}, {DepartureTime}";
+            return $"{StopDto.Name}, {Route}, {DepartureTime}";
         }
     }
 }
