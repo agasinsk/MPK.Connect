@@ -80,8 +80,7 @@ namespace MPK.Connect.WebApp
                 .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information);
 
             // Add dbContext
-            services.AddDbContext<MpkContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(MpkContext))), ServiceLifetime.Singleton)
-                .AddDbContext<SimpleMpkContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(SimpleMpkContext))), ServiceLifetime.Singleton);
+            services.AddDbContext<SimpleMpkContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(SimpleMpkContext))), ServiceLifetime.Transient);
 
             services.AddTransient<IMpkContext, SimpleMpkContext>();
 

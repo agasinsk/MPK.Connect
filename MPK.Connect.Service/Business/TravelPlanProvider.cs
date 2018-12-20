@@ -80,9 +80,12 @@ namespace MPK.Connect.Service.Business
                     .Distinct()
                     .ToList();
 
-                var minimumDistanceToNeighbor = neighborStops.Select(s => s.GetDistanceTo(referentialDestinationStop)).Min();
-
-                distancesToStops[stop.Key.Id] = minimumDistanceToNeighbor;
+                if (neighborStops.Any())
+                {
+                    var minimumDistanceToNeighbor =
+                        neighborStops.Select(s => s.GetDistanceTo(referentialDestinationStop)).Min();
+                    distancesToStops[stop.Key.Id] = minimumDistanceToNeighbor;
+                }
             }
 
             // Take only those stops which have neighbors closer to the destination
