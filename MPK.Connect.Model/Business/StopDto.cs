@@ -17,9 +17,14 @@ namespace MPK.Connect.Model.Business
 
         public double GetDistanceTo(StopDto destination)
         {
-            if (destination == null || destination == this)
+            if (destination == null)
             {
                 return double.MaxValue;
+            }
+
+            if (destination == this)
+            {
+                return 0;
             }
 
             return GetDistanceTo(destination.Latitude, destination.Longitude);

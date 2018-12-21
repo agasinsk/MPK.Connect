@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
@@ -37,14 +36,14 @@ namespace MPK.Connect.Service.Business
 
             // Search for shortest path from subsequent sources to destination
             var paths = new ConcurrentBag<Path<StopTimeInfo>>();
-            Parallel.ForEach(sources, source =>
+            foreach (var source in sources)
             {
                 var path = _pathFinder.FindShortestPath(graph, source.Data, destinationLocation.Name);
                 if (path.Any())
                 {
                     paths.Add(path);
                 }
-            });
+            }
 
             // TODO: eliminate duplicated paths
             var filteredPaths = paths.OrderBy(p => p.First().DepartureTime)
@@ -95,8 +94,8 @@ namespace MPK.Connect.Service.Business
             var filteredSourceNodes = graph.Nodes.Values
                 .Where(s => stopsWithRightDirectionIds.Contains(s.Data.StopId))
                 .GroupBy(s => s.Data.StopId)
-                .Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First())
-                //.SelectMany(g => g.GroupBy(st => st.Data.Route).Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First()))
+                //.Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First())
+                .SelectMany(g => g.GroupBy(st => st.Data.Route).Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First()))
                 .ToList();
 
             return filteredSourceNodes;

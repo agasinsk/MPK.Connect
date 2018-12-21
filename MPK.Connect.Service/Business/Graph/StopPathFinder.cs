@@ -8,6 +8,15 @@ namespace MPK.Connect.Service.Business.Graph
 {
     public class StopPathFinder : IStopPathFinder
     {
+        private const double _distanceEnhancementFactor = 10;
+
+        /// <summary>
+        /// Finds the shortest path using A* algorithm
+        /// </summary>
+        /// <param name="graph">Graph to be searched</param>
+        /// <param name="source">Source node</param>
+        /// <param name="destinationName">Name of the destination stop</param>
+        /// <returns>Shortest path between source and destination</returns>
         public Path<StopTimeInfo> FindShortestPath(Graph<string, StopTimeInfo> graph, StopTimeInfo source, string destinationName)
         {
             var probableDestination = graph.Nodes.Values
@@ -30,16 +39,16 @@ namespace MPK.Connect.Service.Business.Graph
             {
                 [source.Id] = 0
             };
-            var totalDistanceFromSource = new Dictionary<string, double>(nodeDistances)
+            var totalDistanceToDestination = new Dictionary<string, double>(nodeDistances)
             {
-                [source.Id] = source.GetDistanceTo(probableDestination)
+                [source.Id] = source.GetDistanceTo(probableDestination) * _distanceEnhancementFactor
             };
 
             // Look for paths
             while (nodesToExtend.Any())
             {
                 // Get node with minimum distance
-                var currentNodeWithMinimumDistance = nodesToExtend.Aggregate((l, r) => totalDistanceFromSource[l.Key] < totalDistanceFromSource[r.Key] ? l : r).Value;
+                var currentNodeWithMinimumDistance = nodesToExtend.Aggregate((l, r) => totalDistanceToDestination[l.Key] < totalDistanceToDestination[r.Key] ? l : r).Value;
 
                 // If destination is reached
                 if (currentNodeWithMinimumDistance.Data.StopDto.Name.TrimToLower() == destinationName.TrimToLower() ||
@@ -78,7 +87,8 @@ namespace MPK.Connect.Service.Business.Graph
                     // This path is the best until now. Record it!
                     cameFrom[neighbor.Id] = currentNodeWithMinimumDistance;
                     distanceFromSource[neighbor.Id] = distanceToNeighbor;
-                    totalDistanceFromSource[neighbor.Id] = distanceFromSource[neighbor.Id] + neighbor.Data.GetDistanceTo(probableDestination);
+                    var distanceFromNeighborToDestination = neighbor.Data.GetDistanceTo(probableDestination) * _distanceEnhancementFactor;
+                    totalDistanceToDestination[neighbor.Id] = distanceFromSource[neighbor.Id] + distanceFromNeighborToDestination;
                 }
             }
 

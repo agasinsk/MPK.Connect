@@ -12,10 +12,10 @@ namespace MPK.Connect.Service.Business.Graph
 {
     public class GraphBuilder : IGraphBuilder
     {
-        private readonly TimeSpan _additionalTransferTime = TimeSpan.FromMinutes(1);
         private readonly IGenericRepository<Calendar> _calendarRepository;
         private readonly TimeSpan _maxStopTimeDepartureTime = TimeSpan.FromHours(1.25);
         private readonly TimeSpan _minimumSwitchingTime = TimeSpan.FromMinutes(1);
+        private readonly TimeSpan _additionalTransferTime = TimeSpan.FromMinutes(1.5);
         private readonly IGenericRepository<Stop> _stopRepository;
         private readonly IGenericRepository<StopTime> _stopTimeRepository;
 
@@ -72,19 +72,12 @@ namespace MPK.Connect.Service.Business.Graph
                 var stopTimesWithTheSameStopName = stopTimesGroup.Value.ToList();
                 foreach (var sourceStopTime in stopTimesWithTheSameStopName)
                 {
-                    var stopTimesAfterSource = stopTimesWithTheSameStopName.Where(st => sourceStopTime.DepartureTime + _minimumSwitchingTime < st.DepartureTime && st.StopId != sourceStopTime.StopId);
+                    var stopTimesAfterSource = stopTimesWithTheSameStopName.Where(st => sourceStopTime.DepartureTime + _minimumSwitchingTime < st.DepartureTime && st.StopId != sourceStopTime.StopId && st.TripId != sourceStopTime.TripId);
                     foreach (var destination in stopTimesAfterSource)
                     {
                         var cost = destination.DepartureTime - sourceStopTime.DepartureTime + _minimumSwitchingTime;
 
-                        // TODO: Consider adding distance as a factor for additional cost
-                        //var distance = source.GetDistanceTo(destination);
-                        //if (distance > 0.2 && cost.Minutes < 2)
-                        //{
-                        //    cost += _additionalStopChangeTime;
-                        //}
-
-                        graph[sourceStopTime.Id].Neighbors.Add(new GraphEdge<string>(sourceStopTime.Id, destination.Id, cost.Minutes));
+                        graph[sourceStopTime.Id].Neighbors.Add(new GraphEdge<string>(sourceStopTime.Id, destination.Id, cost.TotalMinutes));
                     }
                 }
             }
@@ -105,15 +98,11 @@ namespace MPK.Connect.Service.Business.Graph
                 {
                     var source = stopTransferTimes[i];
                     var destination = stopTransferTimes[i + 1];
-                    if (source.DepartureTime + _minimumSwitchingTime < destination.DepartureTime)
+                    if (source.TripId != destination.TripId && source.DepartureTime + _minimumSwitchingTime < destination.DepartureTime)
                     {
-                        var cost = destination.DepartureTime - source.DepartureTime;
-                        if (source.TripId != destination.TripId)
-                        {
-                            cost += _minimumSwitchingTime;
-                        }
+                        var cost = destination.DepartureTime - source.DepartureTime + _minimumSwitchingTime;
 
-                        graph[source.Id].Neighbors.Add(new GraphEdge<string>(source.Id, destination.Id, cost.Minutes));
+                        graph[source.Id].Neighbors.Add(new GraphEdge<string>(source.Id, destination.Id, cost.TotalMinutes));
                     }
                 }
             }
@@ -136,7 +125,7 @@ namespace MPK.Connect.Service.Business.Graph
                     var destination = tripTimes[i + 1];
                     var cost = destination.DepartureTime - source.DepartureTime;
 
-                    graph[source.Id].Neighbors.Add(new GraphEdge<string>(source.Id, destination.Id, cost.Minutes));
+                    graph[source.Id].Neighbors.Add(new GraphEdge<string>(source.Id, destination.Id, cost.TotalMinutes));
                 }
             }
         }

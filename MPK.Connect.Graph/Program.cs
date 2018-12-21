@@ -73,11 +73,11 @@ namespace MPK.Connect.Graph
                 var graph = graphBuilder.GetGraph();
 
                 var srcs = graph.Nodes.Values
-                    .Where(s => s.Data.StopDto.Name.TrimToLower() == "FAT".TrimToLower())
+                    .Where(s => s.Data.StopDto.Name.TrimToLower() == "Galeria Dominikańska".TrimToLower())
                     .GroupBy(s => s.Data.StopDto)
                     .ToDictionary(k => k.Key, g => g.Select(s => s.Id).ToList());
 
-                var end = graph.Nodes.Values.First(s => s.Data.StopDto.Name.TrimToLower() == "Galeria Dominikańska".TrimToLower()).Data.StopDto;
+                var end = graph.Nodes.Values.First(s => s.Data.StopDto.Name.TrimToLower() == "Biskupin".TrimToLower()).Data.StopDto;
 
                 var distanceFromStopToDestination = srcs.First().Key.GetDistanceTo(end);
                 var distancesToStops = new Dictionary<string, double>();
@@ -87,7 +87,7 @@ namespace MPK.Connect.Graph
                     {
                         var neighborStops = graph.GetNeighbors(stoptimeid)
                             .Select(n => n.Data.StopDto)
-                            .Where(n => n.Name.TrimToLower() != "FAT".TrimToLower())
+                            .Where(n => n.Name.TrimToLower() != "Galeria Dominikańska".TrimToLower())
                             .ToList();
 
                         foreach (var neighborStop in neighborStops)
@@ -105,57 +105,24 @@ namespace MPK.Connect.Graph
                     }
                 }
 
-                var closestStops = distancesToStops.Where(s => s.Value < distanceFromStopToDestination).OrderBy(s => s.Value).ToList();
                 var closestStopsKeys = distancesToStops.Where(s => s.Value < distanceFromStopToDestination).OrderBy(s => s.Value).Select(k => k.Key).ToList();
 
                 var filteredSrcs = graph.Nodes.Values
                     .Where(s => closestStopsKeys.Contains(s.Data.StopId))
                     .GroupBy(s => s.Data.StopId)
-                    .Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First())
-                    //.SelectMany(g => g.GroupBy(st => st.Data.Route).Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First()))
+                    .SelectMany(g => g.OrderBy(st => st.Data.DepartureTime).Take(2))
+                    // .SelectMany(g => g.GroupBy(st => st.Data.Route).Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First()))
                     .ToList();
 
-                var source = graph.Nodes
-                   .Where(s => s.Value.Data.StopDto.Name == "FAT")
-                   .OrderBy(s => s.Value.Data.DepartureTime).First().Value;
-
-                var sources = graph.Nodes.Values
-                    .Where(s => s.Data.StopDto.Name.TrimToLower() == "FAT".TrimToLower())
-                    .GroupBy(s => s.Data.Route)
-                    .ToDictionary(k => k.Key, v => v.OrderBy(st => st.Data.DepartureTime).First());
-
-                var destinations = graph.Nodes.Values
-                    .Where(s => s.Data.StopDto.Name == "Galeria Dominikańska" && s.Data.DepartureTime > source.Data.DepartureTime)
-                    .OrderBy(s => s.Data.DepartureTime)
-                    .GroupBy(s => s.Data.Route)
-                    .ToDictionary(k => k.Key, v => v.OrderBy(st => st.Data.DepartureTime).First());
-
                 var probablepaths = new List<Path<StopTimeInfo>>();
-                foreach (var src in sources.Values)
+                foreach (var src in filteredSrcs)
                 {
-                    var path = graph.AStar(src.Data, "Galeria Dominikańska");
+                    var path = graph.AStar(src.Data, "Biskupin");
                     if (path.Any())
                     {
                         probablepaths.Add(path);
                     }
                 }
-
-                var probablePath = graph.AStar(source.Data, "Kwiska");
-
-                var paths = new List<Path<StopTimeInfo>>();
-                foreach (var src in sources.Values)
-                {
-                    foreach (var destination in destinations.Values)
-                    {
-                        var path = graph.A_Star(src.Data, destination.Data);
-                        if (path.Any())
-                        {
-                            paths.Add(path);
-                        }
-                    }
-                }
-
-                paths = paths.Where(p => p.Any()).OrderBy(p => p.Cost).ToList();
             }
 
             Console.WriteLine("Hello World!");

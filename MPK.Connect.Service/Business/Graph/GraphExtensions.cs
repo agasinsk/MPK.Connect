@@ -2,6 +2,7 @@
 using System.Linq;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Graph;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Business.Graph
 {
@@ -85,7 +86,11 @@ namespace MPK.Connect.Service.Business.Graph
 
         public static Path<StopTimeInfo> AStar(this Graph<string, StopTimeInfo> graph, StopTimeInfo source, string destination)
         {
-            var probableDestination = graph.Nodes.Values.FirstOrDefault(n => n.Data.StopDto.Name.Trim().ToLower().Contains(destination.Trim().ToLower()))?.Data;
+            var probableDestination = graph.Nodes.Values
+                .Where(n => n.Data.StopDto.Name.TrimToLower() == destination.TrimToLower() &&
+                            n.Data.DepartureTime > source.DepartureTime)
+                .OrderByDescending(n => n.Data.DepartureTime)
+                .FirstOrDefault()?.Data;
 
             // Initialize
             var nodesAlreadyExtended = new List<GraphNode<string, StopTimeInfo>>();
@@ -102,15 +107,17 @@ namespace MPK.Connect.Service.Business.Graph
                     [source.Id] = 0
                 };
 
-            var totalCostFromSource =
+            var totalCostToDestination =
                 new Dictionary<string, double>(graph.Nodes.ToDictionary(k => k.Key, v => double.MaxValue))
                 {
-                    [source.Id] = source.GetDistanceTo(probableDestination)
+                    [source.Id] = source.GetDistanceTo(probableDestination) * 10
                 };
 
             while (nodesToExtend.Any())
             {
-                var nodeWithLowestCostId = nodesToExtend.Aggregate((l, r) => totalCostFromSource[l.Key] < totalCostFromSource[r.Key] ? l : r).Key;
+                var orderedNodes = nodesToExtend.ToDictionary(k => k.Value, v => totalCostToDestination[v.Key]).OrderBy(n => n.Value).ToList();
+
+                var nodeWithLowestCostId = nodesToExtend.Aggregate((l, r) => totalCostToDestination[l.Key] < totalCostToDestination[r.Key] ? l : r).Key;
                 var currentNode = graph.Nodes[nodeWithLowestCostId];
                 if (currentNode.Data.StopDto.Name.Trim().ToLower().Contains(destination.Trim().ToLower()))
                 {
@@ -135,7 +142,7 @@ namespace MPK.Connect.Service.Business.Graph
                 nodesToExtend.Remove(currentNode.Id);
                 nodesAlreadyExtended.Add(currentNode);
 
-                foreach (var neighborEdge in currentNode.Neighbors)
+                foreach (var neighborEdge in currentNode.Neighbors.OrderBy(n => n.Cost))
                 {
                     var neighbor = graph.Nodes[neighborEdge.DestinationId];
                     // Ignore the neighbor which is already evaluated
@@ -151,7 +158,7 @@ namespace MPK.Connect.Service.Business.Graph
                     {
                         nodesToExtend.Add(neighbor.Id, neighbor);
                     }
-                    else if (tentative_gScore >= costFromSource[neighbor.Id])
+                    else if (costFromSource[neighbor.Id] <= tentative_gScore)
                     {
                         continue;
                     }
@@ -160,8 +167,90 @@ namespace MPK.Connect.Service.Business.Graph
                     cameFrom[neighbor.Id] = currentNode;
                     costFromSource[neighbor.Id] = tentative_gScore;
 
-                    totalCostFromSource[neighbor.Id] =
-                        costFromSource[neighbor.Id] + neighbor.Data.GetDistanceTo(probableDestination);
+                    var heuristic = neighbor.Data.GetDistanceTo(probableDestination) * 10;
+                    totalCostToDestination[neighbor.Id] = costFromSource[neighbor.Id] + heuristic;
+                }
+            }
+
+            return new Path<StopTimeInfo>();
+        }
+
+        public static Path<StopTimeInfo> AStarSecond(this Graph<string, StopTimeInfo> graph, StopTimeInfo source, string destination)
+        {
+            var probableDestination = graph.Nodes.Values
+                .Where(n => n.Data.StopDto.Name.TrimToLower() == destination.TrimToLower() &&
+                            n.Data.DepartureTime > source.DepartureTime)
+                .OrderByDescending(n => n.Data.DepartureTime)
+                .FirstOrDefault()?.Data;
+
+            var closedSet = new Dictionary<string, GraphNode<string, StopTimeInfo>>();
+            var openSet = new Dictionary<string, GraphNode<string, StopTimeInfo>>
+            {
+                { source.Id, graph.Nodes[source.Id] }
+            };
+            var g_score = new Dictionary<string, double>(graph.Nodes.ToDictionary(k => k.Key, v => double.MaxValue)) { [source.Id] = 0 };
+            var f_score = new Dictionary<string, double>(graph.Nodes.ToDictionary(k => k.Key, v => double.MaxValue));
+            var h_score = new Dictionary<string, double>
+            {
+                [source.Id] = source.GetDistanceTo(probableDestination)
+            };
+            var cameFrom = new Dictionary<string, GraphNode<string, StopTimeInfo>>();
+
+            while (openSet.Any())
+            {
+                // the node in openset having the lowest f_score[] value
+                var x = openSet.Aggregate((l, r) => f_score[l.Key] < f_score[r.Key] ? l : r);
+                if (x.Value.Data.StopDto.Name.TrimToLower() == destination.TrimToLower())
+                {
+                    // reconstruct path
+                    var totalPath = new Path<StopTimeInfo>();
+
+                    var currentNodeId = x.Key;
+                    var destinationNode = graph.Nodes[currentNodeId];
+                    totalPath.Add(destinationNode.Data);
+                    while (cameFrom.ContainsKey(currentNodeId))
+                    {
+                        var node = cameFrom[currentNodeId];
+                        currentNodeId = node.Id;
+                        totalPath.Add(node.Data);
+                    }
+
+                    totalPath.Reverse();
+                    totalPath.Cost = g_score[probableDestination.Id];
+                    return totalPath;
+                }
+
+                openSet.Remove(x.Key);
+                closedSet.Add(x.Key, x.Value);
+
+                foreach (var y in x.Value.Neighbors)
+                {
+                    if (closedSet.ContainsKey(y.DestinationId))
+                    {
+                        continue;
+                    }
+
+                    var tentative_g_score = g_score[x.Key] + y.Cost;
+                    var tentativeIsBetter = false;
+
+                    if (!openSet.ContainsKey(y.DestinationId))
+                    {
+                        var yNode = graph.Nodes[y.DestinationId];
+                        openSet.Add(yNode.Id, yNode);
+                        h_score[y.DestinationId] = yNode.Data.GetDistanceTo(probableDestination);
+                        tentativeIsBetter = true;
+                    }
+                    else if (tentative_g_score < g_score[y.DestinationId])
+                    {
+                        tentativeIsBetter = true;
+                    }
+
+                    if (tentativeIsBetter)
+                    {
+                        cameFrom[y.DestinationId] = x.Value;
+                        g_score[y.DestinationId] = tentative_g_score;
+                        f_score[y.DestinationId] = g_score[y.DestinationId] + h_score[y.DestinationId];
+                    }
                 }
             }
 
@@ -169,7 +258,7 @@ namespace MPK.Connect.Service.Business.Graph
         }
 
         private static IEnumerable<TId> ReconstructPath<TId, T>(T destination, Dictionary<TId, GraphNode<TId, T>> cameFrom)
-            where TId : class
+                    where TId : class
             where T : LocalizableEntity<TId>
         {
             // reconstruct path
@@ -185,5 +274,32 @@ namespace MPK.Connect.Service.Business.Graph
             path.Reverse();
             return path;
         }
+
+        //function A*(start, goal)
+        //    closedset := the empty set                 % Zbiór wierzchołków przejrzanych.
+        //    openset := set containing the initial node % Zbiór wierzchołków nieodwiedzonych, sąsiadujących z odwiedzonymi.
+        //    g_score[start] := 0                        % Długość optymalnej trasy.
+        //while openset is not empty
+        //x := the node in openset having the lowest f_score[] value
+        //if x = goal
+        //return reconstruct_path(came_from, goal)
+        //remove x from openset
+        //add x to closedset
+        //foreach y in neighbor_nodes(x)
+        //    if y in closedset
+        //continue
+        //tentative_g_score := g_score[x] + dist_between(x, y)
+        //tentative_is_better := false
+        //if y not in openset
+        //    add y to openset
+        //    h_score[y] := heuristic_estimate_of_distance_to_goal_from(y)
+        //tentative_is_better := true
+        //elseif tentative_g_score<g_score[y]
+        //tentative_is_better := true
+        //if tentative_is_better = true
+        //came_from[y] := x
+        //    g_score[y] := tentative_g_score
+        //    f_score[y] := g_score[y] + h_score[y] % Przewidywany dystans od startu do celu przez y.
+        //return failure
     }
 }
