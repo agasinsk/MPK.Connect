@@ -134,11 +134,11 @@ namespace MPK.Connect.Service.Business.Graph
         /// <summary>
         /// Gets calendar entity by matching the current day of week
         /// </summary>
+        /// <param name="startDate">Start date</param>
         /// <returns>Current calendar</returns>
-        private Calendar GetCalendar(DateTime startTime)
+        private Calendar GetCalendar(DateTime startDate)
         {
-            // TODO: consider adding validation on ValidUntil dates
-            var dayOfWeek = startTime.DayOfWeek.ToString();
+            var dayOfWeek = startDate.DayOfWeek.ToString();
             return _calendarRepository.FindBy(c => c.GetPropValue<bool>(dayOfWeek))
                 .FirstOrDefault();
         }
@@ -185,15 +185,22 @@ namespace MPK.Connect.Service.Business.Graph
         {
             var startTime = startDate.TimeOfDay;
             var endTime = startTime + _maxStopTimeDepartureTime;
-            //if (endTime.TotalHours >= 24)
-            //{
-            //    endTime = endTime.Subtract(TimeSpan.FromHours(24));
-            //}
-            //TODO: Add validation on over 24 hours end time
 
-            var dbStopTimes = _stopTimeRepository.GetAll()
-                .Where(st => startTime < st.DepartureTime && st.DepartureTime < endTime)
-                .Where(st => st.Trip.ServiceId == serviceId)
+            var dbStopTimesQuery = _stopTimeRepository.GetAll()
+                .Where(st => st.Trip.ServiceId == serviceId);
+
+            if (endTime.TotalHours >= 24)
+            {
+                endTime = endTime.Subtract(TimeSpan.FromHours(24));
+                dbStopTimesQuery = dbStopTimesQuery.Where(st => startTime < st.DepartureTime || st.DepartureTime < endTime);
+            }
+            else
+            {
+                dbStopTimesQuery =
+                    dbStopTimesQuery.Where(st => startTime < st.DepartureTime && st.DepartureTime < endTime);
+            }
+
+            var dbStopTimes = dbStopTimesQuery
                 .Select(st => new StopTimeInfo
                 {
                     Id = st.Id,

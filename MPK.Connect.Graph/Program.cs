@@ -69,7 +69,7 @@ namespace MPK.Connect.Graph
                 var calendarRepo = scope.Resolve<IGenericRepository<Calendar>>();
                 var graphBuilder = new GraphBuilder(stopRepo, stopTimeRepo, calendarRepo);
 
-                var graph = graphBuilder.GetGraph(DateTime.Now);
+                var graph = graphBuilder.GetGraph(new DateTime(2018, 12, 21, 22, 58, 00));
 
                 var srcs = graph.Nodes.Values
                     .Where(s => s.Data.StopDto.Name.TrimToLower() == "Galeria Dominikańska".TrimToLower())
