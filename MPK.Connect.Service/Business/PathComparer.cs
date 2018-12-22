@@ -29,7 +29,8 @@ namespace MPK.Connect.Service.Business
 
         public int GetHashCode(Path<StopTimeInfo> obj)
         {
-            return obj.GetHashCode() + obj.Cost.GetHashCode();
+            var routesHashCode = (int)obj.Select(s => s.Route).Distinct().Average(r => r.GetHashCode());
+            return obj.First().DepartureTime.GetHashCode() + routesHashCode;
         }
     }
 }

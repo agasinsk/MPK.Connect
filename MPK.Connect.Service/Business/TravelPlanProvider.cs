@@ -44,8 +44,9 @@ namespace MPK.Connect.Service.Business
                 }
             }
 
-            // TODO: eliminate duplicated paths
-            var filteredPaths = paths.OrderBy(p => p.First().DepartureTime)
+            var filteredPaths = paths
+                .Distinct(new PathComparer())
+                .OrderBy(p => p.First().DepartureTime)
                 .ThenBy(p => p.Cost)
                 .ToList();
 
