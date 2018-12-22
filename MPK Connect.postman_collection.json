@@ -147,7 +147,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"source\":\t{\n\t\t\"name\":\t\"Pl. Grunwaldzki\"\n\t\t\n\t},\n\t\"destination\":{\n\t\t\"name\": \"Kwiska\"\n\t}\n}"
+							"raw": "{\n\t\"source\": {\n\t\t\"name\":\t\"Kwiska\",\n\t\t\"longitude\": null,\n\t\t\"latitude\": null\n\t},\n\t\"destination\": {\n\t\t\"name\": \"Port lotniczy\",\n\t\t\"longitude\": null,\n\t\t\"latitude\": null\n\t},\n\t\"startDate\": \"2018-12-22T13:38:00\"\n}"
 						},
 						"url": {
 							"raw": "https://localhost:44396/api/TravelPlan",

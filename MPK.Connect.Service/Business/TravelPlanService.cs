@@ -23,11 +23,14 @@ namespace MPK.Connect.Service.Business
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>> GetTravelPlans(Location source, Location destination)
+        public Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>> GetTravelPlans(TravelOptions travelOptions)
         {
+            var source = travelOptions.Source;
+            var destination = travelOptions.Destination;
             ValidateLocations(source, destination);
 
-            var graph = _graphBuilder.GetGraph();
+            var startDate = travelOptions.StartDate.HasValue ? travelOptions.StartDate.Value : DateTime.Now;
+            var graph = _graphBuilder.GetGraph(startDate);
 
             if (string.IsNullOrEmpty(source.Name) || string.IsNullOrEmpty(destination.Name))
             {

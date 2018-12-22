@@ -30,18 +30,19 @@ namespace MPK.Connect.Service.Business.Graph
         /// Builds graph based on specified geographical limits and time bounds
         /// Nodes are StopTime entities, the edges are connections between StopTimes
         /// </summary>
+        /// <param name="startDate">Start date</param>
         /// <param name="graphLimits">Geographical limits for stop locations</param>
         /// <returns>Graph of stop times</returns>
-        public Graph<string, StopTimeInfo> GetGraph(CoordinateLimits graphLimits = null)
+        public Graph<string, StopTimeInfo> GetGraph(DateTime startDate, CoordinateLimits graphLimits = null)
         {
             // Get stops matching the bounds
             var dbStops = GetStops(graphLimits);
 
             // Get calendar matching current day of the week
-            var currentCalendar = GetCurrentCalendar();
+            var currentCalendar = GetCalendar(startDate);
 
             // Get stop times for required stops
-            var dbStopTimes = GetStopTimes(dbStops, currentCalendar.ServiceId);
+            var dbStopTimes = GetStopTimes(dbStops, currentCalendar.ServiceId, startDate);
 
             var graph = new Graph<string, StopTimeInfo>(dbStopTimes);
 
@@ -134,10 +135,11 @@ namespace MPK.Connect.Service.Business.Graph
         /// Gets calendar entity by matching the current day of week
         /// </summary>
         /// <returns>Current calendar</returns>
-        private Calendar GetCurrentCalendar()
+        private Calendar GetCalendar(DateTime startTime)
         {
-            var currentDayOfWeek = DateTime.Now.DayOfWeek.ToString();
-            return _calendarRepository.FindBy(c => c.GetPropValue<bool>(currentDayOfWeek))
+            // TODO: consider adding validation on ValidUntil dates
+            var dayOfWeek = startTime.DayOfWeek.ToString();
+            return _calendarRepository.FindBy(c => c.GetPropValue<bool>(dayOfWeek))
                 .FirstOrDefault();
         }
 
@@ -178,13 +180,14 @@ namespace MPK.Connect.Service.Business.Graph
         /// <param name="dbStops">Collection of stops</param>
         /// <param name="serviceId">Id of service (dependent on the day of the week)</param>
         /// <returns>Collection of matching stop times</returns>
-        private Dictionary<string, StopTimeInfo> GetStopTimes(Dictionary<string, StopDto> dbStops, string serviceId)
+        private Dictionary<string, StopTimeInfo> GetStopTimes(Dictionary<string, StopDto> dbStops, string serviceId, DateTime startDate)
         {
-            var now = DateTime.Now.TimeOfDay;
-            var later = now + _maxStopTimeDepartureTime;
+            var startTime = startDate.TimeOfDay;
+            var endTime = startTime + _maxStopTimeDepartureTime;
+            //TODO: Add validation on over 24 hours end time
 
             var dbStopTimes = _stopTimeRepository.GetAll()
-                .Where(st => now < st.DepartureTime && st.DepartureTime < later)
+                .Where(st => startTime < st.DepartureTime && st.DepartureTime < endTime)
                 .Where(st => st.Trip.ServiceId == serviceId)
                 .Select(st => new StopTimeInfo
                 {
