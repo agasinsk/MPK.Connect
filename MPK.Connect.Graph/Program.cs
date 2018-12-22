@@ -68,9 +68,8 @@ namespace MPK.Connect.Graph
                 var stopRepo = scope.Resolve<IGenericRepository<Stop>>();
                 var calendarRepo = scope.Resolve<IGenericRepository<Calendar>>();
                 var graphBuilder = new GraphBuilder(stopRepo, stopTimeRepo, calendarRepo);
-                var graphBounds = new CoordinateLimits(51.112457, 16.97820, 51.09294, 17.040524);
 
-                var graph = graphBuilder.GetGraph();
+                var graph = graphBuilder.GetGraph(DateTime.Now);
 
                 var srcs = graph.Nodes.Values
                     .Where(s => s.Data.StopDto.Name.TrimToLower() == "Galeria Dominikańska".TrimToLower())

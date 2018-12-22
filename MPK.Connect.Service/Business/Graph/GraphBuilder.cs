@@ -179,11 +179,16 @@ namespace MPK.Connect.Service.Business.Graph
         /// </summary>
         /// <param name="dbStops">Collection of stops</param>
         /// <param name="serviceId">Id of service (dependent on the day of the week)</param>
+        /// <param name="startDate">Start date</param>
         /// <returns>Collection of matching stop times</returns>
         private Dictionary<string, StopTimeInfo> GetStopTimes(Dictionary<string, StopDto> dbStops, string serviceId, DateTime startDate)
         {
             var startTime = startDate.TimeOfDay;
             var endTime = startTime + _maxStopTimeDepartureTime;
+            //if (endTime.TotalHours >= 24)
+            //{
+            //    endTime = endTime.Subtract(TimeSpan.FromHours(24));
+            //}
             //TODO: Add validation on over 24 hours end time
 
             var dbStopTimes = _stopTimeRepository.GetAll()
