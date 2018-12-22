@@ -58,6 +58,7 @@ namespace MPK.Connect.Service.Business.Profiles
                 .ForMember(dst => dst.EndTime, tp => tp.MapFrom(src => src.Any() ? src.Last().DepartureTime.ToDateTime() : DateTime.MinValue))
                 .ForMember(dst => dst.Duration, tp => tp.MapFrom(src => src.Cost))
                 .ForMember(dst => dst.RouteIds, tp => tp.MapFrom(src => src.Select(sti => sti.Route).Distinct()))
+                .ForMember(dst => dst.Transfers, tp => tp.MapFrom(src => src.Select(sti => sti.Route).Distinct().Count()))
                 .ForMember(dst => dst.Stops, tp => tp.MapFrom(src => src))
                 .ForAllOtherMembers(dst => dst.Ignore());
         }

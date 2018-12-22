@@ -31,7 +31,6 @@ namespace MPK.Connect.Service.Business
         /// <returns>Collection of probable paths from source to destination</returns>
         public IEnumerable<TravelPlan> GetTravelPlans(Graph<string, StopTimeInfo> graph, Location sourceLocation, Location destinationLocation)
         {
-            // TODO: experiment with different approaches to selecting starting nodes
             var sources = GetSourceNodes(graph, sourceLocation, destinationLocation);
 
             // Search for shortest path from subsequent sources to destination
@@ -88,7 +87,10 @@ namespace MPK.Connect.Service.Business
             }
 
             // Take only those stops which have neighbors closer to the destination
-            var stopsWithRightDirectionIds = distancesToStops.Where(s => s.Value < distanceFromStopToDestination).OrderBy(s => s.Value).Select(k => k.Key).ToList();
+            var stopsWithRightDirectionIds = distancesToStops
+                .Where(s => s.Value < distanceFromStopToDestination)
+                .OrderBy(s => s.Value)
+                .Select(k => k.Key).ToList();
 
             // Get matching graph nodes
             var filteredSourceNodes = graph.Nodes.Values
