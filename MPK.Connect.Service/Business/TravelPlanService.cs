@@ -29,7 +29,7 @@ namespace MPK.Connect.Service.Business
             var destination = travelOptions.Destination;
             ValidateLocations(source, destination);
 
-            var startDate = travelOptions.StartDate.HasValue ? travelOptions.StartDate.Value : DateTime.Now;
+            var startDate = travelOptions.StartDate ?? DateTime.Now;
             var graph = _graphBuilder.GetGraph(startDate);
 
             if (string.IsNullOrEmpty(source.Name) || string.IsNullOrEmpty(destination.Name))

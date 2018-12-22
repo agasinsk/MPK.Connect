@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
@@ -29,12 +28,13 @@ namespace MPK.Connect.Service.Business
         /// <param name="sourceLocation">Source</param>
         /// <param name="destinationLocation">Destination</param>
         /// <returns>Collection of probable paths from source to destination</returns>
-        public IEnumerable<TravelPlan> GetTravelPlans(Graph<string, StopTimeInfo> graph, Location sourceLocation, Location destinationLocation)
+        public IEnumerable<TravelPlan> GetTravelPlans(Graph<string, StopTimeInfo> graph, Location sourceLocation,
+            Location destinationLocation)
         {
             var sources = GetSourceNodes(graph, sourceLocation, destinationLocation);
 
             // Search for shortest path from subsequent sources to destination
-            var paths = new ConcurrentBag<Path<StopTimeInfo>>();
+            var paths = new List<Path<StopTimeInfo>>();
             foreach (var source in sources)
             {
                 var path = _pathFinder.FindShortestPath(graph, source.Data, destinationLocation.Name);

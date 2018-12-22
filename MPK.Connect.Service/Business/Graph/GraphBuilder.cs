@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using MoreLinq.Extensions;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
@@ -116,7 +117,9 @@ namespace MPK.Connect.Service.Business.Graph
         /// <param name="graph">Graph</param>
         private void CreateDirectedEdgesWithinEachTrip(Dictionary<string, StopTimeInfo> dbStopTimes, Graph<string, StopTimeInfo> graph)
         {
-            var stopTimesGroupedByTrips = dbStopTimes.Values.GroupBy(st => st.TripId).ToDictionary(k => k.Key, v => v.OrderBy(st => st.StopSequence));
+            var stopTimesGroupedByTrips = dbStopTimes.Values
+                .GroupBy(st => st.TripId)
+                .ToDictionary(k => k.Key, v => v.OrderBy(st => st.StopSequence));
             foreach (var tripStopTimes in stopTimesGroupedByTrips)
             {
                 var tripTimes = tripStopTimes.Value.ToList();
@@ -191,8 +194,8 @@ namespace MPK.Connect.Service.Business.Graph
 
             if (endTime.TotalHours >= 24)
             {
-                endTime = endTime.Subtract(TimeSpan.FromHours(24));
-                dbStopTimesQuery = dbStopTimesQuery.Where(st => startTime < st.DepartureTime || st.DepartureTime < endTime);
+                var updatedEndTime = endTime.Subtract(TimeSpan.FromHours(24));
+                dbStopTimesQuery = dbStopTimesQuery.Where(st => startTime < st.DepartureTime || st.DepartureTime < updatedEndTime);
             }
             else
             {
@@ -215,15 +218,26 @@ namespace MPK.Connect.Service.Business.Graph
                     StopSequence = st.StopSequence
                 })
                 .AsNoTracking()
-                .ToDictionary(k => k.Id);
+                .ToList();
 
             // Assign valid stop to stopTime
             foreach (var stopTimeInfo in dbStopTimes)
             {
-                stopTimeInfo.Value.StopDto = dbStops[stopTimeInfo.Value.StopId];
+                stopTimeInfo.StopDto = dbStops[stopTimeInfo.StopId];
             }
 
-            return dbStopTimes;
+            if (endTime.TotalHours >= 24)
+            {
+                var stopTimesBeforeStartTime = dbStopTimes
+                    .Where(st => st.DepartureTime < startTime).ToList();
+
+                stopTimesBeforeStartTime.ForEach(st =>
+                {
+                    st.DepartureTime = st.DepartureTime.Add(TimeSpan.FromHours(24));
+                });
+            }
+
+            return dbStopTimes.ToDictionary(k => k.Id);
         }
     }
 }

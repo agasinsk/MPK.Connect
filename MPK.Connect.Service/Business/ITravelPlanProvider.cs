@@ -7,6 +7,7 @@ namespace MPK.Connect.Service.Business
 {
     public interface ITravelPlanProvider
     {
-        IEnumerable<TravelPlan> GetTravelPlans(Graph<string, StopTimeInfo> graph, Location sourceLocation, Location destinationLocation);
+        IEnumerable<TravelPlan> GetTravelPlans(Graph<string, StopTimeInfo> graph, Location sourceLocation,
+            Location destinationLocation);
     }
 }

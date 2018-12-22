@@ -135,7 +135,7 @@ namespace MPK.Connect.Service.Business.Graph
                     }
 
                     totalPath.Reverse();
-                    totalPath.Cost = costFromSource[probableDestination.Id];
+                    totalPath.Cost = (totalPath.Last().DepartureTime - totalPath.First().DepartureTime).TotalMinutes;
                     return totalPath;
                 }
 

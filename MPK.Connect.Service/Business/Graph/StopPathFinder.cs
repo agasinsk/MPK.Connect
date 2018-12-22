@@ -95,7 +95,8 @@ namespace MPK.Connect.Service.Business.Graph
             return new Path<StopTimeInfo>();
         }
 
-        private static Path<StopTimeInfo> ReconstructPath(GraphNode<string, StopTimeInfo> destinationNode, Graph<string, StopTimeInfo> graph, Dictionary<string, GraphNode<string, StopTimeInfo>> cameFrom, string sourceName)
+        private static Path<StopTimeInfo> ReconstructPath(GraphNode<string, StopTimeInfo> destinationNode,
+            Graph<string, StopTimeInfo> graph, Dictionary<string, GraphNode<string, StopTimeInfo>> cameFrom, string sourceName)
         {
             var totalPath = new Path<StopTimeInfo>();
 
@@ -118,7 +119,7 @@ namespace MPK.Connect.Service.Business.Graph
             }
 
             totalPath.Reverse();
-            totalPath.Cost = (totalPath.Last().ArrivalTime - totalPath.First().DepartureTime).TotalMinutes;
+            totalPath.Cost = (totalPath.Last().DepartureTime - totalPath.First().DepartureTime).TotalMinutes;
             return totalPath;
         }
     }

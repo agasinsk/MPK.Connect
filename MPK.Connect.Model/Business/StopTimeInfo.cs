@@ -8,6 +8,8 @@ namespace MPK.Connect.Model.Business
     public class StopTimeInfo : LocalizableEntity<string>
     {
         public TimeSpan ArrivalTime { get; set; }
+
+        [JsonConverter(typeof(DailyTimeSpanConverter))]
         public TimeSpan DepartureTime { get; set; }
 
         [JsonIgnore]
