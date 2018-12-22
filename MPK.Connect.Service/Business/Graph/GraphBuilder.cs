@@ -17,6 +17,7 @@ namespace MPK.Connect.Service.Business.Graph
         private readonly TimeSpan _maxStopTimeDepartureTime = TimeSpan.FromHours(1.25);
         private readonly TimeSpan _minimumSwitchingTime = TimeSpan.FromMinutes(1);
         private readonly TimeSpan _additionalTransferTime = TimeSpan.FromMinutes(1.5);
+        private readonly TimeSpan _oneDayTimeSpan = TimeSpan.FromHours(24);
         private readonly IGenericRepository<Stop> _stopRepository;
         private readonly IGenericRepository<StopTime> _stopTimeRepository;
 
@@ -194,7 +195,7 @@ namespace MPK.Connect.Service.Business.Graph
 
             if (endTime.TotalHours >= 24)
             {
-                var updatedEndTime = endTime.Subtract(TimeSpan.FromHours(24));
+                var updatedEndTime = endTime.Subtract(_oneDayTimeSpan);
                 dbStopTimesQuery = dbStopTimesQuery.Where(st => startTime < st.DepartureTime || st.DepartureTime < updatedEndTime);
             }
             else
@@ -233,7 +234,7 @@ namespace MPK.Connect.Service.Business.Graph
 
                 stopTimesBeforeStartTime.ForEach(st =>
                 {
-                    st.DepartureTime = st.DepartureTime.Add(TimeSpan.FromHours(24));
+                    st.DepartureTime = st.DepartureTime.Add(_oneDayTimeSpan);
                 });
             }
 

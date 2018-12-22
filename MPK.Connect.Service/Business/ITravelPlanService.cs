@@ -5,6 +5,6 @@ namespace MPK.Connect.Service.Business
 {
     public interface ITravelPlanService
     {
-        Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>> GetTravelPlans(TravelOptions travelOptions);
+        Dictionary<TravelPlanCategories, IEnumerable<TravelPlan>> GetTravelPlans(TravelOptions travelOptions);
     }
 }

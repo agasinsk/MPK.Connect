@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
@@ -10,15 +9,13 @@ using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Business
 {
-    public class TravelPlanProvider : ITravelPlanProvider
+    public class PathProvider : IPathProvider
     {
         private readonly IStopPathFinder _pathFinder;
-        private readonly IMapper _mapper;
 
-        public TravelPlanProvider(IStopPathFinder pathFinder, IMapper mapper)
+        public PathProvider(IStopPathFinder pathFinder)
         {
             _pathFinder = pathFinder ?? throw new ArgumentNullException(nameof(pathFinder));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -28,7 +25,7 @@ namespace MPK.Connect.Service.Business
         /// <param name="sourceLocation">Source</param>
         /// <param name="destinationLocation">Destination</param>
         /// <returns>Collection of probable paths from source to destination</returns>
-        public IEnumerable<TravelPlan> GetTravelPlans(Graph<string, StopTimeInfo> graph, Location sourceLocation,
+        public List<Path<StopTimeInfo>> GetAvailablePaths(Graph<string, StopTimeInfo> graph, Location sourceLocation,
             Location destinationLocation)
         {
             var sources = GetSourceNodes(graph, sourceLocation, destinationLocation);
@@ -50,7 +47,7 @@ namespace MPK.Connect.Service.Business
                 .ThenBy(p => p.Cost)
                 .ToList();
 
-            return _mapper.Map<List<TravelPlan>>(filteredPaths);
+            return filteredPaths;
         }
 
         private IEnumerable<GraphNode<string, StopTimeInfo>> GetSourceNodes(Graph<string, StopTimeInfo> graph, Location sourceLocation, Location destinationLocation)

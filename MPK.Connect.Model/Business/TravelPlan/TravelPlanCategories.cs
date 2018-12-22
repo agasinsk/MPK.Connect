@@ -4,7 +4,7 @@ using Newtonsoft.Json.Converters;
 namespace MPK.Connect.Model.Business.TravelPlan
 {
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum TravelPlanOptimalities
+    public enum TravelPlanCategories
     {
         Fast = 1,
         Comfortable = 2

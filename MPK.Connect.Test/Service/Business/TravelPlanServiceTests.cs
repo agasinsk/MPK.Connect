@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -16,7 +17,7 @@ namespace MPK.Connect.Test.Service.Business
     {
         private TravelPlanService _travelPlanService;
         private Mock<IGraphBuilder> _graphBuilderMock;
-        private Mock<ITravelPlanProvider> _travelPlanProviderMock;
+        private Mock<IPathProvider> _travelPlanProviderMock;
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException), "Empty name in location was allowed.")]
@@ -36,7 +37,7 @@ namespace MPK.Connect.Test.Service.Business
 
             // Assert
             _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
-            _travelPlanProviderMock.Verify(p => p.GetTravelPlans(It.IsAny<Graph<string, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
+            _travelPlanProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<string, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
         }
 
         [TestMethod]
@@ -57,7 +58,7 @@ namespace MPK.Connect.Test.Service.Business
 
             // Assert
             _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
-            _travelPlanProviderMock.Verify(p => p.GetTravelPlans(It.IsAny<Graph<string, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
+            _travelPlanProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<string, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
         }
 
         [TestMethod]
@@ -81,7 +82,7 @@ namespace MPK.Connect.Test.Service.Business
 
             // Assert
             _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
-            _travelPlanProviderMock.Verify(p => p.GetTravelPlans(It.IsAny<Graph<string, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
+            _travelPlanProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<string, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
         }
 
         [TestMethod]
@@ -105,7 +106,7 @@ namespace MPK.Connect.Test.Service.Business
 
             // Assert
             _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
-            _travelPlanProviderMock.Verify(p => p.GetTravelPlans(It.IsAny<Graph<string, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
+            _travelPlanProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<string, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
         }
 
         [TestMethod]
@@ -182,8 +183,8 @@ namespace MPK.Connect.Test.Service.Business
             _graphBuilderMock.Setup(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()))
                 .Returns(graph);
 
-            _travelPlanProviderMock.Setup(p => p.GetTravelPlans(graph, It.Is<Location>(l => l.Name == "Third"), It.Is<Location>(l => l.Name == "Fourth")))
-                .Returns(new List<TravelPlan>());
+            _travelPlanProviderMock.Setup(p => p.GetAvailablePaths(graph, It.Is<Location>(l => l.Name == "Third"), It.Is<Location>(l => l.Name == "Fourth")))
+                .Returns(new List<Path<StopTimeInfo>>());
 
             // Act
             var result = _travelPlanService.GetTravelPlans(travelOptions);
@@ -191,8 +192,8 @@ namespace MPK.Connect.Test.Service.Business
             // Assert
             _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Once);
             _graphBuilderMock.Verify(p => p.GetGraph(It.Is<DateTime>(d => d < DateTime.Now), null), Times.Once);
-            _travelPlanProviderMock.Verify(p => p.GetTravelPlans(It.IsAny<Graph<string, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Once);
-            _travelPlanProviderMock.Verify(p => p.GetTravelPlans(graph, It.Is<Location>(l => l.Name == "Third"), It.Is<Location>(l => l.Name == "Fourth")), Times.Once);
+            _travelPlanProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<string, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Once);
+            _travelPlanProviderMock.Verify(p => p.GetAvailablePaths(graph, It.Is<Location>(l => l.Name == "Third"), It.Is<Location>(l => l.Name == "Fourth")), Times.Once);
 
             Assert.IsNotNull(result);
         }
@@ -201,9 +202,10 @@ namespace MPK.Connect.Test.Service.Business
         public void SetUp()
         {
             _graphBuilderMock = new Mock<IGraphBuilder>();
-            _travelPlanProviderMock = new Mock<ITravelPlanProvider>();
+            _travelPlanProviderMock = new Mock<IPathProvider>();
             var logger = new Logger<TravelPlanService>(new LoggerFactory());
-            _travelPlanService = new TravelPlanService(_graphBuilderMock.Object, _travelPlanProviderMock.Object, logger);
+            var mapper = new Mock<IMapper>();
+            _travelPlanService = new TravelPlanService(_graphBuilderMock.Object, _travelPlanProviderMock.Object, logger, mapper.Object);
         }
     }
 }

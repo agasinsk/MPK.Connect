@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MoreLinq.Extensions;
 using MPK.Connect.Model.Business;
@@ -13,17 +14,19 @@ namespace MPK.Connect.Service.Business
     public class TravelPlanService : ITravelPlanService
     {
         private readonly IGraphBuilder _graphBuilder;
-        private readonly ITravelPlanProvider _travelPlanProvider;
+        private readonly IPathProvider _pathProvider;
         private readonly ILogger<TravelPlanService> _logger;
+        private readonly IMapper _mapper;
 
-        public TravelPlanService(IGraphBuilder graphBuilder, ITravelPlanProvider travelPlanProvider, ILogger<TravelPlanService> logger)
+        public TravelPlanService(IGraphBuilder graphBuilder, IPathProvider pathProvider, ILogger<TravelPlanService> logger, IMapper mapper)
         {
             _graphBuilder = graphBuilder ?? throw new ArgumentNullException(nameof(graphBuilder));
-            _travelPlanProvider = travelPlanProvider ?? throw new ArgumentNullException(nameof(travelPlanProvider));
+            _pathProvider = pathProvider ?? throw new ArgumentNullException(nameof(pathProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>> GetTravelPlans(TravelOptions travelOptions)
+        public Dictionary<TravelPlanCategories, IEnumerable<TravelPlan>> GetTravelPlans(TravelOptions travelOptions)
         {
             var source = travelOptions.Source;
             var destination = travelOptions.Destination;
@@ -32,30 +35,40 @@ namespace MPK.Connect.Service.Business
             var startDate = travelOptions.StartDate ?? DateTime.Now;
             var graph = _graphBuilder.GetGraph(startDate);
 
+            // Get the names of the closest stops by location coordinates
             if (string.IsNullOrEmpty(source.Name) || string.IsNullOrEmpty(destination.Name))
             {
                 UpdatedLocationsWithNamesOfTheClosestStops(source, destination, graph);
             }
 
-            var travelPlans = _travelPlanProvider.GetTravelPlans(graph, source, destination);
+            // Get available paths from source to destination
+            var availablePaths = _pathProvider.GetAvailablePaths(graph, source, destination);
+            availablePaths.ForEach(p => p.StartDate = startDate);
 
-            return GetTravelPlanHierarchy(travelPlans);
+            return GetTravelPlanHierarchy(availablePaths);
         }
 
-        private Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>> GetTravelPlanHierarchy(IEnumerable<TravelPlan> travelPlans)
+        /// <summary>
+        /// Maps the available paths to travel plans and sorts them into categories
+        /// </summary>
+        /// <param name="availablePaths">Paths from source to destination</param>
+        /// <returns>Hierarchy of travel plans</returns>
+        private Dictionary<TravelPlanCategories, IEnumerable<TravelPlan>> GetTravelPlanHierarchy(List<Path<StopTimeInfo>> availablePaths)
         {
-            if (!travelPlans.Any())
+            if (!availablePaths.Any())
             {
-                return new Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>>();
+                return new Dictionary<TravelPlanCategories, IEnumerable<TravelPlan>>();
             }
+
+            var travelPlans = _mapper.Map<List<TravelPlan>>(availablePaths);
 
             var minimumTransfersCount = travelPlans.Min(t => t.Transfers);
             var comfortableTravelPlans = travelPlans.Where(t => t.Transfers == minimumTransfersCount).ToList();
 
-            var travelPlanHierarchy = new Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>>
+            var travelPlanHierarchy = new Dictionary<TravelPlanCategories, IEnumerable<TravelPlan>>
             {
-                { TravelPlanOptimalities.Comfortable, comfortableTravelPlans},
-                { TravelPlanOptimalities.Fast, travelPlans.Except(comfortableTravelPlans)}
+                { TravelPlanCategories.Comfortable, comfortableTravelPlans},
+                { TravelPlanCategories.Fast, travelPlans.Except(comfortableTravelPlans)}
             };
 
             return travelPlanHierarchy;

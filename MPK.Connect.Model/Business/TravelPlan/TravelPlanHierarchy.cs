@@ -4,6 +4,6 @@ namespace MPK.Connect.Model.Business.TravelPlan
 {
     public class TravelPlanHierarchy
     {
-        public Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>> TravelPlans;
+        public Dictionary<TravelPlanCategories, IEnumerable<TravelPlan>> TravelPlans;
     }
 }

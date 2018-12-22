@@ -6,8 +6,13 @@ namespace MPK.Connect.Service.Helpers
     {
         public static DateTime ToDateTime(this TimeSpan time)
         {
-            var now = DateTime.Now;
-            return new DateTime(now.Year, now.Month, now.Day, time.Hours, time.Minutes, time.Seconds);
+            return time.ToDateTime(DateTime.Now);
+        }
+
+        public static DateTime ToDateTime(this TimeSpan time, DateTime date)
+        {
+            var newDate = date.Date + time;
+            return newDate;
         }
     }
 }

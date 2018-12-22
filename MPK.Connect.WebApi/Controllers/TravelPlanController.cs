@@ -18,9 +18,9 @@ namespace MPK.Connect.WebApp.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>>))]
+        [ProducesResponseType(200, Type = typeof(Dictionary<TravelPlanCategories, IEnumerable<TravelPlan>>))]
         [ProducesResponseType(400)]
-        public Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>> Get([FromBody] TravelOptions travelOptions)
+        public Dictionary<TravelPlanCategories, IEnumerable<TravelPlan>> Get([FromBody] TravelOptions travelOptions)
         {
             return _travelPlanService.GetTravelPlans(travelOptions);
         }

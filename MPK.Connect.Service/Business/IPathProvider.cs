@@ -5,9 +5,9 @@ using MPK.Connect.Model.Graph;
 
 namespace MPK.Connect.Service.Business
 {
-    public interface ITravelPlanProvider
+    public interface IPathProvider
     {
-        IEnumerable<TravelPlan> GetTravelPlans(Graph<string, StopTimeInfo> graph, Location sourceLocation,
+        List<Path<StopTimeInfo>> GetAvailablePaths(Graph<string, StopTimeInfo> graph, Location sourceLocation,
             Location destinationLocation);
     }
 }
