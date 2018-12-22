@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using MoreLinq.Extensions;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
@@ -14,7 +13,7 @@ namespace MPK.Connect.Service.Business.Graph
     public class GraphBuilder : IGraphBuilder
     {
         private readonly IGenericRepository<Calendar> _calendarRepository;
-        private readonly TimeSpan _maxStopTimeDepartureTime = TimeSpan.FromHours(1.25);
+        private readonly TimeSpan _maxStopTimeDepartureTime = TimeSpan.FromHours(1.5);
         private readonly TimeSpan _minimumSwitchingTime = TimeSpan.FromMinutes(1);
         private readonly TimeSpan _additionalTransferTime = TimeSpan.FromMinutes(1.5);
         private readonly TimeSpan _oneDayTimeSpan = TimeSpan.FromHours(24);
@@ -69,13 +68,18 @@ namespace MPK.Connect.Service.Business.Graph
         /// <param name="graph">Graph</param>
         private void CreateDirectedEdgesForSwitchingStopsWithSameName(Dictionary<string, StopTimeInfo> dbStopTimes, Graph<string, StopTimeInfo> graph)
         {
-            var stopTimesGroupedByStopName = dbStopTimes.Values.GroupBy(st => st.StopDto.Name).ToDictionary(k => k.Key, v => v.AsEnumerable());
+            var stopTimesGroupedByStopName = dbStopTimes.Values
+                .GroupBy(st => st.StopDto.Name)
+                .ToDictionary(k => k.Key, v => v.AsEnumerable());
             foreach (var stopTimesGroup in stopTimesGroupedByStopName)
             {
                 var stopTimesWithTheSameStopName = stopTimesGroup.Value.ToList();
                 foreach (var sourceStopTime in stopTimesWithTheSameStopName)
                 {
-                    var stopTimesAfterSource = stopTimesWithTheSameStopName.Where(st => sourceStopTime.DepartureTime + _minimumSwitchingTime < st.DepartureTime && st.StopId != sourceStopTime.StopId && st.TripId != sourceStopTime.TripId);
+                    var stopTimesAfterSource = stopTimesWithTheSameStopName
+                        .Where(st => sourceStopTime.DepartureTime + _minimumSwitchingTime < st.DepartureTime &&
+                                     st.StopId != sourceStopTime.StopId &&
+                                     st.TripId != sourceStopTime.TripId);
                     foreach (var destination in stopTimesAfterSource)
                     {
                         var cost = destination.DepartureTime - sourceStopTime.DepartureTime + _minimumSwitchingTime;
@@ -93,7 +97,9 @@ namespace MPK.Connect.Service.Business.Graph
         /// <param name="graph">Graph</param>
         private void CreateDirectedEdgesForSwitchingTrips(Dictionary<string, StopTimeInfo> dbStopTimes, Graph<string, StopTimeInfo> graph)
         {
-            var stopTimesGroupedByStopId = dbStopTimes.Values.GroupBy(st => st.StopId).ToDictionary(k => k.Key, v => v.OrderBy(st => st.DepartureTime));
+            var stopTimesGroupedByStopId = dbStopTimes.Values
+                .GroupBy(st => st.StopId)
+                .ToDictionary(k => k.Key, v => v.OrderBy(st => st.DepartureTime));
             foreach (var stopTransfers in stopTimesGroupedByStopId)
             {
                 var stopTransferTimes = stopTransfers.Value.ToList();
