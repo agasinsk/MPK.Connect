@@ -23,7 +23,7 @@ namespace MPK.Connect.Service.Business
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IEnumerable<TravelPlan> GetTravelPlans(Location source, Location destination)
+        public Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>> GetTravelPlans(Location source, Location destination)
         {
             ValidateLocations(source, destination);
 
@@ -34,10 +34,31 @@ namespace MPK.Connect.Service.Business
                 UpdatedLocationsWithNamesOfTheClosestStops(source, destination, graph);
             }
 
-            return _travelPlanProvider.GetTravelPlans(graph, source, destination);
+            var travelPlans = _travelPlanProvider.GetTravelPlans(graph, source, destination);
+
+            return GetTravelPlanHierarchy(travelPlans);
         }
 
-        private StopDto GetClosestStop(Location source, List<StopDto> stops)
+        private Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>> GetTravelPlanHierarchy(IEnumerable<TravelPlan> travelPlans)
+        {
+            if (!travelPlans.Any())
+            {
+                return new Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>>();
+            }
+
+            var minimumTransfersCount = travelPlans.Min(t => t.Transfers);
+            var comfortableTravelPlans = travelPlans.Where(t => t.Transfers == minimumTransfersCount).ToList();
+
+            var travelPlanHierarchy = new Dictionary<TravelPlanOptimalities, IEnumerable<TravelPlan>>
+            {
+                { TravelPlanOptimalities.Comfortable, comfortableTravelPlans},
+                { TravelPlanOptimalities.Fast, travelPlans.Except(comfortableTravelPlans)}
+            };
+
+            return travelPlanHierarchy;
+        }
+
+        private StopDto GetClosestStop(Location source, IEnumerable<StopDto> stops)
         {
             return stops.Aggregate((l, r) =>
                 l.GetDistanceTo(source.Latitude.Value, source.Longitude.Value) <
