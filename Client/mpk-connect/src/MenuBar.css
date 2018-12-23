@@ -1,0 +1,11 @@
+.grow{
+  flex-grow: 1;
+}
+
+.menuButton {
+  padding: 50!important;
+}
+
+.logo{
+  padding-right:25px;
+}
