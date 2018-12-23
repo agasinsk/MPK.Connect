@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace MPK.Connect.Model.Business.TravelPlan
 {
     public class TravelPlan
     {
+        [JsonConverter(typeof(DateConverter))]
         public DateTime StartTime { get; set; }
+
+        [JsonConverter(typeof(DateConverter))]
         public DateTime EndTime { get; set; }
+
         public double Duration { get; set; }
         public IEnumerable<string> RouteIds { get; set; }
         public int Transfers { get; set; }
