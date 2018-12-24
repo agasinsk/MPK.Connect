@@ -1,6 +1,9 @@
 import './StopMap.css';
 import React, { Component } from 'react';
-import { Map, TileLayer, ZoomControl, Marker, Popup } from 'react-leaflet';
+import { Map, TileLayer, ZoomControl } from 'react-leaflet';
+import { connect } from 'react-redux';
+
+import { getStops } from '../actions';
 
 const mapCenter = [51.12, 17.04];
 const zoomLevel = 17;
@@ -11,30 +14,12 @@ export class StopMap extends Component {
     super(props);
     this.state = {
       currentZoomLevel: zoomLevel,
-      allStops: [],
-      visibleStops: [],
-      timeTableOpened: false,
-      timeTable: undefined
     };
     this.handleUpPanClick = this.handleUpPanClick.bind(this);
     this.handleRightPanClick = this.handleRightPanClick.bind(this);
     this.handleLeftPanClick = this.handleLeftPanClick.bind(this);
     this.handleDownPanClick = this.handleDownPanClick.bind(this);
-    this.handleMapChange = this.handleMapChange.bind(this);
-    this.toggleTimeTable = this.toggleTimeTable.bind(this);
-    this.filterStops = this.filterStops.bind(this);
-    this.getTimeTable = this.getTimeTable.bind(this);
-
-    fetch('api/Stop/GetAll')
-      .then(response => response.json())
-      .then(data => {
-        console.log('Received ' + data.length + ' stops.')
-        let filteredStops = this.filterStops(data);
-        this.setState({
-          allStops: data,
-          visibleStops: filteredStops
-        });
-      });
+    //this.handleMapChange = this.handleMapChange.bind(this);
   }
 
   componentDidMount() {
@@ -44,17 +29,19 @@ export class StopMap extends Component {
       this.handleZoomLevelChange(updatedZoomLevel);
     });
 
-    leafletMap.on('moveend ', () => {
-      this.handleMapChange();
-    });
+    // leafletMap.on('moveend ', () => {
+    //   this.handleMapChange();
+    // });
+
+    this.props.getStops();
   }
 
-  handleMapChange() {
-    let filteredStops = this.filterStops(this.state.allStops);
-    this.setState({
-      visibleStops: filteredStops
-    });
-  }
+  // handleMapChange() {
+  //   //let filteredStops = this.filterStops(this.state.allStops);
+  //   this.setState({
+  //     visibleStops: filteredStops
+  //   });
+  // }
 
   handleZoomLevelChange(newZoomLevel) {
     this.setState({
@@ -86,39 +73,7 @@ export class StopMap extends Component {
     window.console.log('Panning down');
   }
 
-  filterStops(stops) {
-    let bounds = this.leafletMap.leafletElement.getBounds();
-    let visibleStops = stops.filter(function (stop) {
-      return stop.latitude < bounds._northEast.lat
-        && stop.latitude > bounds._southWest.lat
-        && stop.longitude < bounds._northEast.lng
-        && stop.longitude > bounds._southWest.lng;
-    })
-    return visibleStops;
-  }
-
-  toggleTimeTable() {
-    let currentOpened = this.state.timeTableOpened;
-    this.setState({
-      timeTableOpened: !currentOpened,
-    });
-  };
-
-  getTimeTable(stopId) {
-    fetch('api/TimeTable/' + stopId)
-      .then(response => response.json())
-      .then(data => {
-        console.log('Received timetable for stop ' + data.stopId);
-        this.setState({
-          timeTable: data,
-          timeTableOpened: true
-        });
-      });
-  }
-
   render() {
-    window.console.log('this.state.currentZoomLevel ->', this.state.currentZoomLevel);
-
     return (
       <Map ref={m => { this.leafletMap = m; }} center={mapCenter} zoom={zoomLevel} zoomControl={false}>
         <ZoomControl position="bottomright" />
@@ -131,4 +86,4 @@ export class StopMap extends Component {
   }
 }
 
-export default StopMap;
+export default connect(null, { getStops })(StopMap);

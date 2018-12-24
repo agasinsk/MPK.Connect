@@ -60,6 +60,7 @@ namespace MPK.Connect.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddCors();
             services.AddAutoMapper();
 
             services.AddTransient<IStopService, StopService>();
