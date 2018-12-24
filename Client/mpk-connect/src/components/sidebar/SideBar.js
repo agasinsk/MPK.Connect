@@ -1,3 +1,5 @@
+import './SideBar.css';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
@@ -9,10 +11,10 @@ class SideBar extends Component {
 
   render() {
     if (this.props.value === 0) {
-      return (<PathFinder />)
+      return (<PathFinder className="sidebar" />)
     }
     if (this.props.value === 1) {
-      return (<TimeTable />)
+      return (<TimeTable className="sidebar" />)
     }
     return (
       <Typography variant="h6" color="inherit">{this.props.name}</Typography>

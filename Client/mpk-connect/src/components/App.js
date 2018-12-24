@@ -17,7 +17,7 @@ class App extends Component {
           <SideBar />
         </Grid>
         <Grid item xs={9}>
-          <StopMap />
+          <StopMap bounds={undefined} />
         </Grid>
       </Grid>
     );

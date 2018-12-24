@@ -1,0 +1,15 @@
+.padded{
+  padding: 12px !important;
+}
+
+.margined{
+  margin: 0 2% !important;
+}
+
+.centered{
+  text-align: center;
+}
+
+.headerText{
+  text-align: center;
+}

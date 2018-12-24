@@ -7,5 +7,5 @@ import stopsReducer from './stopsReducer';
 export default combineReducers({
   views: viewReducer,
   selectedView: selectedViewReducer,
-  stops: stopsReducer,
+  stops: stopsReducer
 });
