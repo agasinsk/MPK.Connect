@@ -86,4 +86,10 @@ export class StopMap extends Component {
   }
 }
 
-export default connect(null, { getStops })(StopMap);
+const mapStateToProps = (state) => {
+  return {
+    allStops: state.stops
+  }
+};
+
+export default connect(mapStateToProps, { getStops })(StopMap);

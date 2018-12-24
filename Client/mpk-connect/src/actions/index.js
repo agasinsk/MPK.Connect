@@ -10,5 +10,5 @@ export const selectView = view => {
 export const getStops = () => async dispatch => {
   const response = await mpkConnect.get('Stop/GetAll');
 
-  dispatch({ type: 'GET_STOPS', payload: response })
+  dispatch({ type: 'GET_STOPS', payload: response.data })
 };
