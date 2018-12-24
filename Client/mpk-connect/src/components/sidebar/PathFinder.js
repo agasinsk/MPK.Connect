@@ -8,6 +8,8 @@ import TextField from '@material-ui/core/TextField';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, DateTimePicker } from 'material-ui-pickers';
 
+import { selectSource, selectDestination, setTravelOptions, findTravelPlan } from '../../actions';
+
 class PathFinder extends Component {
 
   constructor(props) {
@@ -22,22 +24,32 @@ class PathFinder extends Component {
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleSourceChange = this.handleSourceChange.bind(this);
     this.handleDestinationChange = this.handleDestinationChange.bind(this);
+    this.findPath = this.findPath.bind(this);
   }
 
   handleSourceChange(event) {
-    this.setState({ source: event.target.value });
+    const source = {
+      name: event.target.value
+    };
+    this.props.selectSource(source);
   }
 
   handleDestinationChange(event) {
-    this.setState({ destination: event.target.value });
+    const destination = {
+      name: event.target.value
+    };
+    this.props.selectDestination(destination);
   }
 
   handleDateChange(date) {
     this.setState({ selectedDate: date });
   }
 
+  findPath() {
+    this.props.findTravelPlan(this.props.source, this.props.destination, this.state.selectedDate);
+  }
+
   render() {
-    const selectedDate = this.state.selectedDate;
 
     return (
       <Grid container spacing={0} alignItems="flex-end">
@@ -45,7 +57,7 @@ class PathFinder extends Component {
           <TextField
             id="source-point"
             label="Punkt startowy"
-            value={this.state.source}
+            value={this.props.source.name}
             onChange={this.handleSourceChange}
             variant="outlined"
             margin="normal"
@@ -55,7 +67,7 @@ class PathFinder extends Component {
           <TextField
             id="destination-point"
             label="Punkt końcowy"
-            value={this.state.destination}
+            value={this.props.destination.name}
             onChange={this.handleDestinationChange}
             variant="outlined"
             margin="normal"
@@ -66,7 +78,7 @@ class PathFinder extends Component {
             <DateTimePicker
               autoOk
               ampm={false}
-              value={selectedDate}
+              value={this.state.selectedDate}
               onChange={this.handleDateChange}
               showTodayButton
               format="dd.MM.yyyy, HH:mm "
@@ -76,7 +88,7 @@ class PathFinder extends Component {
           </MuiPickersUtilsProvider>
         </Grid>
         <Grid item xs={12} className="padded centered">
-          <Button variant="contained" color="secondary">
+          <Button variant="contained" color="secondary" onClick={this.findPath}>
             Wyszukaj połączenie
           </Button>
         </Grid>
@@ -87,8 +99,10 @@ class PathFinder extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    name: state.views[state.selectedView].name
+    source: state.selectedSource,
+    destination: state.selectedDestination,
+    travelOptions: state.travelOptions
   };
 };
 
-export default connect(mapStateToProps)(PathFinder);
+export default connect(mapStateToProps, { selectSource, selectDestination, setTravelOptions, findTravelPlan })(PathFinder);

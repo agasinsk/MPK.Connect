@@ -13,30 +13,40 @@ export const getStops = () => async dispatch => {
   dispatch({ type: 'GET_STOPS', payload: response.data })
 };
 
-export const filterStops = (stops, bounds) => {
-  let visibleStops = stops.filter(function (stop) {
-    return stop.latitude < bounds._northEast.lat
-      && stop.latitude > bounds._southWest.lat
-      && stop.longitude < bounds._northEast.lng
-      && stop.longitude > bounds._southWest.lng;
-  });
-
-  return {
-    type: 'FILTER_STOP',
-    payload: visibleStops,
-  };
-};
-
 export const selectSource = source => {
   return {
-    type: 'VIEW_SELECTED',
+    type: 'SET_SOURCE',
     payload: source,
   };
 };
 
 export const selectDestination = destination => {
   return {
-    type: 'VIEW_SELECTED',
+    type: 'SET_DESTINATION',
     payload: destination,
   };
 };
+
+export const setTravelOptions = (source, destination, date) => {
+
+  return {
+    type: 'SET_TRAVEL_OPTIONS',
+    payload: { source, destination, startDate: date },
+  };
+};
+
+export const findTravelPlan = (source, destination, date) => async (dispatch, getState) => {
+  await dispatch(setTravelOptions(source, destination, date));
+  const travelOptions = getState().travelOptions;
+  dispatch(getTravelPlan(travelOptions));
+};
+
+export const getTravelPlan = (travelOptions) => async dispatch => {
+  console.log('Looking for travel plan :' + travelOptions);
+
+  const response = await mpkConnect.post('TravelPlan', travelOptions);
+
+  dispatch({ type: 'GET_TRAVEL_PLAN', payload: response.data })
+};
+
+

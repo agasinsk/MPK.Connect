@@ -17,7 +17,7 @@ namespace MPK.Connect.WebApp.Controllers
             _travelPlanService = travelPlanService ?? throw new ArgumentNullException(nameof(travelPlanService));
         }
 
-        [HttpGet]
+        [HttpPost]
         [ProducesResponseType(200, Type = typeof(Dictionary<TravelPlanCategories, IEnumerable<TravelPlan>>))]
         [ProducesResponseType(400)]
         public Dictionary<TravelPlanCategories, IEnumerable<TravelPlan>> Get([FromBody] TravelOptions travelOptions)
