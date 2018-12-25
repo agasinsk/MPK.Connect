@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import TramIcon from '@material-ui/icons/Tram';
+import { Button } from '@material-ui/core';
 
 class TravelPlan extends Component {
 
@@ -20,34 +21,62 @@ class TravelPlan extends Component {
       routes: props.data.routeIds,
       transfers: props.data.transfers,
       stops: props.data.stops,
+      showDetails: false
     };
+
+    this.handleTravelPlanSelection = this.handleTravelPlanSelection.bind(this);
+    this.renderGeneralView = this.renderGeneralView.bind(this);
+    this.renderDetailedView = this.renderDetailedView.bind(this);
   }
 
-  render() {
+  handleTravelPlanSelection() {
+    const showingDetails = this.state.showDetails;
+    this.setState({
+      showDetails: !showingDetails
+    });
+  }
 
+  renderGeneralView() {
     return (
-      <ListItem >
-        <Paper elevation={10} className="paper-wide">
-          <Paper className="times">
-            <Chip color="primary"
-              label={this.state.startTime}
-              className="chip" />
-            <Typography variant="caption" className="margined">
-              {this.state.duration} min
-            </Typography>
-            <Chip color="secondary"
-              label={this.state.endTime}
-              className="chip" />
-          </Paper>
-
-          <Paper className="routes">
-            {this.state.routes.map(route => {
-              return <Chip label={route} avatar={<Avatar><TramIcon /></Avatar>} className="route-chip" />
-            })}
-          </Paper>
+      <Paper elevation={10} className="paper-wide">
+        <Paper className="times">
+          <Chip color="primary"
+            label={this.state.startTime}
+            className="chip" />
+          <Typography variant="caption" className="margined">
+            {this.state.duration} min
+        </Typography>
+          <Chip color="secondary"
+            label={this.state.endTime}
+            className="chip" />
         </Paper>
 
-      </ListItem >
+        <Paper className="routes">
+          {this.state.routes.map(route => {
+            return <Chip label={route} avatar={<Avatar><TramIcon /></Avatar>} className="route-chip" />
+          })}
+        </Paper>
+      </Paper>
+    )
+  };
+
+
+  renderDetailedView() {
+    return (
+      <Button onClick={this.handleTravelPlanSelection}>back
+      </Button>)
+  };
+
+  render() {
+    var view = null;
+    if (this.state.showDetails) {
+      view = this.renderDetailedView();
+    }
+    else {
+      view = this.renderGeneralView();
+    }
+    return (
+      <ListItem onClick={this.handleTravelPlanSelection} clickable>{view}</ListItem>
 
     )
   };
