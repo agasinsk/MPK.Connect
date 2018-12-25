@@ -1,0 +1,33 @@
+.chip{
+  height: 16px!important;
+}
+
+.paper-wide{
+  flex-grow: 0;
+  max-width: 100%;
+  flex-basis: 100%;
+    display: flex;
+  flex-wrap: wrap;
+}
+
+.times{
+  border-radius: 0!important;
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 5px;
+}
+
+.routes{
+  border-radius: 0!important;
+  display: flex;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 5px;
+}
+
+.route-chip{
+  margin-right: 5px;
+}

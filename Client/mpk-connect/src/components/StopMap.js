@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 
 import { getStops } from '../actions';
 
-const mapCenter = [51.11, 17.035];
-const zoomLevel = 16;
+const mapCenter = [51.105, 17.035];
+const zoomLevel = 15;
 
 export class StopMap extends Component {
 
@@ -59,7 +59,6 @@ export class StopMap extends Component {
   }
 
   render() {
-    console.log(this.props.travelPlanCoordinates);
     console.log('this.state.currentZoomLevel ->', this.state.currentZoomLevel);
     return (
       <Map ref={m => { this.leafletMap = m; }} center={mapCenter} zoom={zoomLevel} zoomControl={false}>
@@ -88,19 +87,17 @@ export class StopMap extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.travelPlan);
+
   const travelPlan = state.travelPlan;
   var travelPlanCoordinates = [];
   if (travelPlan !== undefined && travelPlan.Comfortable !== undefined) {
     const firstTravelPlan = travelPlan.Comfortable[0];
-    console.log(firstTravelPlan);
     travelPlanCoordinates = firstTravelPlan.stops.map(stop => [stop.stopInfo.latitude, stop.stopInfo.longitude]);
-    console.log(travelPlanCoordinates);
   }
 
   return {
     allStops: state.stops,
-    travelPlanCoordinates
+    travelPlanCoordinates: travelPlanCoordinates
   }
 };
 
