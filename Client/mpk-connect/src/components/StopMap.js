@@ -1,6 +1,6 @@
 import './StopMap.css';
 import React, { Component } from 'react';
-import { Map, TileLayer, ZoomControl, Marker, Popup } from 'react-leaflet';
+import { Map, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet';
 import { connect } from 'react-redux';
 
 import { getStops } from '../actions';
@@ -59,6 +59,7 @@ export class StopMap extends Component {
   }
 
   render() {
+    console.log(this.props.travelPlanCoordinates);
     console.log('this.state.currentZoomLevel ->', this.state.currentZoomLevel);
     return (
       <Map ref={m => { this.leafletMap = m; }} center={mapCenter} zoom={zoomLevel} zoomControl={false}>
@@ -80,14 +81,26 @@ export class StopMap extends Component {
           </Marker>
         }
         )}
+        <Polyline color="lime" positions={this.props.travelPlanCoordinates} />
       </Map>
     );
   }
 }
 
 const mapStateToProps = (state) => {
+  console.log(state.travelPlan);
+  const travelPlan = state.travelPlan;
+  var travelPlanCoordinates = [];
+  if (travelPlan !== undefined && travelPlan.Comfortable !== undefined) {
+    const firstTravelPlan = travelPlan.Comfortable[0];
+    console.log(firstTravelPlan);
+    travelPlanCoordinates = firstTravelPlan.stops.map(stop => [stop.stopInfo.latitude, stop.stopInfo.longitude]);
+    console.log(travelPlanCoordinates);
+  }
+
   return {
-    allStops: state.stops
+    allStops: state.stops,
+    travelPlanCoordinates
   }
 };
 

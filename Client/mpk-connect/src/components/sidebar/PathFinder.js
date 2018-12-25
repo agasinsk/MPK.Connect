@@ -8,7 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, DateTimePicker } from 'material-ui-pickers';
 
-import { selectSource, selectDestination, setTravelOptions, findTravelPlan } from '../../actions';
+import { selectSource, selectDestination, findTravelPlan } from '../../actions';
 
 class PathFinder extends Component {
 
@@ -105,4 +105,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { selectSource, selectDestination, setTravelOptions, findTravelPlan })(PathFinder);
+export default connect(mapStateToProps, { selectSource, selectDestination, findTravelPlan })(PathFinder);

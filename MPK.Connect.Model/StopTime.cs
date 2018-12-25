@@ -1,16 +1,13 @@
-﻿using MPK.Connect.Model.Enums;
-using MPK.Connect.Model.Helpers;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MPK.Connect.Model.Enums;
+using MPK.Connect.Model.Helpers;
 
 namespace MPK.Connect.Model
 {
     public class StopTime : IdentifiableEntity<string>
     {
-        [NotMapped]
-        public override string Id => $"{TripId}:{StopId}:{ArrivalTime}";
-
         [ForeignKey(nameof(Trip))]
         [Required]
         public string TripId { get; set; }

@@ -1,14 +1,14 @@
-﻿using EFCore.BulkExtensions;
-using Microsoft.EntityFrameworkCore;
-using MPK.Connect.Model.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore;
+using MPK.Connect.Model.Helpers;
 
 namespace MPK.Connect.DataAccess
 {
-    public abstract class GenericRepository<TEntity, TId> :
+    public abstract class GenericRepository<TEntity, TId> : IDisposable,
         IGenericRepository<TEntity> where TEntity : IdentifiableEntity<TId> where TId : class
     {
         protected DbContext Context { get; set; }
@@ -69,6 +69,11 @@ namespace MPK.Connect.DataAccess
         public virtual void Save()
         {
             Context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            Context?.Dispose();
         }
     }
 }

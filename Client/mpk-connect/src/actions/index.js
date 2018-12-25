@@ -28,10 +28,12 @@ export const selectDestination = destination => {
 };
 
 export const setTravelOptions = (source, destination, date) => {
-
+  const localDate = new Date(date);
+  localDate.setHours(date.getHours() - date.getTimezoneOffset() / 60);
+  console.log(localDate);
   return {
     type: 'SET_TRAVEL_OPTIONS',
-    payload: { source, destination, startDate: date },
+    payload: { source, destination, startDate: localDate },
   };
 };
 

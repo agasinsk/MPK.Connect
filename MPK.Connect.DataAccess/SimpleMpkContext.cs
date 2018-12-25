@@ -23,9 +23,6 @@ namespace MPK.Connect.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<StopTime>()
-                .HasKey(p => new { p.TripId, p.StopId, p.StopSequence });
-
             modelBuilder.Ignore<Shape>();
             modelBuilder.Ignore<ShapeBase>();
 

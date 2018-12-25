@@ -1,4 +1,9 @@
-﻿using Autofac;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,11 +16,6 @@ using MPK.Connect.Model.Helpers;
 using MPK.Connect.Service.Builders;
 using MPK.Connect.Service.Helpers;
 using MPK.Connect.Service.Import;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 
 namespace MPK.Console.DataImporter
 {
@@ -75,6 +75,7 @@ namespace MPK.Console.DataImporter
 
             containerBuilder.RegisterGeneric(typeof(ImporterService<>)).As(typeof(IImporterService<>));
             containerBuilder.RegisterType(typeof(ShapeImporterService)).As(typeof(IImporterService<Shape>));
+            containerBuilder.RegisterType(typeof(StopTimeImporterService)).As(typeof(IImporterService<StopTime>));
             containerBuilder.RegisterType(typeof(ShapeCollectionHelper)).As(typeof(IShapeCollectionHelper));
 
             containerBuilder.RegisterType(typeof(SimpleMpkContext)).As<IMpkContext>();

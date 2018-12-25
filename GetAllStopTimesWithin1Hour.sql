@@ -8,7 +8,7 @@ declare @now time
 set @now = CAST(GETDATE() as time)
 
 declare @later time
-set @later = DATEADD(minute, 100, @now)
+set @later = DATEADD(minute, 90, @now)
 
 SELECT [st].[TripId], [st].[StopId], [st].[StopSequence], [st].[ArrivalTime], [st].[DepartureTime], 
 [st].[DropOffTypes], [st].[HeadSign], [st].[PickupType], [st].[ShapeDistTraveled], [st].[TimePoint],

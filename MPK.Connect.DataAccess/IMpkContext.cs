@@ -1,6 +1,8 @@
-﻿namespace MPK.Connect.DataAccess
+﻿using System;
+
+namespace MPK.Connect.DataAccess
 {
-    public interface IMpkContext
+    public interface IMpkContext : IDisposable
     {
     }
 }
