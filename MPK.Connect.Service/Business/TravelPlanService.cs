@@ -26,7 +26,7 @@ namespace MPK.Connect.Service.Business
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public Dictionary<TravelPlanCategories, IEnumerable<TravelPlan>> GetTravelPlans(TravelOptions travelOptions)
+        public IEnumerable<TravelPlan> GetTravelPlans(TravelOptions travelOptions)
         {
             var source = travelOptions.Source;
             var destination = travelOptions.Destination;
@@ -44,8 +44,9 @@ namespace MPK.Connect.Service.Business
             // Get available paths from source to destination
             var availablePaths = _pathProvider.GetAvailablePaths(graph, source, destination);
             availablePaths.ForEach(p => p.StartDate = startDate);
+            var travelPlans = _mapper.Map<List<TravelPlan>>(availablePaths);
 
-            return GetTravelPlanHierarchy(availablePaths);
+            return travelPlans.OrderBy(t => t.Transfers).ThenBy(t => t.StartTime).ThenBy(t => t.Duration);
         }
 
         /// <summary>

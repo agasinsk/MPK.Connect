@@ -9,6 +9,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, DateTimePicker } from 'material-ui-pickers';
 import List from '@material-ui/core/List';
 import ArrowBack from '@material-ui/icons/ArrowBack';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { selectSource, selectDestination, findTravelPlan } from '../../actions';
 import TravelPlan from './TravelPlan';
@@ -23,7 +24,7 @@ class PathFinder extends Component {
       selectedDate: new Date(),
       source: "",
       destination: "",
-      showTravelPlan: true
+      showTravelPlan: false
     };
 
     this.handleDateChange = this.handleDateChange.bind(this);
@@ -58,91 +59,63 @@ class PathFinder extends Component {
 
   findPath() {
     this.props.findTravelPlan(this.props.source, this.props.destination, this.state.selectedDate);
+    this.setState({ showTravelPlan: true });
+  }
+
+  renderView() {
+    if (this.state.showTravelPlan && this.props.travelPlan === null && this.props.travelPlan !== "ERROR") {
+      return (
+        <Grid item xs={12} className="margined centered">
+          <CircularProgress />
+        </Grid >);
+    }
+    if (this.state.showTravelPlan && this.props.travelPlan !== null) {
+      return this.renderTravelPlans(this.props.travelPlan);
+    }
+    if (!this.state.showTravelPlan) {
+      return this.renderStardardView();
+    }
   }
 
   renderStardardView() {
-    if (!this.state.showTravelPlan) {
-      return (<Grid item xs={12} className="centered margined">
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <DateTimePicker
-            autoOk
-            ampm={false}
-            value={this.state.selectedDate}
-            onChange={this.handleDateChange}
-            showTodayButton
-            format="dd.MM.yyyy, HH:mm"
-            label="Data"
-            margin={this.state.margin}
-          />
-        </MuiPickersUtilsProvider>
-        <Button variant="contained" color="primary" onClick={this.findPath}>
-          Wyszukaj połączenie
-        </Button>
-      </Grid>);
-    }
-    else {
-      return (<Grid item xs={12} className="margined centered">
-        <Button variant="outlined" color="primary" onClick={this.handleGoBack} className="back-button">
-          Wroć
-         <ArrowBack />
-        </Button>
-      </Grid>);
-
-    }
-
+    return (<Grid item xs={12} className="centered margined">
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <DateTimePicker
+          autoOk
+          ampm={false}
+          value={this.state.selectedDate}
+          onChange={this.handleDateChange}
+          showTodayButton
+          format="dd.MM.yyyy, HH:mm"
+          label="Data"
+          margin={this.state.margin}
+        />
+      </MuiPickersUtilsProvider>
+      <Button variant="contained" color="primary" onClick={this.findPath}>
+        Wyszukaj połączenie
+      </Button>
+    </Grid>);
   }
 
-  renderTravelPlans(travelPlans) {
-    if (travelPlans !== undefined && travelPlans.Comfortable !== undefined) {
-      return this.props.travelPlan.Comfortable.map((travelPlan) => {
-        return <TravelPlan data={travelPlan} />
-      });
-    }
-    else {
-      const travelPlan = {
-        startTime: "2018-12-25T19:42:00Z",
-        endTime: "2018-12-25T19:57:00Z",
-        duration: 15,
-        routeIds: [
-          "33", "22"
-        ],
-        transfers: 1,
-        stops: [
-          {
-            arrivalTime: "19:42:00",
-            departureTime: "19:42:00",
-            route: "33",
-            routeType: "Tram",
-            direction: "SĘPOLNO",
-            stopInfo: {
-              code: "12206",
-              latitude: 51.12527525,
-              longitude: 16.98342767,
-              name: "Kwiska",
-              id: "1501"
-            },
-            stopSequence: 5,
-            tripId: "6_6517658"
-          },
-          {
-            arrivalTime: "19:52:00",
-            departureTime: "19:52:00",
-            route: "102",
-            routeType: "Bus",
-            direction: "SĘPOLNO",
-            stopInfo: {
-              code: "12206",
-              latitude: 51.12527525,
-              longitude: 16.98342767,
-              name: "Zachodnia",
-              id: "1501"
-            },
-            stopSequence: 7,
-            tripId: "6_6517658"
-          }]
-      };
-      return <TravelPlan data={travelPlan} />
-    }
+  renderTravelPlans() {
+
+    return (<React.Fragment>
+      <Grid item xs={12} className="margined centered">
+        <Button variant="outlined" color="primary" onClick={this.handleGoBack} className="back-button">
+          Wroć
+          <ArrowBack />
+        </Button>
+      </Grid>
+      <Grid item xs={12} className="centered">
+        <List dense>
+          {this.props.travelPlan.map(travelPlan => {
+            return (<TravelPlan key={travelPlan.id} data={travelPlan} />);
+          })}
+        </List>
+      </Grid>
+    </React.Fragment>)
+
+
   }
 
   render() {
@@ -168,13 +141,7 @@ class PathFinder extends Component {
             margin={this.state.margin}
             fullWidth />
         </Grid>
-
-        {this.renderStardardView()}
-        <Grid item xs={12} className="centered">
-          <List dense>
-            {this.renderTravelPlans(this.props.travelPlan)}
-          </List>
-        </Grid>
+        {this.renderView()}
       </Grid >
     )
   };

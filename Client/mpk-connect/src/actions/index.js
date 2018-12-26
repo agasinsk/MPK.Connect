@@ -45,7 +45,9 @@ export const findTravelPlan = (source, destination, date) => async (dispatch, ge
 
 export const getTravelPlan = (travelOptions) => async dispatch => {
   const response = await mpkConnect.post('TravelPlan', travelOptions);
-
+  if (response.status !== 200) {
+    dispatch({ type: 'GET_TRAVEL_PLAN', payload: "ERROR" })
+  }
   dispatch({ type: 'GET_TRAVEL_PLAN', payload: response.data })
 };
 

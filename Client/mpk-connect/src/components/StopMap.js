@@ -15,7 +15,7 @@ export class StopMap extends Component {
 
     this.state = {
       currentZoomLevel: zoomLevel,
-      visibleStops: props.allStops
+      visibleStops: []
     };
     this.handleMapChange = this.handleMapChange.bind(this);
   }
@@ -67,7 +67,7 @@ export class StopMap extends Component {
           attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {this.state.visibleStops.map((stop) => {
+        {/* {this.state.visibleStops.map((stop) => {
           let position = [stop.latitude, stop.longitude];
           return <Marker key={`marker-${stop.id}`} position={position}>
             <Popup>
@@ -79,7 +79,7 @@ export class StopMap extends Component {
             </Popup>
           </Marker>
         }
-        )}
+        )} */}
         <Polyline color="lime" positions={this.props.travelPlanCoordinates} />
       </Map>
     );
@@ -90,8 +90,8 @@ const mapStateToProps = (state) => {
 
   const travelPlan = state.travelPlan;
   var travelPlanCoordinates = [];
-  if (travelPlan !== undefined && travelPlan.Comfortable !== undefined) {
-    const firstTravelPlan = travelPlan.Comfortable[0];
+  if (travelPlan !== null && travelPlan !== "ERROR") {
+    const firstTravelPlan = travelPlan[0];
     travelPlanCoordinates = firstTravelPlan.stops.map(stop => [stop.stopInfo.latitude, stop.stopInfo.longitude]);
   }
 

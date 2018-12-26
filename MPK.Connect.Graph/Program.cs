@@ -28,7 +28,7 @@ namespace MPK.Connect.Graph
             serviceCollection.AddSingleton(new LoggerFactory())
                 .AddLogging(configure =>
                     configure
-                        .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning))
+                        .AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Information))
                 .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information);
 
             // Build configuration
@@ -70,7 +70,7 @@ namespace MPK.Connect.Graph
                 var calendarRepo = scope.Resolve<IGenericRepository<Calendar>>();
                 var graphBuilder = new GraphBuilder(stopRepo, stopTimeRepo, calendarRepo);
 
-                var graph = graphBuilder.GetGraph(new DateTime(2018, 12, 21, 23, 30, 00));
+                var graph = graphBuilder.GetGraph(DateTime.Now);
 
                 var srcs = graph.Nodes.Values
                     .Where(s => s.Data.StopDto.Name.TrimToLower() == "Galeria Dominikańska".TrimToLower())

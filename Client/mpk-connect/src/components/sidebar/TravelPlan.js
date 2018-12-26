@@ -56,7 +56,7 @@ class TravelPlan extends Component {
 
         <Paper className="routes">
           {this.state.routes.map(route => {
-            return <Chip label={route} avatar={<Avatar><TramIcon /></Avatar>} className="route-chip" />
+            return <Chip key={route} label={route} avatar={<Avatar><TramIcon /></Avatar>} className="route-chip" />
           })}
         </Paper>
       </Paper>
@@ -66,13 +66,14 @@ class TravelPlan extends Component {
   renderDetailedView() {
     return (
       <Paper elevation={10} className="paper-wide">
-        <List dense={true} >
+        <List dense>
           <ListItem>
             <Button variant="contained" color="secondary" onClick={this.handleTravelPlanSelection}>
               Wroć
               <ArrowBack />
             </Button>
           </ListItem>
+          <Paper className="detail-list">
           {this.state.stops.map(stop => {
             return <ListItem>
               <Chip color="primary"
@@ -85,6 +86,7 @@ class TravelPlan extends Component {
               />
             </ListItem>
           })}
+          </Paper>
         </List>
       </Paper>)
   };

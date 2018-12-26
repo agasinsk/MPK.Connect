@@ -1,13 +1,13 @@
-use [MPK.Simple.Db]
+use [MPK.Fast.Db]
 go
 
-declare @serviceId int
-set @serviceId = 6
+declare @serviceId nvarchar(450)
+set @serviceId = N'6'
 
-declare @now time
+declare @now time(7)
 set @now = CAST(GETDATE() as time)
 
-declare @later time
+declare @later time(7)
 set @later = DATEADD(minute, 90, @now)
 
 SELECT [st].[TripId], [st].[StopId], [st].[StopSequence], [st].[ArrivalTime], [st].[DepartureTime], 

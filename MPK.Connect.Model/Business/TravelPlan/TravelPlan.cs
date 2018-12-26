@@ -6,6 +6,8 @@ namespace MPK.Connect.Model.Business.TravelPlan
 {
     public class TravelPlan
     {
+        public string Id { get; set; }
+
         [JsonConverter(typeof(DateConverter))]
         public DateTime StartTime { get; set; }
 
