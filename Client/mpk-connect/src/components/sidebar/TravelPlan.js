@@ -7,7 +7,10 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import TramIcon from '@material-ui/icons/Tram';
-import { Button } from '@material-ui/core';
+import ArrowBack from '@material-ui/icons/ArrowBack';
+import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import ListItemText from '@material-ui/core/ListItemText';
 
 class TravelPlan extends Component {
 
@@ -38,7 +41,7 @@ class TravelPlan extends Component {
 
   renderGeneralView() {
     return (
-      <Paper elevation={10} className="paper-wide">
+      <Paper elevation={10} className="paper-wide" onClick={this.handleTravelPlanSelection}>
         <Paper className="times">
           <Chip color="primary"
             label={this.state.startTime}
@@ -60,11 +63,30 @@ class TravelPlan extends Component {
     )
   };
 
-
   renderDetailedView() {
     return (
-      <Button onClick={this.handleTravelPlanSelection}>back
-      </Button>)
+      <Paper elevation={10} className="paper-wide">
+        <List dense={true} >
+          <ListItem>
+            <Button variant="contained" color="secondary" onClick={this.handleTravelPlanSelection}>
+              Wroć
+              <ArrowBack />
+            </Button>
+          </ListItem>
+          {this.state.stops.map(stop => {
+            return <ListItem>
+              <Chip color="primary"
+                label={stop.departureTime}
+                className="chip" />
+              <Chip label={stop.route} avatar={<Avatar><TramIcon /></Avatar>} className="route-chip" variant="outlined" />
+              <ListItemText
+                primary={stop.stopInfo.name}
+                secondary={'Kierunek: ' + stop.direction}
+              />
+            </ListItem>
+          })}
+        </List>
+      </Paper>)
   };
 
   render() {
@@ -76,7 +98,7 @@ class TravelPlan extends Component {
       view = this.renderGeneralView();
     }
     return (
-      <ListItem onClick={this.handleTravelPlanSelection} clickable>{view}</ListItem>
+      <ListItem>{view}</ListItem>
 
     )
   };

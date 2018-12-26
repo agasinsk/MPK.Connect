@@ -65,6 +65,7 @@ namespace MPK.Connect.Graph
             using (var scope = Container.BeginLifetimeScope())
             {
                 var stopTimeRepo = scope.Resolve<IGenericRepository<StopTime>>();
+
                 var stopRepo = scope.Resolve<IGenericRepository<Stop>>();
                 var calendarRepo = scope.Resolve<IGenericRepository<Calendar>>();
                 var graphBuilder = new GraphBuilder(stopRepo, stopTimeRepo, calendarRepo);

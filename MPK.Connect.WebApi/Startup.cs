@@ -87,9 +87,9 @@ namespace MPK.Connect.WebApp
                 .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information);
 
             // Add dbContext
-            services.AddDbContext<SimpleMpkContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(SimpleMpkContext))), ServiceLifetime.Transient);
+            services.AddDbContext<SimpleMpkContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(SimpleMpkContext))), ServiceLifetime.Scoped);
 
-            services.AddTransient<IMpkContext, SimpleMpkContext>();
+            services.AddScoped<IMpkContext, SimpleMpkContext>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

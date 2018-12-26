@@ -8,6 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, DateTimePicker } from 'material-ui-pickers';
 import List from '@material-ui/core/List';
+import ArrowBack from '@material-ui/icons/ArrowBack';
 
 import { selectSource, selectDestination, findTravelPlan } from '../../actions';
 import TravelPlan from './TravelPlan';
@@ -21,12 +22,14 @@ class PathFinder extends Component {
       margin: "normal",
       selectedDate: new Date(),
       source: "",
-      destination: ""
+      destination: "",
+      showTravelPlan: true
     };
 
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleSourceChange = this.handleSourceChange.bind(this);
     this.handleDestinationChange = this.handleDestinationChange.bind(this);
+    this.handleGoBack = this.handleGoBack.bind(this);
     this.findPath = this.findPath.bind(this);
   }
 
@@ -48,8 +51,45 @@ class PathFinder extends Component {
     this.setState({ selectedDate: date });
   }
 
+  handleGoBack() {
+    const showingTravelPlan = this.state.showTravelPlan;
+    this.setState({ showTravelPlan: !showingTravelPlan });
+  }
+
   findPath() {
     this.props.findTravelPlan(this.props.source, this.props.destination, this.state.selectedDate);
+  }
+
+  renderStardardView() {
+    if (!this.state.showTravelPlan) {
+      return (<Grid item xs={12} className="centered margined">
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <DateTimePicker
+            autoOk
+            ampm={false}
+            value={this.state.selectedDate}
+            onChange={this.handleDateChange}
+            showTodayButton
+            format="dd.MM.yyyy, HH:mm"
+            label="Data"
+            margin={this.state.margin}
+          />
+        </MuiPickersUtilsProvider>
+        <Button variant="contained" color="primary" onClick={this.findPath}>
+          Wyszukaj połączenie
+        </Button>
+      </Grid>);
+    }
+    else {
+      return (<Grid item xs={12} className="margined centered">
+        <Button variant="outlined" color="primary" onClick={this.handleGoBack} className="back-button">
+          Wroć
+         <ArrowBack />
+        </Button>
+      </Grid>);
+
+    }
+
   }
 
   renderTravelPlans(travelPlans) {
@@ -83,11 +123,26 @@ class PathFinder extends Component {
             },
             stopSequence: 5,
             tripId: "6_6517658"
+          },
+          {
+            arrivalTime: "19:52:00",
+            departureTime: "19:52:00",
+            route: "102",
+            routeType: "Bus",
+            direction: "SĘPOLNO",
+            stopInfo: {
+              code: "12206",
+              latitude: 51.12527525,
+              longitude: 16.98342767,
+              name: "Zachodnia",
+              id: "1501"
+            },
+            stopSequence: 7,
+            tripId: "6_6517658"
           }]
       };
       return <TravelPlan data={travelPlan} />
     }
-
   }
 
   render() {
@@ -113,25 +168,10 @@ class PathFinder extends Component {
             margin={this.state.margin}
             fullWidth />
         </Grid>
-        <Grid item xs={12} className="centered margined">
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <DateTimePicker
-              autoOk
-              ampm={false}
-              value={this.state.selectedDate}
-              onChange={this.handleDateChange}
-              showTodayButton
-              format="dd.MM.yyyy, HH:mm"
-              label="Data"
-              margin={this.state.margin}
-            />
-          </MuiPickersUtilsProvider>
-          <Button variant="contained" color="secondary" onClick={this.findPath}>
-            Wyszukaj połączenie
-          </Button>
-        </Grid>
+
+        {this.renderStardardView()}
         <Grid item xs={12} className="centered">
-          <List >
+          <List dense>
             {this.renderTravelPlans(this.props.travelPlan)}
           </List>
         </Grid>

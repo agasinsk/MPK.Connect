@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using MPK.Connect.Model;
 
 namespace MPK.Connect.DataAccess
@@ -30,11 +29,11 @@ namespace MPK.Connect.DataAccess
                 .Ignore(nameof(Trip.Shape));
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var connectionString = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json").Build().GetConnectionString(nameof(SimpleMpkContext));
-            optionsBuilder.UseSqlServer(connectionString);
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    var connectionString = new ConfigurationBuilder()
+        //        .AddJsonFile("appsettings.json").Build().GetConnectionString(nameof(SimpleMpkContext));
+        //    optionsBuilder.UseSqlServer(connectionString);
+        //}
     }
 }
