@@ -7,6 +7,7 @@ import selectedDestinationReducer from './selectedDestinationReducer';
 import selectedSourceReducer from './selectedSourceReducer';
 import travelOptionsReducer from './travelOptionsReducer';
 import travelPlanReducer from './travelPlanReducer';
+import selectedTravelPlanReducer from './selectedTravelPlanReducer';
 
 export default combineReducers({
   views: viewReducer,
@@ -15,5 +16,6 @@ export default combineReducers({
   selectedSource: selectedSourceReducer,
   selectedDestination: selectedDestinationReducer,
   travelOptions: travelOptionsReducer,
-  travelPlan: travelPlanReducer
+  travelPlan: travelPlanReducer,
+  selectedTravelPlan: selectedTravelPlanReducer
 });

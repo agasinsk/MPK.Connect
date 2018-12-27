@@ -75,7 +75,7 @@ class TravelPlan extends Component {
           </ListItem>
           <Paper className="detail-list">
           {this.state.stops.map(stop => {
-            return <ListItem>
+            return <ListItem key={stop.stopInfo.stopId}>
               <Chip color="primary"
                 label={stop.departureTime}
                 className="chip" />

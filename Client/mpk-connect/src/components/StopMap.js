@@ -1,9 +1,11 @@
 import './StopMap.css';
 import React, { Component } from 'react';
+import Control from 'react-leaflet-control';
 import { Map, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet';
 import { connect } from 'react-redux';
 
 import { getStops } from '../actions';
+import { Button } from '@material-ui/core';
 
 const mapCenter = [51.105, 17.035];
 const zoomLevel = 15;
@@ -15,9 +17,12 @@ export class StopMap extends Component {
 
     this.state = {
       currentZoomLevel: zoomLevel,
+      bounds: undefined,
+      showStops: false,
       visibleStops: []
     };
     this.handleMapChange = this.handleMapChange.bind(this);
+    this.handleShowStops = this.handleShowStops.bind(this);
   }
 
   componentDidMount() {
@@ -35,14 +40,22 @@ export class StopMap extends Component {
   }
 
   handleMapChange() {
-    let filteredStops = this.filterStops(this.props.allStops);
+    const currentBounds = this.leafletMap.leafletElement.getBounds();
     this.setState({
-      visibleStops: filteredStops
+      bounds: currentBounds
     });
   }
 
+  handleShowStops() {
+    const showingShops = this.state.showStops;
+    this.setState({ showStops: !showingShops });
+  }
+
   filterStops(stops) {
-    let bounds = this.leafletMap.leafletElement.getBounds();
+    let bounds = this.state.bounds;
+    if (bounds === undefined) {
+      bounds = this.leafletMap.leafletElement.getBounds();
+    }
     let visibleStops = stops.filter(function (stop) {
       return stop.latitude < bounds._northEast.lat
         && stop.latitude > bounds._southWest.lat
@@ -58,30 +71,43 @@ export class StopMap extends Component {
     });
   }
 
+  renderStops() {
+    if (this.state.showStops) {
+      let filteredStops = this.filterStops(this.props.allStops);
+
+      return (filteredStops.map((stop) => {
+        let position = [stop.latitude, stop.longitude];
+        return <Marker key={`marker-${stop.id}`} position={position}>
+          <Popup>
+            <span><b>{stop.name}</b>
+              <br /> {stop.code}
+              <br /> {stop.latitude}
+              <br /> {stop.longitude}
+            </span>
+          </Popup>
+        </Marker>
+      }));
+    }
+    return null;
+  }
+
   render() {
     console.log('this.state.currentZoomLevel ->', this.state.currentZoomLevel);
     return (
       <Map ref={m => { this.leafletMap = m; }} center={mapCenter} zoom={zoomLevel} zoomControl={false}>
+        <Control position="topright" >
+          <Button variant="contained" onClick={this.handleShowStops}>
+            {this.state.showStops ? "Ukryj przystanki" : "Pokaż przystanki"}
+          </Button>
+        </Control>
         <ZoomControl position="bottomright" />
         <TileLayer
           attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {/* {this.state.visibleStops.map((stop) => {
-          let position = [stop.latitude, stop.longitude];
-          return <Marker key={`marker-${stop.id}`} position={position}>
-            <Popup>
-              <span><b>{stop.name}</b>
-                <br /> {stop.code}
-                <br /> {stop.latitude}
-                <br /> {stop.longitude}
-              </span>
-            </Popup>
-          </Marker>
-        }
-        )} */}
-        <Polyline color="lime" positions={this.props.travelPlanCoordinates} />
-      </Map>
+        {this.renderStops()}
+        <Polyline color="red" positions={this.props.travelPlanCoordinates} />
+      </Map >
     );
   }
 }

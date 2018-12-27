@@ -52,7 +52,6 @@ namespace MPK.Connect.Service.Business.Profiles
                 .ForAllOtherMembers(dst => dst.Ignore());
 
             CreateMap<Path<StopTimeInfo>, TravelPlan>()
-                .ForMember(dst => dst.Id, tp => tp.MapFrom(src => new Guid().ToString()))
                 .ForMember(dst => dst.Destination, tp => tp.MapFrom(src => src.Any() ? src.Last().StopDto : null))
                 .ForMember(dst => dst.Source, tp => tp.MapFrom(src => src.Any() ? src.First().StopDto : null))
                 .ForMember(dst => dst.StartTime, tp => tp.MapFrom(src => src.Any() ? src.First().DepartureTime.ToDateTime(src.StartDate) : DateTime.MinValue))

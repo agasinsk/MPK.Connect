@@ -18,8 +18,6 @@ namespace MPK.Connect.WebApp.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<TravelPlan>))]
-        [ProducesResponseType(400)]
         public IEnumerable<TravelPlan> Get([FromBody] TravelOptions travelOptions)
         {
             return _travelPlanService.GetTravelPlans(travelOptions);

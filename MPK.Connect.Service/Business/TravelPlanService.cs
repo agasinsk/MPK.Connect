@@ -45,7 +45,12 @@ namespace MPK.Connect.Service.Business
             var availablePaths = _pathProvider.GetAvailablePaths(graph, source, destination);
             availablePaths.ForEach(p => p.StartDate = startDate);
             var travelPlans = _mapper.Map<List<TravelPlan>>(availablePaths);
-
+            var travelPlanId = 1;
+            travelPlans.ForEach(t =>
+            {
+                t.Id = travelPlanId;
+                travelPlanId++;
+            });
             return travelPlans.OrderBy(t => t.Transfers).ThenBy(t => t.StartTime).ThenBy(t => t.Duration);
         }
 

@@ -64,17 +64,15 @@ class PathFinder extends Component {
 
   renderView() {
     if (this.state.showTravelPlan && this.props.travelPlan === null && this.props.travelPlan !== "ERROR") {
-      return (
-        <Grid item xs={12} className="margined centered">
-          <CircularProgress />
-        </Grid >);
+      return (<Grid item xs={12} className="margined centered">
+        <CircularProgress />
+      </Grid >);
     }
-    if (this.state.showTravelPlan && this.props.travelPlan !== null) {
+    if (this.state.showTravelPlan && this.props.travelPlan !== null && this.props.travelPlan !== "ERROR") {
       return this.renderTravelPlans(this.props.travelPlan);
     }
-    if (!this.state.showTravelPlan) {
-      return this.renderStardardView();
-    }
+
+    return this.renderStardardView();
   }
 
   renderStardardView() {

@@ -40,15 +40,35 @@ export const setTravelOptions = (source, destination, date) => {
 export const findTravelPlan = (source, destination, date) => async (dispatch, getState) => {
   await dispatch(setTravelOptions(source, destination, date));
   const travelOptions = getState().travelOptions;
-  dispatch(getTravelPlan(travelOptions));
+  await dispatch(getTravelPlan(travelOptions));
+  const travelPlans = getState().travelPlan;
+  await dispatch(selectTravelPlan(travelPlans));
 };
 
 export const getTravelPlan = (travelOptions) => async dispatch => {
-  const response = await mpkConnect.post('TravelPlan', travelOptions);
-  if (response.status !== 200) {
-    dispatch({ type: 'GET_TRAVEL_PLAN', payload: "ERROR" })
+  mpkConnect.post('TravelPlan', travelOptions)
+    .then(response => {
+      console.log(response.data);
+      dispatch({ type: 'GET_TRAVEL_PLAN', payload: response.data })
+    })
+    .catch(error => {
+      console.log(error.message);
+      dispatch({ type: 'GET_TRAVEL_PLAN', payload: "ERROR" })
+    });
+
+
+};
+
+export const selectTravelPlan = travelPlan => {
+  var selectedTravelPlan = null;
+  if (travelPlan !== null && travelPlan !== undefined) {
+    selectedTravelPlan = travelPlan[0];
   }
-  dispatch({ type: 'GET_TRAVEL_PLAN', payload: response.data })
+
+  return {
+    type: 'SELECT_TRAVEL_PLAN',
+    payload: selectedTravelPlan,
+  };
 };
 
 
