@@ -11,6 +11,9 @@ import ArrowBack from '@material-ui/icons/ArrowBack';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItemText from '@material-ui/core/ListItemText';
+import { connect } from 'react-redux';
+
+import { selectTravelPlan } from '../../actions';
 
 class TravelPlan extends Component {
 
@@ -18,6 +21,7 @@ class TravelPlan extends Component {
     super(props);
 
     this.state = {
+      id: props.data.id,
       startTime: props.data.startTime.split('T')[1].split('Z')[0],
       endTime: props.data.endTime.split('T')[1].split('Z')[0],
       duration: props.data.duration,
@@ -33,10 +37,12 @@ class TravelPlan extends Component {
   }
 
   handleTravelPlanSelection() {
+    this.props.selectTravelPlan(this.props.data);
     const showingDetails = this.state.showDetails;
     this.setState({
       showDetails: !showingDetails
     });
+
   }
 
   renderGeneralView() {
@@ -74,18 +80,18 @@ class TravelPlan extends Component {
             </Button>
           </ListItem>
           <Paper className="detail-list">
-          {this.state.stops.map(stop => {
-            return <ListItem key={stop.stopInfo.stopId}>
-              <Chip color="primary"
-                label={stop.departureTime}
-                className="chip" />
-              <Chip label={stop.route} avatar={<Avatar><TramIcon /></Avatar>} className="route-chip" variant="outlined" />
-              <ListItemText
-                primary={stop.stopInfo.name}
-                secondary={'Kierunek: ' + stop.direction}
-              />
-            </ListItem>
-          })}
+            {this.state.stops.map(stop => {
+              return <ListItem key={stop.stopInfo.stopId + stop.departureTime}>
+                <Chip color="primary"
+                  label={stop.departureTime}
+                  className="chip" />
+                <Chip label={stop.route} avatar={<Avatar><TramIcon /></Avatar>} className="route-chip" variant="outlined" />
+                <ListItemText
+                  primary={stop.stopInfo.name}
+                  secondary={'Kierunek: ' + stop.direction}
+                />
+              </ListItem>
+            })}
           </Paper>
         </List>
       </Paper>)
@@ -101,9 +107,8 @@ class TravelPlan extends Component {
     }
     return (
       <ListItem>{view}</ListItem>
-
     )
   };
 }
 
-export default TravelPlan;
+export default connect(null, { selectTravelPlan })(TravelPlan);

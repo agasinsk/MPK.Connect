@@ -54,7 +54,7 @@ class PathFinder extends Component {
 
   handleGoBack() {
     const showingTravelPlan = this.state.showTravelPlan;
-    this.setState({ showTravelPlan: !showingTravelPlan });
+    this.setState({ showTravelPlan: !showingTravelPlan, selectedDate: new Date() });
   }
 
   findPath() {
@@ -63,12 +63,12 @@ class PathFinder extends Component {
   }
 
   renderView() {
-    if (this.state.showTravelPlan && this.props.travelPlan === null && this.props.travelPlan !== "ERROR") {
+    if (this.state.showTravelPlan && this.props.travelPlan === null && !this.props.travelPlanError) {
       return (<Grid item xs={12} className="margined centered">
         <CircularProgress />
       </Grid >);
     }
-    if (this.state.showTravelPlan && this.props.travelPlan !== null && this.props.travelPlan !== "ERROR") {
+    if (this.state.showTravelPlan && this.props.travelPlan !== null && !this.props.travelPlanError) {
       return this.renderTravelPlans(this.props.travelPlan);
     }
 
@@ -96,7 +96,6 @@ class PathFinder extends Component {
   }
 
   renderTravelPlans() {
-
     return (<React.Fragment>
       <Grid item xs={12} className="margined centered">
         <Button variant="outlined" color="primary" onClick={this.handleGoBack} className="back-button">
@@ -105,7 +104,7 @@ class PathFinder extends Component {
         </Button>
       </Grid>
       <Grid item xs={12} className="centered">
-        <List dense>
+        <List dense className="path-list">
           {this.props.travelPlan.map(travelPlan => {
             return (<TravelPlan key={travelPlan.id} data={travelPlan} />);
           })}
@@ -146,11 +145,13 @@ class PathFinder extends Component {
 }
 
 const mapStateToProps = (state) => {
+  const travelPlanError = state.travelPlan === "ERROR";
   return {
     source: state.selectedSource,
     destination: state.selectedDestination,
     travelOptions: state.travelOptions,
-    travelPlan: state.travelPlan
+    travelPlan: state.travelPlan,
+    travelPlanError: travelPlanError
   };
 };
 

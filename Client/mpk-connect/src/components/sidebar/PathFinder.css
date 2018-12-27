@@ -17,3 +17,9 @@
 .back-button{
   text-align: center;
 }
+
+.path-list{
+  margin-top: 5px!important;
+  overflow: auto;
+  height: 500px;
+}

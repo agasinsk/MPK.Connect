@@ -65,12 +65,28 @@ namespace MPK.Connect.Graph
             using (var scope = Container.BeginLifetimeScope())
             {
                 var stopTimeRepo = scope.Resolve<IGenericRepository<StopTime>>();
+                var random = new Random();
+                for (var i = 0; i < 10; i++)
+                {
+                    var startTime = DateTime.Now.TimeOfDay;
+                    var randomwInd = random.Next(59);
+                    startTime = new TimeSpan(startTime.Hours, randomwInd, startTime.Seconds);
+                    var endTime = startTime + new TimeSpan(0, 90, 0);
+                    var start = DateTime.Now;
+                    var stoptimes = stopTimeRepo.GetAll()
+                            .Where(st => st.Trip.ServiceId == "6")
+                        .Where(st => startTime < st.DepartureTime && st.DepartureTime < endTime)
+                        .ToList();
+                    var stop = DateTime.Now;
+                    Console.WriteLine($"Retrieved {stoptimes.Count} entities.");
+                    Console.WriteLine($"Elapsed time: {stop - start}.");
+                }
 
                 var stopRepo = scope.Resolve<IGenericRepository<Stop>>();
                 var calendarRepo = scope.Resolve<IGenericRepository<Calendar>>();
                 var graphBuilder = new GraphBuilder(stopRepo, stopTimeRepo, calendarRepo);
 
-                var graph = graphBuilder.GetGraph(DateTime.Now);
+                var graph = graphBuilder.GetGraph(DateTime.Now.Date);
 
                 var srcs = graph.Nodes.Values
                     .Where(s => s.Data.StopDto.Name.TrimToLower() == "Galeria Dominikańska".TrimToLower())

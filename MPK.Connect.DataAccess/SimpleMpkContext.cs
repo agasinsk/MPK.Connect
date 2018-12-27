@@ -14,7 +14,7 @@ namespace MPK.Connect.DataAccess
 
         public SimpleMpkContext(DbContextOptions<SimpleMpkContext> options) : base(options)
         {
-            Database.SetCommandTimeout(7);
+            Database.SetCommandTimeout(10);
         }
 
         public SimpleMpkContext()

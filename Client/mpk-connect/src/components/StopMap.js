@@ -113,16 +113,16 @@ export class StopMap extends Component {
 }
 
 const mapStateToProps = (state) => {
-
-  const travelPlan = state.travelPlan;
+  const selectedTravelPlan = state.selectedTravelPlan;
+  console.log(selectedTravelPlan);
   var travelPlanCoordinates = [];
-  if (travelPlan !== null && travelPlan !== "ERROR") {
-    const firstTravelPlan = travelPlan[0];
-    travelPlanCoordinates = firstTravelPlan.stops.map(stop => [stop.stopInfo.latitude, stop.stopInfo.longitude]);
+  if (selectedTravelPlan !== null) {
+    travelPlanCoordinates = selectedTravelPlan.stops.map(stop => [stop.stopInfo.latitude, stop.stopInfo.longitude]);
   }
 
   return {
     allStops: state.stops,
+    selectedTravelPlan: selectedTravelPlan,
     travelPlanCoordinates: travelPlanCoordinates
   }
 };
