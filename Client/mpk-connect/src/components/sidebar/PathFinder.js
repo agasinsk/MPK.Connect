@@ -10,6 +10,12 @@ import { MuiPickersUtilsProvider, DateTimePicker } from 'material-ui-pickers';
 import List from '@material-ui/core/List';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import deburr from "lodash/deburr";
+import uniqBy from "lodash/uniqBy";
+import Downshift from "downshift";
+import Paper from "@material-ui/core/Paper";
+import MenuItem from "@material-ui/core/MenuItem";
+
 
 import { selectSource, selectDestination, findTravelPlan } from '../../actions';
 import TravelPlan from './TravelPlan';
@@ -22,8 +28,6 @@ class PathFinder extends Component {
     this.state = {
       margin: "normal",
       selectedDate: new Date(),
-      source: "",
-      destination: "",
       showTravelPlan: false
     };
 
@@ -34,18 +38,22 @@ class PathFinder extends Component {
     this.findPath = this.findPath.bind(this);
   }
 
-  handleSourceChange(event) {
-    const source = {
-      name: event.target.value
+  handleSourceChange(source) {
+    const sourceObject = {
+      name: source,
+      latitude: null,
+      longitude: null
     };
-    this.props.selectSource(source);
+    this.props.selectSource(sourceObject);
   }
 
-  handleDestinationChange(event) {
-    const destination = {
-      name: event.target.value
+  handleDestinationChange(destination) {
+    const destinationObject = {
+      name: destination,
+      latitude: null,
+      longitude: null
     };
-    this.props.selectDestination(destination);
+    this.props.selectDestination(destinationObject);
   }
 
   handleDateChange(date) {
@@ -118,28 +126,147 @@ class PathFinder extends Component {
     </React.Fragment>)
   }
 
+  getSuggestions(value) {
+    const inputValue = deburr(value.trim()).toLowerCase();
+    const inputLength = inputValue.length;
+    let count = 0;
+
+    return inputLength === 0
+      ? []
+      : this.props.stopNames.filter(suggestion => {
+        const keep =
+          count < 7 &&
+          suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
+
+        if (keep) {
+          count += 1;
+        }
+
+        return keep;
+      });
+  }
+
+  renderInput(inputProps) {
+    const { InputProps, ref, ...other } = inputProps;
+
+    return (
+      <TextField
+        variant="outlined"
+        margin={this.state.margin}
+        label={inputProps.label}
+        InputProps={{
+          inputRef: ref,
+          ...InputProps
+        }}
+        {...other}
+      />
+    );
+  }
+
+  renderSuggestion({
+    suggestion,
+    index,
+    itemProps,
+    highlightedIndex,
+    selectedItem
+  }) {
+    const isHighlighted = highlightedIndex === index;
+    const isSelected = (selectedItem || "").indexOf(suggestion.label) > -1;
+
+    return (
+      <MenuItem
+        {...itemProps}
+        key={suggestion.label}
+        selected={isHighlighted}
+        component="div"
+        style={{
+          fontWeight: isSelected ? 600 : 400
+        }}
+      >
+        {suggestion.label}
+      </MenuItem>
+    );
+  }
+
   render() {
     return (
       <Grid container spacing={0}>
         <Grid item xs={12} className="margined">
-          <TextField
-            id="source-point"
-            label="Punkt startowy"
-            value={this.props.source.name}
-            onChange={this.handleSourceChange}
-            variant="outlined"
-            margin={this.state.margin}
-            fullWidth />
+          <Downshift id="source-selection" onChange={this.handleSourceChange}>
+            {({
+              getInputProps,
+              getItemProps,
+              getMenuProps,
+              highlightedIndex,
+              inputValue,
+              isOpen,
+              selectedItem
+            }) => (
+                <div className="suggestions-container">
+                  {this.renderInput({
+                    fullWidth: true,
+                    label: "Punkt startowy",
+                    InputProps: getInputProps({
+                      placeholder: "Wybierz punkt startowy..."
+                    })
+                  })}
+                  <div {...getMenuProps()}>
+                    {isOpen ? (
+                      <Paper square className="suggestion-paper">
+                        {this.getSuggestions(inputValue).map((suggestion, index) =>
+                          this.renderSuggestion({
+                            suggestion,
+                            index,
+                            itemProps: getItemProps({ item: suggestion.label }),
+                            highlightedIndex,
+                            selectedItem
+                          })
+                        )}
+                      </Paper>
+                    ) : null}
+                  </div>
+                </div>
+              )}
+          </Downshift>
+
         </Grid>
         <Grid item xs={12} className="margined">
-          <TextField
-            id="destination-point"
-            label="Punkt końcowy"
-            value={this.props.destination.name}
-            onChange={this.handleDestinationChange}
-            variant="outlined"
-            margin={this.state.margin}
-            fullWidth />
+          <Downshift id="destination-selection" onChange={this.handleDestinationChange}>
+            {({
+              getInputProps,
+              getItemProps,
+              getMenuProps,
+              highlightedIndex,
+              inputValue,
+              isOpen,
+              selectedItem
+            }) => (
+                <div className="suggestions-container">
+                  {this.renderInput({
+                    fullWidth: true,
+                    label: "Punkt końcowy",
+                    InputProps: getInputProps({
+                      placeholder: "Wybierz punkt końcowy..."
+                    })
+                  })}
+                  <div {...getMenuProps()}>
+                    {isOpen ? (
+                      <Paper square className="suggestion-paper">
+                        {this.getSuggestions(inputValue).map((suggestion, index) =>
+                          this.renderSuggestion({
+                            suggestion,
+                            index,
+                            itemProps: getItemProps({ item: suggestion.label }),
+                            highlightedIndex,
+                            selectedItem
+                          })
+                        )}
+                      </Paper>
+                    ) : null}
+                  </div>
+                </div>
+              )}
+          </Downshift>
         </Grid>
         {this.renderView()}
       </Grid >
@@ -149,7 +276,13 @@ class PathFinder extends Component {
 
 const mapStateToProps = (state) => {
   const travelPlanError = state.travelPlan === "ERROR";
+  const stopNames = uniqBy(state.stops, 'name').map(stop => ({
+    value: stop.name,
+    label: stop.name
+  }));
+
   return {
+    stopNames: stopNames,
     source: state.selectedSource,
     destination: state.selectedDestination,
     travelOptions: state.travelOptions,

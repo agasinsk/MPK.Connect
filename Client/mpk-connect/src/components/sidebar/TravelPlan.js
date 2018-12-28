@@ -78,14 +78,14 @@ class TravelPlan extends Component {
   renderDetailedView() {
     return (
       <Paper elevation={10} className="paper-wide">
-        <List dense>
+        <List dense className="detail-list-container">
           <ListItem>
             <Button variant="contained" color="secondary" onClick={this.handleTravelPlanSelection}>
               Wroć
               <ArrowBack />
             </Button>
           </ListItem>
-          <Paper className="detail-list">
+          <List dense className="detail-list">
             {this.state.stops.map(stop => {
               return <ListItem key={stop.stopInfo.stopId + stop.departureTime}>
                 <Chip color="primary"
@@ -98,7 +98,7 @@ class TravelPlan extends Component {
                 />
               </ListItem>
             })}
-          </Paper>
+          </List>
         </List>
       </Paper>)
   };

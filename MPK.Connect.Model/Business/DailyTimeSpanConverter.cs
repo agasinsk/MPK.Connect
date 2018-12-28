@@ -7,7 +7,7 @@ namespace MPK.Connect.Model.Business
     {
         public override void WriteJson(JsonWriter writer, TimeSpan value, JsonSerializer serializer)
         {
-            writer.WriteValue(value.ToString("hh\\:mm\\:ss"));
+            writer.WriteValue(value.ToString("hh\\:mm"));
         }
 
         public override TimeSpan ReadJson(JsonReader reader, Type objectType, TimeSpan existingValue, bool hasExistingValue, JsonSerializer serializer)

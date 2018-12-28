@@ -7,6 +7,7 @@ namespace MPK.Connect.Model.Business
 {
     public class StopTimeInfo : LocalizableEntity<string>
     {
+        [JsonConverter(typeof(DailyTimeSpanConverter))]
         public TimeSpan ArrivalTime { get; set; }
 
         [JsonConverter(typeof(DailyTimeSpanConverter))]

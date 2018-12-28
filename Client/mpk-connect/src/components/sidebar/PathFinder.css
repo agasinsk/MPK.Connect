@@ -23,3 +23,13 @@
   overflow: auto;
   height: calc(100vh - 280px);
 }
+
+.suggestion-paper{
+  position: absolute;
+  z-index: 10; 
+}
+
+.suggestion-container{
+  flex-grow: 1;
+  position: relative;
+}

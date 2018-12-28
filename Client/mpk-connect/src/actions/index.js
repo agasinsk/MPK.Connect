@@ -27,16 +27,6 @@ export const selectDestination = destination => {
   };
 };
 
-export const setTravelOptions = (source, destination, date) => {
-  const localDate = new Date(date);
-  localDate.setHours(date.getHours() - date.getTimezoneOffset() / 60);
-  console.log(localDate);
-  return {
-    type: 'SET_TRAVEL_OPTIONS',
-    payload: { source, destination, startDate: localDate },
-  };
-};
-
 export const findTravelPlan = (source, destination, date) => async (dispatch, getState) => {
   await dispatch(selectTravelPlan(null));
   await dispatch(clearTravelPlan());
@@ -48,6 +38,16 @@ export const findTravelPlan = (source, destination, date) => async (dispatch, ge
   if (travelPlans !== null) {
     await dispatch(selectTravelPlan(travelPlans[0]));
   }
+};
+
+export const setTravelOptions = (source, destination, date) => {
+  
+  const localDate = new Date(date);
+  localDate.setHours(date.getHours() - date.getTimezoneOffset() / 60);
+  return {
+    type: 'SET_TRAVEL_OPTIONS',
+    payload: { source, destination, startDate: localDate },
+  };
 };
 
 export const getTravelPlan = (travelOptions) => async dispatch => {
