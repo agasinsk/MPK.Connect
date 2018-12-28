@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
@@ -10,10 +12,12 @@ namespace MPK.Connect.Service.Business
     public class StopService : IStopService
     {
         private readonly IGenericRepository<Stop> _stopRepository;
+        private readonly IMapper _mapper;
 
-        public StopService(IGenericRepository<Stop> stopRepository)
+        public StopService(IGenericRepository<Stop> stopRepository, IMapper mapper)
         {
             _stopRepository = stopRepository ?? throw new ArgumentNullException(nameof(stopRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper)); ;
         }
 
         public List<StopDto> GetAllStops()
@@ -42,6 +46,17 @@ namespace MPK.Connect.Service.Business
                     Longitude = s.Longitude
                 })
                 .FirstOrDefault();
+        }
+
+        public List<StopDto> GetDistinctStopsByName()
+        {
+            return _stopRepository.GetAll()
+                .Select(s => _mapper.Map<StopDto>(s))
+                .AsNoTracking()
+                .ToList()
+                .GroupBy(s => s.Name)
+                .Select(g => g.First())
+                .ToList();
         }
 
         public List<StopDto> GetStopByName(string stopName)

@@ -10,5 +10,7 @@ namespace MPK.Connect.Service.Business
         List<StopDto> GetStopByName(string stopName);
 
         StopDto GetStopById(string stopId);
+
+        List<StopDto> GetDistinctStopsByName();
     }
 }

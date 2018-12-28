@@ -40,7 +40,7 @@ export const setTravelOptions = (source, destination, date) => {
 export const findTravelPlan = (source, destination, date) => async (dispatch, getState) => {
   await dispatch(selectTravelPlan(null));
   await dispatch(clearTravelPlan());
-  
+
   await dispatch(setTravelOptions(source, destination, date));
   const travelOptions = getState().travelOptions;
   await dispatch(getTravelPlan(travelOptions));

@@ -76,23 +76,28 @@ class PathFinder extends Component {
   }
 
   renderStardardView() {
-    return (<Grid item xs={12} className="centered margined">
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <DateTimePicker
-          autoOk
-          ampm={false}
-          value={this.state.selectedDate}
-          onChange={this.handleDateChange}
-          showTodayButton
-          format="dd.MM.yyyy, HH:mm"
-          label="Data"
-          margin={this.state.margin}
-        />
-      </MuiPickersUtilsProvider>
-      <Button variant="contained" color="primary" onClick={this.findPath}>
-        Wyszukaj połączenie
+    return (
+      <React.Fragment>
+        <Grid item xs={12} className="centered margined">
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <DateTimePicker
+              autoOk
+              ampm={false}
+              value={this.state.selectedDate}
+              onChange={this.handleDateChange}
+              showTodayButton
+              format="dd.MM.yyyy, HH:mm"
+              label="Data"
+              margin={this.state.margin}
+            />
+          </MuiPickersUtilsProvider>
+        </Grid>
+        <Grid item xs={12} className="centered margined">
+          <Button variant="contained" color="primary" onClick={this.findPath}>
+            Wyszukaj połączenie
       </Button>
-    </Grid>);
+        </Grid>
+      </React.Fragment>);
   }
 
   renderTravelPlans() {
@@ -111,13 +116,11 @@ class PathFinder extends Component {
         </List>
       </Grid>
     </React.Fragment>)
-
-
   }
 
   render() {
     return (
-      <Grid container spacing={0} alignItems="flex-end">
+      <Grid container spacing={0}>
         <Grid item xs={12} className="margined">
           <TextField
             id="source-point"

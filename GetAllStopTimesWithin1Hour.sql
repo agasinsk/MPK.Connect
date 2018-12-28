@@ -1,8 +1,10 @@
 use [MPK.Fast.Db]
 go
+set arithabort on;
+go
 
 declare @serviceId nvarchar(450)
-set @serviceId = N'6'
+set @serviceId = N'8'
 
 declare @now time(7)
 set @now = CAST(GETDATE() as time)

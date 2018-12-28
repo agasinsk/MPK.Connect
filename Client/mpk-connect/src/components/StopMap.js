@@ -91,6 +91,27 @@ export class StopMap extends Component {
     return null;
   }
 
+  renderPath() {
+    if (this.props.selectedTravelPlan !== null && this.props.selectedTravelPlan.stops !== undefined) {
+      return (<React.Fragment>
+        {this.props.selectedTravelPlan.stops.map((stop) => {
+          let position = [stop.stopInfo.latitude, stop.stopInfo.longitude];
+          return (<Marker key={`path-stop-${stop.stopInfo.id}`} position={position}>
+            <Popup>
+              <span>
+                <b>{stop.stopInfo.name}</b>
+                <br /> Odjazd: {stop.departureTime}
+                <br /> Linia: {stop.route}
+              </span>
+            </Popup>
+          </Marker>)
+        })}
+        <Polyline color="red" positions={this.props.travelPlanCoordinates} />
+      </React.Fragment>)
+    }
+    return null;
+  }
+
   render() {
     console.log('this.state.currentZoomLevel ->', this.state.currentZoomLevel);
     return (
@@ -106,7 +127,7 @@ export class StopMap extends Component {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {this.renderStops()}
-        <Polyline color="red" positions={this.props.travelPlanCoordinates} />
+        {this.renderPath()}
       </Map >
     );
   }
@@ -116,10 +137,9 @@ const mapStateToProps = (state) => {
   const selectedTravelPlan = state.selectedTravelPlan;
   console.log(selectedTravelPlan);
   var travelPlanCoordinates = [];
-  if (selectedTravelPlan !== null) {
+  if (selectedTravelPlan !== null && selectedTravelPlan.stops !== undefined) {
     travelPlanCoordinates = selectedTravelPlan.stops.map(stop => [stop.stopInfo.latitude, stop.stopInfo.longitude]);
   }
-
   return {
     allStops: state.stops,
     selectedTravelPlan: selectedTravelPlan,

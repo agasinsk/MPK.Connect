@@ -19,6 +19,12 @@ namespace MPK.Connect.WebApp.Controllers
         }
 
         [HttpGet("[action]")]
+        public List<StopDto> GetNamed()
+        {
+            return _stopService.GetDistinctStopsByName();
+        }
+
+        [HttpGet("[action]")]
         public List<StopDto> GetAll()
         {
             return _stopService.GetAllStops();

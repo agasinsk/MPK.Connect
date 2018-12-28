@@ -15,7 +15,7 @@ namespace MPK.Connect.Model.Business.TravelPlan
         public DateTime EndTime { get; set; }
 
         public double Duration { get; set; }
-        public IEnumerable<string> RouteIds { get; set; }
+        public IEnumerable<RouteDto> Routes { get; set; }
         public int Transfers { get; set; }
         public StopDto Source { get; set; }
         public StopDto Destination { get; set; }

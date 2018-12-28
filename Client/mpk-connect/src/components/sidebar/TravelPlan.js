@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import TramIcon from '@material-ui/icons/Tram';
+import DirectionsBusIcon from '@material-ui/icons/DirectionsBus';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
@@ -25,7 +26,7 @@ class TravelPlan extends Component {
       startTime: props.data.startTime.split('T')[1].split('Z')[0],
       endTime: props.data.endTime.split('T')[1].split('Z')[0],
       duration: props.data.duration,
-      routes: props.data.routeIds,
+      routes: props.data.routes,
       transfers: props.data.transfers,
       stops: props.data.stops,
       showDetails: false
@@ -62,7 +63,12 @@ class TravelPlan extends Component {
 
         <Paper className="routes">
           {this.state.routes.map(route => {
-            return <Chip key={route} label={route} avatar={<Avatar><TramIcon /></Avatar>} className="route-chip" />
+            return <Chip key={route.id}
+              label={route.id}
+              avatar={<Avatar>
+                {route.type === "Tram" ? <TramIcon /> : <DirectionsBusIcon />}
+              </Avatar>}
+              className="route-chip" />
           })}
         </Paper>
       </Paper>
@@ -85,7 +91,7 @@ class TravelPlan extends Component {
                 <Chip color="primary"
                   label={stop.departureTime}
                   className="chip" />
-                <Chip label={stop.route} avatar={<Avatar><TramIcon /></Avatar>} className="route-chip" variant="outlined" />
+                <Chip label={stop.route} avatar={<Avatar>{stop.routeType === "Tram" ? <TramIcon /> : <DirectionsBusIcon />}</Avatar>} className="route-chip" variant="outlined" />
                 <ListItemText
                   primary={stop.stopInfo.name}
                   secondary={'Kierunek: ' + stop.direction}

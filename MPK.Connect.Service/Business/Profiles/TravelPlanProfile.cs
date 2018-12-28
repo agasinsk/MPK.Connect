@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using AutoMapper;
+using MoreLinq;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
@@ -57,8 +58,8 @@ namespace MPK.Connect.Service.Business.Profiles
                 .ForMember(dst => dst.StartTime, tp => tp.MapFrom(src => src.Any() ? src.First().DepartureTime.ToDateTime(src.StartDate) : DateTime.MinValue))
                 .ForMember(dst => dst.EndTime, tp => tp.MapFrom(src => src.Any() ? src.Last().DepartureTime.ToDateTime(src.StartDate) : DateTime.MinValue))
                 .ForMember(dst => dst.Duration, tp => tp.MapFrom(src => src.Cost))
-                .ForMember(dst => dst.RouteIds, tp => tp.MapFrom(src => src.Select(sti => sti.Route).Distinct()))
-                .ForMember(dst => dst.Transfers, tp => tp.MapFrom(src => src.Select(sti => sti.Route).Distinct().Count()))
+                .ForMember(dst => dst.Routes, tp => tp.MapFrom(src => src.Select(sti => new RouteDto { Id = sti.Route, Type = sti.RouteType }).DistinctBy(r => r.Id)))
+                .ForMember(dst => dst.Transfers, tp => tp.MapFrom(src => src.Select(sti => sti.Route).Distinct().Count() - 1))
                 .ForMember(dst => dst.Stops, tp => tp.MapFrom(src => src))
                 .ForAllOtherMembers(dst => dst.Ignore());
         }
