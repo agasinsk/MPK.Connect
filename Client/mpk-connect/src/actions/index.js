@@ -74,7 +74,6 @@ export const clearTravelPlan = () => {
   };
 };
 
-
 export const getTimeTable = (stop) => async dispatch => {
   await dispatch(selectStop(stop));
   await mpkConnect.get('TimeTable/' + stop.id)
@@ -94,3 +93,33 @@ export const selectStop = stop => {
   };
 };
 
+
+export const selectStopTime = stopTime => {
+  return {
+    type: 'SELECT_STOP_TIME',
+    payload: stopTime,
+  };
+};
+
+export const updateStopTime = (stopTime) => async dispatch => {
+  await mpkConnect.put('StopTime', stopTime)
+    .then(response => {
+      dispatch({ type: 'UPDATE_STOP_TIME', payload: response.data })
+    })
+    .catch(error => {
+      console.log(error.message);
+      dispatch({ type: 'UPDATE_STOP_TIME', payload: error })
+    });
+};
+
+
+export const deleteStopTime = (stopTime) => async dispatch => {
+  await mpkConnect.delete('StopTime', stopTime)
+    .then(response => {
+      dispatch({ type: 'DELETE_STOP_TIME', payload: response.data })
+    })
+    .catch(error => {
+      console.log(error.message);
+      dispatch({ type: 'DELETE_STOP_TIME', payload: error })
+    });
+};

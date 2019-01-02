@@ -3,8 +3,9 @@ import React, { Component } from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import { StopTime } from './StopTime';
 import List from '@material-ui/core/List';
+
+import StopTime from './StopTime';
 
 export class DirectionStopTimes extends Component {
 
@@ -23,7 +24,7 @@ export class DirectionStopTimes extends Component {
     delete stopTimes[stopTimeIndex];
     this.setState({
       stopTimes: stopTimes
-    })
+    });
   }
 
   render() {
@@ -35,7 +36,8 @@ export class DirectionStopTimes extends Component {
           </Typography>
           <List>
             {this.state.stopTimes.map((stopTime) => (
-              <StopTime key={stopTime.tripId} stopId={this.state.stopId} stopTime={stopTime} onDelete={() => this.deleteStopTime(stopTime)} />
+              <StopTime key={stopTime.tripId} stopTime={stopTime}
+                onDelete={() => this.deleteStopTime(stopTime)} />
             ))}
           </List>
         </CardContent>
@@ -43,3 +45,5 @@ export class DirectionStopTimes extends Component {
     );
   }
 }
+
+export default DirectionStopTimes;

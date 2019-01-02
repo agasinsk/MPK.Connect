@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 
 import RouteCard from './RouteCard';
-import { RouteStopTime } from './RouteStopTime';
+import RouteStopTime from './RouteStopTime';
 import { getTimeTable } from '../../actions';
 
 export class TimeTable extends Component {
@@ -49,7 +49,7 @@ export class TimeTable extends Component {
 
       if (this.state.isRouteSelected) {
         timeTableDetail = (<div>
-          <RouteStopTime stopId={this.props.stopId} route={this.props.currentRoute} onClick={() => this.handleRouteUnselected(this.state.currentRoute)} />
+          <RouteStopTime stopId={this.props.stopId} route={this.state.currentRoute} onClick={() => this.handleRouteUnselected(this.state.currentRoute)} />
         </div>);
       }
       else {

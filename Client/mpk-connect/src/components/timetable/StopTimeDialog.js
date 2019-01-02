@@ -6,7 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-export class StopTimeDialog extends Component {
+class StopTimeDialog extends Component {
 
   render() {
     return (
@@ -34,3 +34,5 @@ export class StopTimeDialog extends Component {
     );
   }
 }
+
+export default StopTimeDialog;

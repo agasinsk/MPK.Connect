@@ -1,5 +1,6 @@
 import './StopTime.css';
 import React, { Component } from 'react';
+import Grid from '@material-ui/core/Grid';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
@@ -8,19 +9,17 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
-import Snackbar from '@material-ui/core/Snackbar';
-import Button from '@material-ui/core/Button';
-import CloseIcon from '@material-ui/icons/Close';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { connect } from 'react-redux';
 
-import { StopTimeDialog } from './StopTimeDialog';
+import StopTimeDialog from './StopTimeDialog';
+import { updateStopTime, deleteStopTime } from '../../actions';
 
-export class StopTime extends Component {
+class StopTime extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      stopId: props.stopId,
-      stopTime: props.stopTime,
       editMode: false,
       deleteMode: false,
       updatedDepartureTime: undefined,
@@ -28,9 +27,6 @@ export class StopTime extends Component {
       dialogDescription: undefined,
       showDialog: false,
       onDelete: props.onDelete,
-      snackBarText: '',
-      snackBarVariant: 'success',
-      showSnackbar: false
     };
 
     this.handleEditMode = this.handleEditMode.bind(this);
@@ -40,11 +36,10 @@ export class StopTime extends Component {
     this.deleteStopTime = this.deleteStopTime.bind(this);
     this.confirmUpdate = this.confirmUpdate.bind(this);
     this.confirmDelete = this.confirmDelete.bind(this);
-    this.closeSnackbar = this.closeSnackbar.bind(this);
   }
 
-  updateDepartureTime(e) {
-    let currentValue = e.target.value;
+  updateDepartureTime(event) {
+    let currentValue = event.target.value;
     console.log("Wants to update stop time to: " + currentValue);
     if (currentValue !== null && currentValue !== undefined) {
       this.setState({ updatedDepartureTime: currentValue });
@@ -55,19 +50,19 @@ export class StopTime extends Component {
     let updatedDepartureTime = this.state.updatedDepartureTime;
     if (updatedDepartureTime !== null && updatedDepartureTime !== undefined) {
       this.setState({
-        dialogText: "Update stop time?",
-        dialogDescription: "Are you sure you want to update stop time to " + updatedDepartureTime + "?",
+        dialogText: "Zaktualizować czas odjazdu?",
+        dialogDescription: "Czy jesteś pewny, że chcesz zmienić czas odjazdu na " + updatedDepartureTime + "?",
         showDialog: true,
-        andleCancel: this.handleEditMode,
+        handleCancel: this.handleEditMode,
         handleConfirm: this.updateStopTime
-      })
+      });
     }
   }
 
   confirmDelete() {
     this.setState({
-      dialogText: "Delete stop time?",
-      dialogDescription: "Are you sure you want to delete this stop time?",
+      dialogText: "Usunąć przystanek z kursu?",
+      dialogDescription: "Czy jesteś pewny, że chcesz to zrobić?",
       showDialog: true,
       handleCancel: this.handleDeleteMode,
       handleConfirm: this.deleteStopTime
@@ -79,106 +74,34 @@ export class StopTime extends Component {
     console.log("Updating stop time to: " + updatedDepartureTime);
 
     var updatedStopTime = {
-      stopId: this.state.stopId,
-      tripId: this.state.stopTime.tripId,
-      departureTime: this.state.stopTime.departureTime,
+      stopId: this.props.stopId,
+      tripId: this.props.stopTime.tripId,
+      departureTime: this.props.stopTime.departureTime,
       updatedDepartureTime: updatedDepartureTime
     };
     console.log(JSON.stringify(updatedStopTime));
-    fetch('api/StopTime/', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updatedStopTime)
-    })
-      .then(function (response) {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(JSON.stringify(response));
-      })
-      .then((data) => {
-        console.log('Success:', JSON.stringify(data));
-        this.setState({
-          stopTime: {
-            tripId: data.result.tripId,
-            departureTime: data.result.departureTime
-          },
-          updatedDepartureTime: undefined,
-          showDialog: false,
-          showSnackbar: true,
-          snackBarVariant: 'success',
-          snackBarText: data.text
-        });
-      })
-      .catch(error => {
-        console.log('Error:', JSON.stringify(error));
-        this.setState({
-          showSnackbar: true,
-          snackBarVariant: 'error',
-          snackBarText: error
-        });
-      });
 
+    this.props.updateStopTime(updatedStopTime);
     this.handleEditMode();
   }
 
-  closeSnackbar(reason) {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    this.setState({ showSnackbar: false });
-  }
-
   deleteStopTime() {
-    console.log("Deleting stop time: " + this.state.stopTime.departureTime);
+    console.log("Deleting stop time: " + this.props.stopTime.departureTime);
 
     var stopTimeToDelete = {
-      stopId: this.state.stopId,
-      tripId: this.state.stopTime.tripId,
-      departureTime: this.state.stopTime.departureTime,
+      stopId: this.props.stopId,
+      tripId: this.props.stopTime.tripId,
+      departureTime: this.props.stopTime.departureTime,
     };
     console.log(JSON.stringify(stopTimeToDelete));
-    fetch('api/StopTime/', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(stopTimeToDelete)
-    })
-      .then(function (response) {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(JSON.stringify(response));
-      })
-      .then((data) => {
-        console.log('Success:', JSON.stringify(data));
-        this.setState({
-          stopTime: {
-            tripId: data.result.tripId,
-            departureTime: data.result.departureTime
-          },
-          showDialog: false,
-          showSnackbar: true,
-          snackBarVariant: 'success',
-          snackBarText: data.text
-        });
-      })
-      .catch(error => {
-        console.log('Error:', JSON.stringify(error));
-        this.setState({
-          showSnackbar: true,
-          snackBarVariant: 'error',
-          snackBarText: error
-        });
-      });
 
+    this.props.deleteStopTime(stopTimeToDelete);
     this.handleDeleteMode();
     this.state.onDelete();
   }
 
   handleEditMode() {
     let currentEditMode = this.state.editMode;
-    console.log("Edit mode: " + !currentEditMode);
     this.setState({
       editMode: !currentEditMode,
       showDialog: false
@@ -194,16 +117,20 @@ export class StopTime extends Component {
     });
   }
 
-  render() {
-    let stopTime, actionIcon;
-
+  renderView() {
     if (this.state.editMode) {
-      stopTime =
+      if (this.props.updatedStopTime === null && !this.props.stopTimeError) {
+        return (<Grid item xs={12} className="margined centered">
+          <CircularProgress />
+        </Grid >);
+      }
+
+      return (<React.Fragment>
         <TextField
           id="updatedStopTime"
-          label="Edit stop time"
+          label="Edytuj czas"
           type="time"
-          defaultValue={this.state.stopTime.departureTime}
+          defaultValue={this.props.stopTime.departureTime}
           className="stopTimeEdit"
           variant="outlined"
           InputLabelProps={{
@@ -212,33 +139,43 @@ export class StopTime extends Component {
           inputProps={{
             step: 1,
           }}
-          onChange={this.updateDepartureTime} />;
-
-      actionIcon = <Tooltip title="Update">
-        <IconButton onClick={this.confirmUpdate}>
-          <CheckIcon />
-        </IconButton>
-      </Tooltip>;
+          onChange={this.updateDepartureTime} />
+        <Tooltip title="Akceptuj">
+          <IconButton onClick={this.confirmUpdate}>
+            <CheckIcon />
+          </IconButton>
+        </Tooltip>
+      </React.Fragment>);
     }
-    else {
-      stopTime = <ListItemText primary={this.state.stopTime.departureTime} className="stopTimeText" />;
-      actionIcon = <Tooltip title="Delete">
+
+    const updatedStopTime = this.props.updatedStopTime;
+    var departureTime = this.props.stopTime.departureTime;
+    if (updatedStopTime !== undefined && updatedStopTime.tripId === this.props.stopTime.tripId) {
+      departureTime = this.props.updatedStopTime.departureTime;
+    }
+
+    return (<React.Fragment>
+      <ListItemText primary={departureTime} className="stopTimeText" />
+      <Tooltip title="Usuń">
         <IconButton onClick={this.confirmDelete}>
           <DeleteIcon />
         </IconButton>
-      </Tooltip>;
-    }
+      </Tooltip>
+    </React.Fragment >);
+  }
+
+  render() {
+    console.log(this.props);
 
     return (
       <React.Fragment>
-        <ListItem dense>
+        <ListItem>
           <Tooltip title="Edit">
             <IconButton onClick={this.handleEditMode}>
-              <EditIcon color="secondary" />
+              <EditIcon color="primary" />
             </IconButton>
           </Tooltip>
-          {stopTime}
-          {actionIcon}
+          {this.renderView()}
         </ListItem>
         <StopTimeDialog
           open={this.state.showDialog}
@@ -246,29 +183,29 @@ export class StopTime extends Component {
           description={this.state.dialogDescription}
           handleCancel={this.state.handleCancel}
           handleConfirm={this.state.handleConfirm} />
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          open={this.state.showSnackbar}
-          autoHideDuration={6000}
-          onClose={this.closeSnackbar}
-          message={<span id="message-id">{this.state.snackBarText}</span>}
-          action={[
-            <Button key="undo" color="secondary" size="small" onClick={this.closeSnackbar}>
-              OK
-            </Button>,
-            <IconButton
-              key="close"
-              color="inherit"
-              onClick={this.handleClose}
-            >
-              <CloseIcon />
-            </IconButton>,
-          ]}
-        />
       </React.Fragment>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  const stopTimeError = state.selectedStopTime === "ERROR";
+  let stopId, updatedStopTime, resultText;
+  if (state.selectedStop !== undefined && state.selectedStop !== null) {
+    stopId = state.selectedStop.id;
+  }
+
+  if (state.selectedStopTime !== undefined && state.selectedStopTime !== null) {
+    resultText = state.selectedStopTime.text;
+    updatedStopTime = state.selectedStopTime.result;
+  }
+
+  return {
+    stopId,
+    resultText,
+    updatedStopTime,
+    stopTimeError
+  };
+};
+
+export default connect(mapStateToProps, { updateStopTime, deleteStopTime })(StopTime);

@@ -1,9 +1,11 @@
 .stopTimeText {
-  margin-left: 10px ;
-  font-size: large !important;
+    margin-left: 10px;
+    font-size: large !important;
+    text-align: center;
 }
 
-.stopTimeEdit{
-  margin-left: 2.5px !important;
-  margin-right: 2.5px !important;
+.stopTimeEdit {
+    width: 100%;
+    margin-left: 2.5px !important;
+    margin-right: 2.5px !important;
 }

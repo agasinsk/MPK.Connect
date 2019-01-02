@@ -10,6 +10,7 @@ import travelPlanReducer from './travelPlanReducer';
 import selectedTravelPlanReducer from './selectedTravelPlanReducer';
 import timeTableReducer from './timeTableReducer';
 import selectedStopReducer from './selectedStopReducer';
+import selectedStopTimeReducer from './selectedStopTimeReducer';
 
 export default combineReducers({
   views: viewReducer,
@@ -21,5 +22,6 @@ export default combineReducers({
   travelPlan: travelPlanReducer,
   selectedTravelPlan: selectedTravelPlanReducer,
   timeTable: timeTableReducer,
-  selectedStop: selectedStopReducer
+  selectedStop: selectedStopReducer,
+  selectedStopTime: selectedStopTimeReducer
 });
