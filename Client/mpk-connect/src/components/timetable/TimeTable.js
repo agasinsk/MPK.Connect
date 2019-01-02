@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import Chip from '@material-ui/core/Chip';
+import Grid from '@material-ui/core/Grid';
+import List from '@material-ui/core/List';
 
-import { RouteCard } from './RouteCard';
+import RouteCard from './RouteCard';
 import { RouteStopTime } from './RouteStopTime';
 import { getTimeTable } from '../../actions';
 
@@ -19,13 +20,6 @@ export class TimeTable extends Component {
 
     this.handleRouteSelected = this.handleRouteSelected.bind(this);
     this.handleRouteUnselected = this.handleRouteUnselected.bind(this);
-    console.log('Current stopId: ' + this.state.stopId);
-  }
-
-  componentDidMount() {
-    if (this.props.stopId !== undefined) {
-      this.props.getTimeTable(this.props.stopId);
-    }
   }
 
   handleRouteSelected(route) {
@@ -44,35 +38,47 @@ export class TimeTable extends Component {
     });
   }
 
-  render() {
-    let timeTableDetail;
-
-    if (this.state.isRouteSelected) {
-      timeTableDetail = (<div>
-        <RouteStopTime stopId={this.props.stopId} route={this.props.currentRoute} onClick={() => this.handleRouteUnselected(this.state.currentRoute)} />
-      </div>);
+  renderView() {
+    if (this.props.stopId === undefined) {
+      return (<Typography variant="headline" component="h5">
+        Wybierz przystanek z mapy, aby zobaczyć rozkład jazdy
+      </Typography>);
     }
     else {
-      timeTableDetail =
-        <div>
-          {this.props.routes.map((route) => (
-            <RouteCard key={route.routeId} route={route} onClick={() => this.handleRouteSelected(route)} />
-          ))}
-        </div>
-    }
+      let timeTableDetail;
 
-    return (
-      <div className="timeTable">
-        <Paper className="stopInfo" elevation={1}>
+      if (this.state.isRouteSelected) {
+        timeTableDetail = (<div>
+          <RouteStopTime stopId={this.props.stopId} route={this.props.currentRoute} onClick={() => this.handleRouteUnselected(this.state.currentRoute)} />
+        </div>);
+      }
+      else {
+        timeTableDetail =
+          <List>
+            {this.props.routes.map((route) => (
+              <RouteCard key={route.routeId} route={route} onClick={() => this.handleRouteSelected(route)} />
+            ))}
+          </List>
+      }
+
+      return (
+        <React.Fragment>
           <Typography variant="headline" component="h5" align="center">
             {this.props.stopName}
           </Typography>
-          <Button variant="outlined">
-            {this.props.stopCode}
-          </Button>
-        </Paper>
-        {timeTableDetail}
-      </div>
+          <Chip label={this.props.stopCode} />
+          {timeTableDetail}
+        </React.Fragment>);
+    }
+  }
+
+  render() {
+    return (
+      <Grid container spacing={0}>
+        <Grid item xs={12} className="centered margined">
+          {this.renderView()}
+        </Grid>
+      </Grid>
     )
   };
 }

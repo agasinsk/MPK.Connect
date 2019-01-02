@@ -4,11 +4,11 @@ import Control from 'react-leaflet-control';
 import { Map, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet';
 import { connect } from 'react-redux';
 
-import { getStops, selectStop } from '../actions';
+import { getStops, getTimeTable } from '../actions';
 import { Button } from '@material-ui/core';
 
 const mapCenter = [51.105, 17.035];
-const zoomLevel = 13;
+const zoomLevel = 14;
 
 export class StopMap extends Component {
 
@@ -65,8 +65,7 @@ export class StopMap extends Component {
   }
 
   handleSelectStop(stop) {
-    console.log('Selecting stop ' + stop.id + stop.name);
-    this.props.selectStop(stop);
+    this.props.getTimeTable(stop);
   }
 
   filterStops(stops) {
@@ -164,4 +163,4 @@ const mapStateToProps = (state) => {
   }
 };
 
-export default connect(mapStateToProps, { getStops, selectStop })(StopMap);
+export default connect(mapStateToProps, { getStops, getTimeTable })(StopMap);

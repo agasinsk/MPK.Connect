@@ -1,13 +1,18 @@
-.routeCard {
-  padding: 20px;
+.route-card {
+    flex-grow: 0;
+    max-width: 100%;
+    flex-basis: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center !important;
+    border-radius: 0;
 }
 
-.routeCardButton{
-  border: 1px solid rgba(0, 0, 0, 0.13);
-  border-radius: 4px;
+.route-button {
+    width: 100%;
+    font-size: 4vh;
 }
 
-.routeTypeIcon{
-  margin-left: 10px !important;
-  color: rgba(0,0,0,0.9) !important
+.route-icon {
+    margin-right: 2vh;
 }

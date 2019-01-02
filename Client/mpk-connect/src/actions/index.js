@@ -74,8 +74,10 @@ export const clearTravelPlan = () => {
   };
 };
 
-export const getTimeTable = (stopId) => async dispatch => {
-  await mpkConnect.get('TimeTable/' + stopId)
+
+export const getTimeTable = (stop) => async dispatch => {
+  await dispatch(selectStop(stop));
+  await mpkConnect.get('TimeTable/' + stop.id)
     .then(response => {
       dispatch({ type: 'GET_TIMETABLE', payload: response.data })
     })
@@ -85,10 +87,10 @@ export const getTimeTable = (stopId) => async dispatch => {
     });
 };
 
-
 export const selectStop = stop => {
   return {
     type: 'SELECT_STOP',
     payload: stop,
   };
 };
+
