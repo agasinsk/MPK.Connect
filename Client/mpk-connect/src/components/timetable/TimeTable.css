@@ -1,0 +1,9 @@
+.timeTable {
+  min-width: 300px;
+  width: 350px;
+}
+
+.stopInfo{
+  padding: 30px;
+  color: rgba(0,0,0,0.9)
+}

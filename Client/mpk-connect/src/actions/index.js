@@ -41,7 +41,7 @@ export const findTravelPlan = (source, destination, date) => async (dispatch, ge
 };
 
 export const setTravelOptions = (source, destination, date) => {
-  
+
   const localDate = new Date(date);
   localDate.setHours(date.getHours() - date.getTimezoneOffset() / 60);
   return {
@@ -74,3 +74,21 @@ export const clearTravelPlan = () => {
   };
 };
 
+export const getTimeTable = (stopId) => async dispatch => {
+  await mpkConnect.get('TimeTable/' + stopId)
+    .then(response => {
+      dispatch({ type: 'GET_TIMETABLE', payload: response.data })
+    })
+    .catch(error => {
+      console.log(error.message);
+      dispatch({ type: 'GET_TIMETABLE', payload: "ERROR" })
+    });
+};
+
+
+export const selectStop = stop => {
+  return {
+    type: 'SELECT_STOP',
+    payload: stop,
+  };
+};

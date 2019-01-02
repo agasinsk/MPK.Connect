@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 
-import PathFinder from './PathFinder';
-import TimeTable from './TimeTable';
+import PathFinder from '../travelplan/PathFinder';
+import TimeTable from '../timetable/TimeTable';
 
 class SideBar extends Component {
 

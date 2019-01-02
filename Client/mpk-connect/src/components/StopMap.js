@@ -4,7 +4,7 @@ import Control from 'react-leaflet-control';
 import { Map, TileLayer, ZoomControl, Marker, Popup, Polyline } from 'react-leaflet';
 import { connect } from 'react-redux';
 
-import { getStops } from '../actions';
+import { getStops, selectStop } from '../actions';
 import { Button } from '@material-ui/core';
 
 const mapCenter = [51.105, 17.035];
@@ -22,6 +22,7 @@ export class StopMap extends Component {
     };
     this.handleMapChange = this.handleMapChange.bind(this);
     this.handleShowStops = this.handleShowStops.bind(this);
+    this.handleSelectStop = this.handleSelectStop.bind(this);
   }
 
   componentDidMount() {
@@ -63,6 +64,10 @@ export class StopMap extends Component {
     this.setState({ showStops: !showingShops });
   }
 
+  handleSelectStop(stop) {
+    console.log('Selecting stop ' + stop.id + stop.name);
+    this.props.selectStop(stop);
+  }
 
   filterStops(stops) {
     let bounds = this.state.bounds;
@@ -90,7 +95,7 @@ export class StopMap extends Component {
 
       return (filteredStops.map((stop) => {
         let position = [stop.latitude, stop.longitude];
-        return <Marker key={`marker-${stop.id}`} position={position}>
+        return <Marker key={`marker-${stop.id}`} position={position} onClick={() => this.handleSelectStop(stop)}>
           <Popup>
             <span><b>{stop.name}</b>
               <br /> {stop.code}
@@ -154,8 +159,9 @@ const mapStateToProps = (state) => {
   return {
     allStops: state.stops,
     selectedTravelPlan: selectedTravelPlan,
-    travelPlanCoordinates: travelPlanCoordinates
+    travelPlanCoordinates: travelPlanCoordinates,
+    selectedStop: state.selectedStop
   }
 };
 
-export default connect(mapStateToProps, { getStops })(StopMap);
+export default connect(mapStateToProps, { getStops, selectStop })(StopMap);

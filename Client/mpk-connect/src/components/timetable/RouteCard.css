@@ -1,0 +1,13 @@
+.routeCard {
+  padding: 20px;
+}
+
+.routeCardButton{
+  border: 1px solid rgba(0, 0, 0, 0.13);
+  border-radius: 4px;
+}
+
+.routeTypeIcon{
+  margin-left: 10px !important;
+  color: rgba(0,0,0,0.9) !important
+}
