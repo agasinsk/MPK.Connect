@@ -26,7 +26,7 @@ export class StopMap extends Component {
 
   componentDidMount() {
     const leafletMap = this.leafletMap.leafletElement;
-    
+
     leafletMap.on('zoomend', () => {
       const updatedZoomLevel = leafletMap.getZoom();
       this.handleZoomLevelChange(updatedZoomLevel);
@@ -50,20 +50,20 @@ export class StopMap extends Component {
     });
   }
 
-  handleFitBounds(leafletMap, layer){
-    if(layer._latlngs !== undefined && layer._latlngs.length > 1){
+  handleFitBounds(leafletMap, layer) {
+    if (layer._latlngs !== undefined && layer._latlngs.length > 1) {
       const bounds = layer._bounds;
       console.log(bounds);
       leafletMap.fitBounds(bounds);
     }
- }
+  }
 
   handleShowStops() {
     const showingShops = this.state.showStops;
     this.setState({ showStops: !showingShops });
   }
 
-  
+
   filterStops(stops) {
     let bounds = this.state.bounds;
     if (bounds === undefined) {
@@ -119,7 +119,7 @@ export class StopMap extends Component {
             </Popup>
           </Marker>)
         })}
-        <Polyline ref={m => { this.polyline = m; }} color="red" positions={this.props.travelPlanCoordinates} />
+        <Polyline ref={m => { this.polyline = m; }} color="#3388ff" smoothFactor={2.0} positions={this.props.travelPlanCoordinates} />
       </React.Fragment>)
     }
     return null;

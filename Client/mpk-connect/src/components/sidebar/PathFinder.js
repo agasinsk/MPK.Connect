@@ -10,12 +10,10 @@ import { MuiPickersUtilsProvider, DateTimePicker } from 'material-ui-pickers';
 import List from '@material-ui/core/List';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import deburr from "lodash/deburr";
 import uniqBy from "lodash/uniqBy";
 import Downshift from "downshift";
 import Paper from "@material-ui/core/Paper";
 import MenuItem from "@material-ui/core/MenuItem";
-
 
 import { selectSource, selectDestination, findTravelPlan } from '../../actions';
 import TravelPlan from './TravelPlan';
@@ -127,7 +125,7 @@ class PathFinder extends Component {
   }
 
   getSuggestions(value) {
-    const inputValue = deburr(value.trim()).toLowerCase();
+    const inputValue = value.trim().toLowerCase();
     const inputLength = inputValue.length;
     let count = 0;
 
