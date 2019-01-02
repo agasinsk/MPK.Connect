@@ -5,7 +5,7 @@ namespace MPK.Connect.Service.Business.Graph
 {
     public interface IStopPathFinder
     {
-        Path<StopTimeInfo> FindShortestPath(Graph<string, StopTimeInfo> graph, StopTimeInfo source,
+        Path<StopTimeInfo> FindShortestPath(Graph<int, StopTimeInfo> graph, StopTimeInfo source,
             string destinationName);
     }
 }

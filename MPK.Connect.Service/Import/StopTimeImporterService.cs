@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Service.Builders;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MPK.Connect.Service.Import
 {
@@ -18,7 +18,7 @@ namespace MPK.Connect.Service.Import
             var ids = Enumerable.Range(1, entities.Count).ToList();
             for (var i = 0; i < entities.Count; i++)
             {
-                entities[i].Id = ids[i].ToString();
+                entities[i].Id = ids[i];
             }
         }
     }

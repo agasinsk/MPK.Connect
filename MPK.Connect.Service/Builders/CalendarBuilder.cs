@@ -9,7 +9,7 @@ namespace MPK.Connect.Service.Builders
         {
             var data = dataString.Replace("\"", "").ToEntityData();
 
-            var serviceId = data[_entityMappings["service_id"]];
+            var serviceId = GetNullableInt(data[_entityMappings["service_id"]]).GetValueOrDefault();
             var monday = data[_entityMappings["monday"]] == "1";
             var tuesday = data[_entityMappings["tuesday"]] == "1";
             var wednesday = data[_entityMappings["wednesday"]] == "1";

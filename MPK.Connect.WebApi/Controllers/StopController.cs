@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Service.Business;
+using System;
+using System.Collections.Generic;
 
 namespace MPK.Connect.WebApp.Controllers
 {
@@ -31,7 +31,7 @@ namespace MPK.Connect.WebApp.Controllers
         }
 
         [HttpGet("[action]")]
-        public StopDto GetById(string stopId)
+        public StopDto GetById(int stopId)
         {
             return _stopService.GetStopById(stopId);
         }

@@ -4,6 +4,6 @@ namespace MPK.Connect.Service.Business
 {
     public interface ITimeTableService
     {
-        TimeTable GetTimeTable(string stopId);
+        TimeTable GetTimeTable(int stopId);
     }
 }

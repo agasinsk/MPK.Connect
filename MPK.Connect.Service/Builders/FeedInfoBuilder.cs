@@ -15,7 +15,7 @@ namespace MPK.Connect.Service.Builders
 
             var feedStartDate = GetDate(data[_entityMappings["feed_start_date"]]);
             var feedEndDate = GetDate(data[_entityMappings["feed_end_date"]]);
-            var feedVersion = GetInt(data[_entityMappings["feed_version"]]);
+            var feedVersion = GetNullableInt(data[_entityMappings["feed_version"]]);
 
             var feedInfo = new FeedInfo
             {

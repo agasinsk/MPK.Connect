@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MoreLinq.Extensions;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.Graph;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business
 {
     public class TravelPlanService : ITravelPlanService
     {
         private readonly IGraphBuilder _graphBuilder;
-        private readonly IPathProvider _pathProvider;
         private readonly ILogger<TravelPlanService> _logger;
         private readonly IMapper _mapper;
+        private readonly IPathProvider _pathProvider;
 
         public TravelPlanService(IGraphBuilder graphBuilder, IPathProvider pathProvider, ILogger<TravelPlanService> logger, IMapper mapper)
         {
@@ -51,7 +51,16 @@ namespace MPK.Connect.Service.Business
                 t.Id = travelPlanId;
                 travelPlanId++;
             });
+
             return travelPlans.OrderBy(t => t.Transfers).ThenBy(t => t.StartTime).ThenBy(t => t.Duration);
+        }
+
+        private StopDto GetClosestStop(Location source, IEnumerable<StopDto> stops)
+        {
+            return stops.Aggregate((l, r) =>
+                l.GetDistanceTo(source.Latitude.Value, source.Longitude.Value) <
+                r.GetDistanceTo(source.Latitude.Value, source.Longitude.Value)
+                    ? l : r);
         }
 
         /// <summary>
@@ -80,15 +89,7 @@ namespace MPK.Connect.Service.Business
             return travelPlanHierarchy;
         }
 
-        private StopDto GetClosestStop(Location source, IEnumerable<StopDto> stops)
-        {
-            return stops.Aggregate((l, r) =>
-                l.GetDistanceTo(source.Latitude.Value, source.Longitude.Value) <
-                r.GetDistanceTo(source.Latitude.Value, source.Longitude.Value)
-                    ? l : r);
-        }
-
-        private void UpdatedLocationsWithNamesOfTheClosestStops(Location source, Location destination, Graph<string, StopTimeInfo> graph)
+        private void UpdatedLocationsWithNamesOfTheClosestStops(Location source, Location destination, Graph<int, StopTimeInfo> graph)
         {
             var stops = graph.Nodes.Select(st => st.Value.Data.StopDto).DistinctBy(s => s.Id).ToList();
             if (string.IsNullOrEmpty(source.Name))
@@ -103,6 +104,11 @@ namespace MPK.Connect.Service.Business
             }
         }
 
+        private bool ValidateLocation(Location location)
+        {
+            return string.IsNullOrEmpty(location.Name) && (!location.Latitude.HasValue || !location.Longitude.HasValue);
+        }
+
         private void ValidateLocations(params Location[] locations)
         {
             foreach (var location in locations)
@@ -115,11 +121,6 @@ namespace MPK.Connect.Service.Business
                     throw locationException;
                 }
             }
-        }
-
-        private bool ValidateLocation(Location location)
-        {
-            return string.IsNullOrEmpty(location.Name) && (!location.Latitude.HasValue || !location.Longitude.HasValue);
         }
     }
 }

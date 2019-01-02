@@ -1,9 +1,9 @@
-﻿using System;
-using MPK.Connect.Model.Helpers;
+﻿using MPK.Connect.Model.Helpers;
+using System;
 
 namespace MPK.Connect.Model.Business
 {
-    public class StopDto : IdentifiableEntity<string>
+    public class StopDto : IdentifiableEntity<int>
     {
         public string Code { get; set; }
         public double Latitude { get; set; }

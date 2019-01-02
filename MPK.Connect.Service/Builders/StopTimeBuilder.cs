@@ -11,11 +11,11 @@ namespace MPK.Connect.Service.Builders
         {
             var data = dataString.Replace("\"", "").ToEntityData();
 
-            var tripId = data[_entityMappings["trip_id"]];
+            var tripId = GetNullableInt(data[_entityMappings["trip_id"]]).Value;
             var arrival = GetTime(data[_entityMappings["arrival_time"]]).GetValueOrDefault();
             var departure = GetTime(data[_entityMappings["departure_time"]]).GetValueOrDefault();
-            var stopId = data[_entityMappings["stop_id"]];
-            var stopSequence = GetInt(data[_entityMappings["stop_sequence"]]).GetValueOrDefault();
+            var stopId = GetNullableInt(data[_entityMappings["stop_id"]]).Value;
+            var stopSequence = GetNullableInt(data[_entityMappings["stop_sequence"]]).GetValueOrDefault();
             var stopHeadsign = data[_entityMappings["stop_headsign"]];
 
             Enum.TryParse(data[_entityMappings["pickup_type"]], out PickupTypes pickup);

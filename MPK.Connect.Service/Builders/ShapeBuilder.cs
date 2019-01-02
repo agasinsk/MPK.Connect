@@ -12,7 +12,7 @@ namespace MPK.Connect.Service.Builders
             var shapeId = data[_entityMappings["shape_id"]];
             var shapePtLat = GetDouble(data[_entityMappings["shape_pt_lat"]]).GetValueOrDefault();
             var shapePtLon = GetDouble(data[_entityMappings["shape_pt_lon"]]).GetValueOrDefault();
-            var shapePtSequence = GetInt(data[_entityMappings["shape_pt_sequence"]]).GetValueOrDefault();
+            var shapePtSequence = GetNullableInt(data[_entityMappings["shape_pt_sequence"]]).GetValueOrDefault();
             var shapeDistTraveled = GetDouble(data[_entityMappings["shape_dist_traveled"]]);
 
             var shapePoint = new Shape

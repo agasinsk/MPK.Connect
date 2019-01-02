@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business
 {
@@ -34,7 +34,7 @@ namespace MPK.Connect.Service.Business
                 .ToList();
         }
 
-        public StopDto GetStopById(string stopId)
+        public StopDto GetStopById(int stopId)
         {
             return _stopRepository.FindBy(s => s.Id == stopId)
                 .Select(s => new StopDto

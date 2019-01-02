@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -10,10 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
-using MPK.Connect.Model.Business;
-using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.Graph;
 using MPK.Connect.Service.Helpers;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace MPK.Connect.Graph
 {
@@ -74,7 +72,7 @@ namespace MPK.Connect.Graph
                     var endTime = startTime + new TimeSpan(0, 90, 0);
                     var start = DateTime.Now;
                     var stoptimes = stopTimeRepo.GetAll()
-                            .Where(st => st.Trip.ServiceId == "6")
+                            .Where(st => st.Trip.ServiceId == 6)
                         .Where(st => startTime < st.DepartureTime && st.DepartureTime < endTime)
                         .ToList();
                     var stop = DateTime.Now;
@@ -96,7 +94,7 @@ namespace MPK.Connect.Graph
                 var end = graph.Nodes.Values.First(s => s.Data.StopDto.Name.TrimToLower() == "Biskupin".TrimToLower()).Data.StopDto;
 
                 var distanceFromStopToDestination = srcs.First().Key.GetDistanceTo(end);
-                var distancesToStops = new Dictionary<string, double>();
+                var distancesToStops = new Dictionary<int, double>();
                 foreach (var stop in srcs)
                 {
                     foreach (var stoptimeid in stop.Value)
@@ -130,17 +128,17 @@ namespace MPK.Connect.Graph
                     // .SelectMany(g => g.GroupBy(st => st.Data.Route).Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First()))
                     .ToList();
 
-                var probablepaths = new List<Path<StopTimeInfo>>();
-                foreach (var src in filteredSrcs)
-                {
-                    var path = graph.AStar(src.Data, "Biskupin");
-                    if (path.Any())
-                    {
-                        probablepaths.Add(path);
-                    }
-                }
+                //var probablepaths = new List<Path<StopTimeInfo>>();
+                //foreach (var src in filteredSrcs)
+                //{
+                //    var path = //graph.AStar(src.Data, "Biskupin");
+                //    if (path.Any())
+                //    {
+                //        probablepaths.Add(path);
+                //    }
+                //}
 
-                probablepaths = probablepaths.OrderBy(p => p.First().DepartureTime).ThenBy(p => p.Cost).ToList();
+                //probablepaths = probablepaths.OrderBy(p => p.First().DepartureTime).ThenBy(p => p.Cost).ToList();
             }
 
             Console.WriteLine("Hello World!");

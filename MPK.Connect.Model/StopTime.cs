@@ -1,16 +1,20 @@
-﻿using System;
+﻿using MPK.Connect.Model.Enums;
+using MPK.Connect.Model.Helpers;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using MPK.Connect.Model.Enums;
-using MPK.Connect.Model.Helpers;
 
 namespace MPK.Connect.Model
 {
-    public class StopTime : IdentifiableEntity<string>
+    public class StopTime : IdentifiableEntity<int>
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Required]
+        public override int Id { get; set; }
+
         [ForeignKey(nameof(Trip))]
         [Required]
-        public string TripId { get; set; }
+        public int TripId { get; set; }
 
         [Required]
         [Column(TypeName = "time")]
@@ -21,7 +25,7 @@ namespace MPK.Connect.Model
         public TimeSpan DepartureTime { get; set; }
 
         [Required]
-        public string StopId { get; set; }
+        public int StopId { get; set; }
 
         [Required]
         public int StopSequence { get; set; }

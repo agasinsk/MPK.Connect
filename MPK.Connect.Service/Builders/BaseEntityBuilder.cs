@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace MPK.Connect.Service.Builders
 {
@@ -58,7 +59,6 @@ namespace MPK.Connect.Service.Builders
             return new TimeSpan(hours, minutes, seconds);
         }
 
-
         protected double? GetDouble(string doubleString)
         {
             if (string.IsNullOrEmpty(doubleString))
@@ -69,14 +69,36 @@ namespace MPK.Connect.Service.Builders
             return double.Parse(doubleString, CultureInfo.InvariantCulture);
         }
 
-        protected int? GetInt(string intString)
+        protected int? GetNullableInt(string intString)
         {
             if (string.IsNullOrEmpty(intString))
             {
                 return null;
             }
 
+            if (intString.Contains('_'))
+            {
+                var split = intString.Split('_');
+                intString = split.Last();
+            }
+
             return int.Parse(intString, CultureInfo.InvariantCulture);
+        }
+
+        protected int GetInt(string intString)
+        {
+            if (string.IsNullOrEmpty(intString))
+            {
+                return Int32.MinValue;
+            }
+
+            if (intString.Contains('_'))
+            {
+                var split = intString.Split('_');
+                intString = split[1];
+            }
+
+            return int.Parse(intString);
         }
     }
 }

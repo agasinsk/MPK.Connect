@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
-using MPK.Connect.Model.Helpers;
 using MPK.Connect.Service.Builders;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +7,7 @@ using System.Linq;
 
 namespace MPK.Connect.Service.Import
 {
-    public class ImporterService<T> : IImporterService<T> where T : IdentifiableEntity<string>
+    public class ImporterService<T> : IImporterService<T> where T : class
     {
         protected readonly IGenericRepository<T> _repository;
         protected readonly IEntityBuilder<T> _entityBuilder;

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using MPK.Connect.Model.Business;
+﻿using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Helpers;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business.Graph
 {
@@ -17,7 +17,7 @@ namespace MPK.Connect.Service.Business.Graph
         /// <param name="source">Source node</param>
         /// <param name="destinationName">Name of the destination stop</param>
         /// <returns>Shortest path between source and destination</returns>
-        public Path<StopTimeInfo> FindShortestPath(Graph<string, StopTimeInfo> graph, StopTimeInfo source, string destinationName)
+        public Path<StopTimeInfo> FindShortestPath(Graph<int, StopTimeInfo> graph, StopTimeInfo source, string destinationName)
         {
             var probableDestination = graph.Nodes.Values
                 .Where(n => n.Data.StopDto.Name.TrimToLower() == destinationName.TrimToLower() &&
@@ -26,20 +26,20 @@ namespace MPK.Connect.Service.Business.Graph
                 .FirstOrDefault()?.Data;
 
             // Initialize extended list
-            var nodesAlreadyExtended = new List<GraphNode<string, StopTimeInfo>>();
-            var nodesToExtend = new Dictionary<string, GraphNode<string, StopTimeInfo>>
+            var nodesAlreadyExtended = new List<GraphNode<int, StopTimeInfo>>();
+            var nodesToExtend = new Dictionary<int, GraphNode<int, StopTimeInfo>>
             {
                 { source.Id, graph.Nodes[source.Id] }
             };
 
             // Initialize distance lookups
-            var cameFrom = new Dictionary<string, GraphNode<string, StopTimeInfo>>();
+            var cameFrom = new Dictionary<int, GraphNode<int, StopTimeInfo>>();
             var nodeDistances = graph.Nodes.ToDictionary(k => k.Key, v => double.MaxValue);
-            var distanceFromSource = new Dictionary<string, double>(nodeDistances)
+            var distanceFromSource = new Dictionary<int, double>(nodeDistances)
             {
                 [source.Id] = 0
             };
-            var totalDistanceToDestination = new Dictionary<string, double>(nodeDistances)
+            var totalDistanceToDestination = new Dictionary<int, double>(nodeDistances)
             {
                 [source.Id] = source.GetDistanceTo(probableDestination) * _distanceEnhancementFactor
             };
@@ -95,8 +95,8 @@ namespace MPK.Connect.Service.Business.Graph
             return new Path<StopTimeInfo>();
         }
 
-        private static Path<StopTimeInfo> ReconstructPath(GraphNode<string, StopTimeInfo> destinationNode,
-            Graph<string, StopTimeInfo> graph, Dictionary<string, GraphNode<string, StopTimeInfo>> cameFrom, string sourceName)
+        private static Path<StopTimeInfo> ReconstructPath(GraphNode<int, StopTimeInfo> destinationNode,
+            Graph<int, StopTimeInfo> graph, Dictionary<int, GraphNode<int, StopTimeInfo>> cameFrom, string sourceName)
         {
             var totalPath = new Path<StopTimeInfo>();
 

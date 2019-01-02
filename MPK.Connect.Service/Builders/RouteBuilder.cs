@@ -12,7 +12,7 @@ namespace MPK.Connect.Service.Builders
             var data = dataString.Replace("\"", "").ToEntityData();
 
             var id = data[_entityMappings["route_id"]];
-            var agencyId = data[_entityMappings["agency_id"]];
+            var agencyId = GetNullableInt(data[_entityMappings["agency_id"]]).Value;
             var shortName = data[_entityMappings["route_short_name"]];
             var longName = data[_entityMappings["route_long_name"]];
             var desc = data[_entityMappings["route_desc"]];

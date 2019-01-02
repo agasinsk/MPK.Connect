@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MPK.Connect.Model.Business;
+﻿using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.Graph;
 using MPK.Connect.Service.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business
 {
@@ -25,7 +25,7 @@ namespace MPK.Connect.Service.Business
         /// <param name="sourceLocation">Source</param>
         /// <param name="destinationLocation">Destination</param>
         /// <returns>Collection of probable paths from source to destination</returns>
-        public List<Path<StopTimeInfo>> GetAvailablePaths(Graph<string, StopTimeInfo> graph, Location sourceLocation,
+        public List<Path<StopTimeInfo>> GetAvailablePaths(Graph<int, StopTimeInfo> graph, Location sourceLocation,
             Location destinationLocation)
         {
             var sources = GetSourceNodes(graph, sourceLocation, destinationLocation);
@@ -50,7 +50,7 @@ namespace MPK.Connect.Service.Business
             return filteredPaths;
         }
 
-        private IEnumerable<GraphNode<string, StopTimeInfo>> GetSourceNodes(Graph<string, StopTimeInfo> graph, Location sourceLocation, Location destinationLocation)
+        private IEnumerable<GraphNode<int, StopTimeInfo>> GetSourceNodes(Graph<int, StopTimeInfo> graph, Location sourceLocation, Location destinationLocation)
         {
             // Get source stops that have the same name
             var sourceStopTimesGroupedByStop = graph.Nodes.Values
@@ -65,7 +65,7 @@ namespace MPK.Connect.Service.Business
             var distanceFromStopToDestination = sourceStopTimesGroupedByStop
                 .Select(s => s.Key.GetDistanceTo(referentialDestinationStop)).Max();
 
-            var distancesToStops = new Dictionary<string, double>();
+            var distancesToStops = new Dictionary<int, double>();
             foreach (var stop in sourceStopTimesGroupedByStop)
             {
                 // Get neighbor stops

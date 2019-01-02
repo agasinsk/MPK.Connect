@@ -14,7 +14,7 @@ namespace MPK.Connect.Service.Builders
             var fromStopId = data[_entityMappings["from_stop_id"]];
             var toStopId = data[_entityMappings["to_stop_id"]];
             Enum.TryParse(data[_entityMappings["transfer_type"]], out TransferTypes transferType);
-            var minTransferTime = GetInt(data[_entityMappings["min_transfer_time"]]);
+            var minTransferTime = GetNullableInt(data[_entityMappings["min_transfer_time"]]);
 
             var transfer = new Transfer
             {

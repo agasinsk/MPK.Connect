@@ -65,7 +65,7 @@ namespace MPK.Connect.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddCors();
             services.AddAutoMapper();
 
@@ -87,9 +87,9 @@ namespace MPK.Connect.WebApp
                 .Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Information);
 
             // Add dbContext
-            services.AddDbContext<SimpleMpkContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(SimpleMpkContext))), ServiceLifetime.Transient);
+            services.AddDbContext<SimpleMpkContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(SimpleMpkContext))));
 
-            services.AddTransient<IMpkContext, SimpleMpkContext>();
+            services.AddScoped<IMpkContext, SimpleMpkContext>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

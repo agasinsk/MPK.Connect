@@ -21,7 +21,7 @@ namespace MPK.Connect.Service.Business
             _calendarRepository = calendarRepository ?? throw new ArgumentNullException(nameof(calendarRepository)); ;
         }
 
-        public TimeTable GetTimeTable(string stopId)
+        public TimeTable GetTimeTable(int stopId)
         {
             var stop = _stopRepository.FindBy(st => st.Id == stopId).FirstOrDefault();
             if (stop == null)

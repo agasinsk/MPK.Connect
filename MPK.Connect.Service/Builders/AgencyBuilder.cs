@@ -9,7 +9,7 @@ namespace MPK.Connect.Service.Builders
         {
             var data = dataString.Replace("\"", string.Empty).ToEntityData();
 
-            var id = data[_entityMappings["agency_id"]];
+            var id = GetNullableInt(data[_entityMappings["agency_id"]]).Value;
             var name = data[_entityMappings["agency_name"]];
             var url = data[_entityMappings["agency_url"]];
             var timeZone = data[_entityMappings["agency_timezone"]];

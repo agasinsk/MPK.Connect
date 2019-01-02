@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business.Graph
 {
@@ -34,7 +34,7 @@ namespace MPK.Connect.Service.Business.Graph
         /// <param name="startDate">Start date</param>
         /// <param name="graphLimits">Geographical limits for stop locations</param>
         /// <returns>Graph of stop times</returns>
-        public Graph<string, StopTimeInfo> GetGraph(DateTime startDate, CoordinateLimits graphLimits = null)
+        public Graph<int, StopTimeInfo> GetGraph(DateTime startDate, CoordinateLimits graphLimits = null)
         {
             // Get stops matching the bounds
             var dbStops = GetStops(graphLimits);
@@ -45,7 +45,7 @@ namespace MPK.Connect.Service.Business.Graph
             // Get stop times for required stops
             var dbStopTimes = GetStopTimes(dbStops, currentCalendar.ServiceId, startDate);
 
-            var graph = new Graph<string, StopTimeInfo>(dbStopTimes);
+            var graph = new Graph<int, StopTimeInfo>(dbStopTimes);
 
             // Create a directed edge for every bus route segment
             CreateDirectedEdgesWithinEachTrip(dbStopTimes, graph);
@@ -66,7 +66,7 @@ namespace MPK.Connect.Service.Business.Graph
         /// </summary>
         /// <param name="dbStopTimes">Stop times</param>
         /// <param name="graph">Graph</param>
-        private void CreateDirectedEdgesForSwitchingStopsWithSameName(Dictionary<string, StopTimeInfo> dbStopTimes, Graph<string, StopTimeInfo> graph)
+        private void CreateDirectedEdgesForSwitchingStopsWithSameName(Dictionary<int, StopTimeInfo> dbStopTimes, Graph<int, StopTimeInfo> graph)
         {
             var stopTimesGroupedByStopName = dbStopTimes.Values
                 .GroupBy(st => st.StopDto.Name)
@@ -84,7 +84,7 @@ namespace MPK.Connect.Service.Business.Graph
                     {
                         var cost = destination.DepartureTime - sourceStopTime.DepartureTime + _minimumSwitchingTime;
 
-                        graph[sourceStopTime.Id].Neighbors.Add(new GraphEdge<string>(sourceStopTime.Id, destination.Id, cost.TotalMinutes));
+                        graph[sourceStopTime.Id].Neighbors.Add(new GraphEdge<int>(sourceStopTime.Id, destination.Id, cost.TotalMinutes));
                     }
                 }
             }
@@ -95,7 +95,7 @@ namespace MPK.Connect.Service.Business.Graph
         /// </summary>
         /// <param name="dbStopTimes">Stop times</param>
         /// <param name="graph">Graph</param>
-        private void CreateDirectedEdgesForSwitchingTrips(Dictionary<string, StopTimeInfo> dbStopTimes, Graph<string, StopTimeInfo> graph)
+        private void CreateDirectedEdgesForSwitchingTrips(Dictionary<int, StopTimeInfo> dbStopTimes, Graph<int, StopTimeInfo> graph)
         {
             var stopTimesGroupedByStopId = dbStopTimes.Values
                 .GroupBy(st => st.StopId)
@@ -111,7 +111,7 @@ namespace MPK.Connect.Service.Business.Graph
                     {
                         var cost = destination.DepartureTime - source.DepartureTime + _minimumSwitchingTime;
 
-                        graph[source.Id].Neighbors.Add(new GraphEdge<string>(source.Id, destination.Id, cost.TotalMinutes));
+                        graph[source.Id].Neighbors.Add(new GraphEdge<int>(source.Id, destination.Id, cost.TotalMinutes));
                     }
                 }
             }
@@ -122,7 +122,7 @@ namespace MPK.Connect.Service.Business.Graph
         /// </summary>
         /// <param name="dbStopTimes">Stop times</param>
         /// <param name="graph">Graph</param>
-        private void CreateDirectedEdgesWithinEachTrip(Dictionary<string, StopTimeInfo> dbStopTimes, Graph<string, StopTimeInfo> graph)
+        private void CreateDirectedEdgesWithinEachTrip(Dictionary<int, StopTimeInfo> dbStopTimes, Graph<int, StopTimeInfo> graph)
         {
             var stopTimesGroupedByTrips = dbStopTimes.Values
                 .GroupBy(st => st.TripId)
@@ -136,7 +136,7 @@ namespace MPK.Connect.Service.Business.Graph
                     var destination = tripTimes[i + 1];
                     var cost = destination.DepartureTime - source.DepartureTime;
 
-                    graph[source.Id].Neighbors.Add(new GraphEdge<string>(source.Id, destination.Id, cost.TotalMinutes));
+                    graph[source.Id].Neighbors.Add(new GraphEdge<int>(source.Id, destination.Id, cost.TotalMinutes));
                 }
             }
         }
@@ -158,7 +158,7 @@ namespace MPK.Connect.Service.Business.Graph
         /// </summary>
         /// <param name="coordinateLimits">The geographical bounds</param>
         /// <returns>Stops within bounds</returns>
-        private Dictionary<string, StopDto> GetStops(CoordinateLimits coordinateLimits = null)
+        private Dictionary<int, StopDto> GetStops(CoordinateLimits coordinateLimits = null)
         {
             var dbStopsQuery = _stopRepository.GetAll();
 
@@ -191,7 +191,7 @@ namespace MPK.Connect.Service.Business.Graph
         /// <param name="serviceId">Id of service (dependent on the day of the week)</param>
         /// <param name="startDate">Start date</param>
         /// <returns>Collection of matching stop times</returns>
-        private Dictionary<string, StopTimeInfo> GetStopTimes(Dictionary<string, StopDto> dbStops, string serviceId, DateTime startDate)
+        private Dictionary<int, StopTimeInfo> GetStopTimes(Dictionary<int, StopDto> dbStops, int serviceId, DateTime startDate)
         {
             var startTime = startDate.TimeOfDay;
             var endTime = startTime + _maxStopTimeDepartureTime;

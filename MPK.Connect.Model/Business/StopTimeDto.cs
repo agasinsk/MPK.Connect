@@ -2,7 +2,7 @@
 {
     public class StopTimeDto : StopTimeCore
     {
-        public string StopId { get; set; }
+        public int StopId { get; set; }
 
         public override string ToString()
         {

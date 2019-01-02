@@ -1,14 +1,20 @@
-﻿using System.Collections;
+﻿using MPK.Connect.Model.Helpers;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using MPK.Connect.Model.Helpers;
 
 namespace MPK.Connect.Model.Graph
 {
-    public class Graph<TId, T> : IEnumerable<T> where T : IdentifiableEntity<TId> where TId : class
+    public class Graph<TId, T> : IEnumerable<T> where T : IdentifiableEntity<TId>
     {
         public Dictionary<TId, GraphNode<TId, T>> Nodes { get; }
         public Dictionary<TId, GraphNode<TId, T>>.KeyCollection Keys => Nodes.Keys;
+
+        public GraphNode<TId, T> this[TId key]
+        {
+            get => Nodes[key];
+            set => Nodes[key] = value;
+        }
 
         public Graph()
         {
@@ -24,12 +30,6 @@ namespace MPK.Connect.Model.Graph
         {
             var nodes = nodeSet.ToDictionary(k => k.Key, v => new GraphNode<TId, T>(v.Value));
             Nodes = nodes;
-        }
-
-        public GraphNode<TId, T> this[TId key]
-        {
-            get => Nodes[key];
-            set => Nodes[key] = value;
         }
 
         public void AddDirectedEdge(T source, T destination, double edgeCost = 0)

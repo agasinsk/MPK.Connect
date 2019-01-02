@@ -11,7 +11,7 @@ namespace MPK.Connect.Service.Builders
         {
             var data = dataString.Replace("\"", "").ToEntityData();
 
-            var id = data[_entityMappings["stop_id"]];
+            var id = GetNullableInt(data[_entityMappings["stop_id"]]).Value;
             var code = data[_entityMappings["stop_code"]];
             var name = data[_entityMappings["stop_name"]];
             var description = data[_entityMappings["stop_desc"]];

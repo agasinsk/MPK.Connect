@@ -1,27 +1,30 @@
 ﻿using MPK.Connect.Model.Helpers;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Agency : IdentifiableEntity<string>
+    public class Agency : IdentifiableEntity<int>
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
         [Required]
-        public override string Id { get; set; }
+        public override int Id { get; set; }
+
+        public string Language { get; set; }
 
         [Required]
         public string Name { get; set; }
 
         [Required]
-        public string Url { get; set; }
-
-        [Required]
         public string Timezone { get; set; }
 
-        public string Language { get; set; }
+        [Required]
+        public string Url { get; set; }
 
         public string Phone { get; set; }
-        public string FareUrl { get; set; }
         public string Email { get; set; }
+
+        public string FareUrl { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace MPK.Connect.Model
         [Required]
         public override string Id { get; set; }
 
-        public string AgencyId { get; set; }
+        public int? AgencyId { get; set; }
 
         [Required]
         public string ShortName { get; set; }

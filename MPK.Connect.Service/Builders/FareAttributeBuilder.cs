@@ -15,9 +15,9 @@ namespace MPK.Connect.Service.Builders
             var price = GetDouble(data[_entityMappings["price"]]).GetValueOrDefault();
             var currency = data[_entityMappings["currency_type"]];
             Enum.TryParse(data[_entityMappings["payment_method"]], out PaymentMethods payment);
-            var transfers = GetInt(data[_entityMappings["transfers"]]);
+            var transfers = GetNullableInt(data[_entityMappings["transfers"]]);
             var agencyId = data[_entityMappings["agency_id"]];
-            var transferDuration = GetInt(data[_entityMappings["transfer_duration"]]);
+            var transferDuration = GetNullableInt(data[_entityMappings["transfer_duration"]]);
 
             var fareAttribute = new FareAttribute
             {

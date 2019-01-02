@@ -13,8 +13,6 @@ namespace MPK.Connect.DataAccess
 
         int BulkInsert(List<T> entities);
 
-        bool Contains(T entity);
-
         T Delete(T entity);
 
         void Edit(T entity);

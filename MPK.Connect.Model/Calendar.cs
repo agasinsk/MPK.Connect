@@ -5,13 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Calendar : IdentifiableEntity<string>
+    public class Calendar : IdentifiableEntity<int>
     {
         [NotMapped]
-        public override string Id => ServiceId;
+        public override int Id => ServiceId;
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
-        public string ServiceId { get; set; }
+        public int ServiceId { get; set; }
 
         [Required]
         public bool Monday { get; set; }

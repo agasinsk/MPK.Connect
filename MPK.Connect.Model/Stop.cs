@@ -1,13 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-using MPK.Connect.Model.Enums;
+﻿using MPK.Connect.Model.Enums;
 using MPK.Connect.Model.Helpers;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Stop : IdentifiableEntity<string>
+    public class Stop : IdentifiableEntity<int>
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
-        public override string Id { get; set; }
+        public override int Id { get; set; }
 
         public string Code { get; set; }
 

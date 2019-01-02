@@ -15,14 +15,13 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
+                .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("MPK.Connect.Model.Agency", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id");
 
                     b.Property<string>("Email");
 
@@ -48,8 +47,7 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
 
             modelBuilder.Entity("MPK.Connect.Model.Calendar", b =>
                 {
-                    b.Property<string>("ServiceId")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("ServiceId");
 
                     b.Property<DateTime>("EndDate");
 
@@ -79,7 +77,7 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("AgencyId");
+                    b.Property<int?>("AgencyId");
 
                     b.Property<string>("Color");
 
@@ -108,8 +106,7 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
 
             modelBuilder.Entity("MPK.Connect.Model.Stop", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id");
 
                     b.Property<string>("Code");
 
@@ -141,8 +138,7 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
 
             modelBuilder.Entity("MPK.Connect.Model.StopTime", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id");
 
                     b.Property<TimeSpan>("ArrivalTime")
                         .HasColumnType("time");
@@ -158,15 +154,13 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
 
                     b.Property<double?>("ShapeDistTraveled");
 
-                    b.Property<string>("StopId")
-                        .IsRequired();
+                    b.Property<int>("StopId");
 
                     b.Property<int>("StopSequence");
 
                     b.Property<int>("TimePoint");
 
-                    b.Property<string>("TripId")
-                        .IsRequired();
+                    b.Property<int>("TripId");
 
                     b.HasKey("Id");
 
@@ -179,8 +173,7 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
 
             modelBuilder.Entity("MPK.Connect.Model.Trip", b =>
                 {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("Id");
 
                     b.Property<int>("BikesAllowed");
 
@@ -193,7 +186,7 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
                     b.Property<string>("RouteId")
                         .IsRequired();
 
-                    b.Property<string>("ServiceId");
+                    b.Property<int>("ServiceId");
 
                     b.Property<string>("ShapeId");
 
@@ -239,7 +232,8 @@ namespace MPK.Connect.DataAccess.Migrations.SimpleMpk
 
                     b.HasOne("MPK.Connect.Model.Calendar", "Calendar")
                         .WithMany()
-                        .HasForeignKey("ServiceId");
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

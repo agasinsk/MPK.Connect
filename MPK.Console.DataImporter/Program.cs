@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +11,11 @@ using MPK.Connect.Model.Helpers;
 using MPK.Connect.Service.Builders;
 using MPK.Connect.Service.Helpers;
 using MPK.Connect.Service.Import;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace MPK.Console.DataImporter
 {
@@ -99,7 +99,7 @@ namespace MPK.Console.DataImporter
             var filePaths = GetDataSourcesFromConfiguration();
             var dbContextEntityTypes = GetDbContextEntityTypes();
 
-            var entityModelTypes = GetAllTypesOf<IdentifiableEntity<string>>()
+            var entityModelTypes = GetAllTypesOf<IIdentifiableEntity>()
                     .Where(t => dbContextEntityTypes.Contains(t))
                     .ToDictionary(kv => kv.Name, kv => kv);
 

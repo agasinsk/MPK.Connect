@@ -1,15 +1,14 @@
-﻿using System;
+﻿using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using EFCore.BulkExtensions;
-using Microsoft.EntityFrameworkCore;
-using MPK.Connect.Model.Helpers;
 
 namespace MPK.Connect.DataAccess
 {
-    public abstract class GenericRepository<TEntity, TId> : IDisposable,
-        IGenericRepository<TEntity> where TEntity : IdentifiableEntity<TId> where TId : class
+    public abstract class GenericRepository<TEntity> : IDisposable,
+        IGenericRepository<TEntity> where TEntity : class
     {
         protected DbContext Context { get; set; }
 
@@ -35,11 +34,6 @@ namespace MPK.Connect.DataAccess
             return entities.Count;
         }
 
-        public bool Contains(TEntity entity)
-        {
-            return Context.Set<TEntity>().Any(e => e.Id == entity.Id);
-        }
-
         public virtual TEntity Delete(TEntity entity)
         {
             Context.Set<TEntity>().Remove(entity);
@@ -59,11 +53,6 @@ namespace MPK.Connect.DataAccess
         public virtual IQueryable<TEntity> GetAll()
         {
             return Context.Set<TEntity>();
-        }
-
-        public virtual TEntity GetSingle(TId id)
-        {
-            return Context.Set<TEntity>().FirstOrDefault(t => t.Id == id);
         }
 
         public virtual void Save()

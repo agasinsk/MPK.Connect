@@ -5,15 +5,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Trip : IdentifiableEntity<string>
+    public class Trip : IdentifiableEntity<int>
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
-        public override string Id { get; set; }
+        public override int Id { get; set; }
 
         [Required]
         public string RouteId { get; set; }
 
-        public string ServiceId { get; set; }
+        public int ServiceId { get; set; }
 
         public string HeadSign { get; set; }
         public string ShortName { get; set; }

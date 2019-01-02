@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MPK.Connect.Model;
 
 namespace MPK.Connect.DataAccess
@@ -14,7 +15,7 @@ namespace MPK.Connect.DataAccess
 
         public SimpleMpkContext(DbContextOptions<SimpleMpkContext> options) : base(options)
         {
-            Database.SetCommandTimeout(10);
+            //Database.SetCommandTimeout(10);
         }
 
         public SimpleMpkContext()
@@ -30,11 +31,11 @@ namespace MPK.Connect.DataAccess
                 .Ignore(nameof(Trip.Shape));
         }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    var connectionString = new ConfigurationBuilder()
-        //        .AddJsonFile("appsettings.json").Build().GetConnectionString(nameof(SimpleMpkContext));
-        //    optionsBuilder.UseSqlServer(connectionString);
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var connectionString = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json").Build().GetConnectionString(nameof(SimpleMpkContext));
+            optionsBuilder.UseSqlServer(connectionString);
+        }
     }
 }

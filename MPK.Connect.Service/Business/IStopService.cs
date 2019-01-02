@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using MPK.Connect.Model.Business;
+﻿using MPK.Connect.Model.Business;
+using System.Collections.Generic;
 
 namespace MPK.Connect.Service.Business
 {
@@ -9,7 +9,7 @@ namespace MPK.Connect.Service.Business
 
         List<StopDto> GetStopByName(string stopName);
 
-        StopDto GetStopById(string stopId);
+        StopDto GetStopById(int stopId);
 
         List<StopDto> GetDistinctStopsByName();
     }

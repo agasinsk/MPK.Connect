@@ -17,27 +17,9 @@ namespace MPK.Connect.WebApp.Controllers
 
         // GET: api/TimeTable/5
         [HttpGet("{stopId}", Name = "Get")]
-        public TimeTable Get(string stopId)
+        public TimeTable Get(int stopId)
         {
             return _timeTableService.GetTimeTable(stopId);
-        }
-
-        // POST: api/TimeTable
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT: api/TimeTable/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

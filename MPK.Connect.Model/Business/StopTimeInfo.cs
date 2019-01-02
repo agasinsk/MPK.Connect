@@ -1,11 +1,11 @@
-﻿using System;
-using MPK.Connect.Model.Enums;
+﻿using MPK.Connect.Model.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System;
 
 namespace MPK.Connect.Model.Business
 {
-    public class StopTimeInfo : LocalizableEntity<string>
+    public class StopTimeInfo : LocalizableEntity<int>
     {
         [JsonConverter(typeof(DailyTimeSpanConverter))]
         public TimeSpan ArrivalTime { get; set; }
@@ -14,7 +14,7 @@ namespace MPK.Connect.Model.Business
         public TimeSpan DepartureTime { get; set; }
 
         [JsonIgnore]
-        public override string Id => $"{StopId}|{TripId}|{DepartureTime}";
+        public override int Id { get; set; }
 
         public string Route { get; set; }
 
@@ -30,13 +30,13 @@ namespace MPK.Connect.Model.Business
         public StopDto StopDto { get; set; }
 
         [JsonIgnore]
-        public string StopId { get; set; }
+        public int StopId { get; set; }
 
         public int StopSequence { get; set; }
 
-        public string TripId { get; set; }
+        public int TripId { get; set; }
 
-        public override double GetDistanceTo(LocalizableEntity<string> otherEntity)
+        public override double GetDistanceTo(LocalizableEntity<int> otherEntity)
         {
             if (otherEntity is StopTimeInfo stopTimeInfo)
             {
