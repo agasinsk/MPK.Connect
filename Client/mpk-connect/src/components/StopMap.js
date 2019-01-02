@@ -8,7 +8,7 @@ import { getStops } from '../actions';
 import { Button } from '@material-ui/core';
 
 const mapCenter = [51.105, 17.035];
-const zoomLevel = 15;
+const zoomLevel = 13;
 
 export class StopMap extends Component {
 
@@ -17,7 +17,6 @@ export class StopMap extends Component {
 
     this.state = {
       currentZoomLevel: zoomLevel,
-      bounds: undefined,
       showStops: false,
       visibleStops: []
     };
@@ -27,9 +26,14 @@ export class StopMap extends Component {
 
   componentDidMount() {
     const leafletMap = this.leafletMap.leafletElement;
+    
     leafletMap.on('zoomend', () => {
       const updatedZoomLevel = leafletMap.getZoom();
       this.handleZoomLevelChange(updatedZoomLevel);
+    });
+
+    leafletMap.on('layeradd', (event) => {
+      this.handleFitBounds(leafletMap, event.layer);
     });
 
     leafletMap.on('moveend ', () => {
@@ -46,11 +50,20 @@ export class StopMap extends Component {
     });
   }
 
+  handleFitBounds(leafletMap, layer){
+    if(layer._latlngs !== undefined && layer._latlngs.length > 1){
+      const bounds = layer._bounds;
+      console.log(bounds);
+      leafletMap.fitBounds(bounds);
+    }
+ }
+
   handleShowStops() {
     const showingShops = this.state.showStops;
     this.setState({ showStops: !showingShops });
   }
 
+  
   filterStops(stops) {
     let bounds = this.state.bounds;
     if (bounds === undefined) {
@@ -106,14 +119,13 @@ export class StopMap extends Component {
             </Popup>
           </Marker>)
         })}
-        <Polyline color="red" positions={this.props.travelPlanCoordinates} />
+        <Polyline ref={m => { this.polyline = m; }} color="red" positions={this.props.travelPlanCoordinates} />
       </React.Fragment>)
     }
     return null;
   }
 
   render() {
-    console.log('this.state.currentZoomLevel ->', this.state.currentZoomLevel);
     return (
       <Map ref={m => { this.leafletMap = m; }} center={mapCenter} zoom={zoomLevel} zoomControl={false}>
         <Control position="topright" >
@@ -135,7 +147,6 @@ export class StopMap extends Component {
 
 const mapStateToProps = (state) => {
   const selectedTravelPlan = state.selectedTravelPlan;
-  console.log(selectedTravelPlan);
   var travelPlanCoordinates = [];
   if (selectedTravelPlan !== null && selectedTravelPlan.stops !== undefined) {
     travelPlanCoordinates = selectedTravelPlan.stops.map(stop => [stop.stopInfo.latitude, stop.stopInfo.longitude]);
