@@ -20,22 +20,22 @@ class StopTime extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      actionAwaited: false,
       editMode: false,
-      deleteMode: false,
       updatedDepartureTime: undefined,
       dialogText: undefined,
       dialogDescription: undefined,
-      showDialog: false,
-      onDelete: props.onDelete,
+      showDialog: false
     };
 
     this.handleEditMode = this.handleEditMode.bind(this);
-    this.handleDeleteMode = this.handleDeleteMode.bind(this);
     this.updateDepartureTime = this.updateDepartureTime.bind(this);
     this.updateStopTime = this.updateStopTime.bind(this);
     this.deleteStopTime = this.deleteStopTime.bind(this);
     this.confirmUpdate = this.confirmUpdate.bind(this);
     this.confirmDelete = this.confirmDelete.bind(this);
+    this.handleUpdateMode = this.handleUpdateMode.bind(this);
+    this.handleDialogCancel = this.handleDialogCancel.bind(this);
   }
 
   updateDepartureTime(event) {
@@ -46,6 +46,36 @@ class StopTime extends Component {
     }
   }
 
+  handleEditMode() {
+    let currentEditMode = this.state.editMode;
+    this.setState({
+      editMode: !currentEditMode,
+      showDialog: false
+    });
+  }
+
+  handleDialogCancel() {
+    this.setState({
+      editMode: false,
+      showDialog: false
+    });
+  }
+
+  handleUpdateMode() {
+    this.setState({
+      actionAwaited: true,
+      editMode: false,
+      showDialog: false
+    });
+  }
+
+  handleDeleteMode() {
+    this.setState({
+      actionAwaited: true,
+      showDialog: false
+    });
+  }
+
   confirmUpdate() {
     let updatedDepartureTime = this.state.updatedDepartureTime;
     if (updatedDepartureTime !== null && updatedDepartureTime !== undefined) {
@@ -53,7 +83,7 @@ class StopTime extends Component {
         dialogText: "Zaktualizować czas odjazdu?",
         dialogDescription: "Czy jesteś pewny, że chcesz zmienić czas odjazdu na " + updatedDepartureTime + "?",
         showDialog: true,
-        handleCancel: this.handleEditMode,
+        handleCancel: this.handleDialogCancel,
         handleConfirm: this.updateStopTime
       });
     }
@@ -64,9 +94,9 @@ class StopTime extends Component {
       dialogText: "Usunąć przystanek z kursu?",
       dialogDescription: "Czy jesteś pewny, że chcesz to zrobić?",
       showDialog: true,
-      handleCancel: this.handleDeleteMode,
+      handleCancel: this.handleDialogCancel,
       handleConfirm: this.deleteStopTime
-    })
+    });
   }
 
   updateStopTime() {
@@ -74,58 +104,36 @@ class StopTime extends Component {
     console.log("Updating stop time to: " + updatedDepartureTime);
 
     var updatedStopTime = {
-      stopId: this.props.stopId,
-      tripId: this.props.stopTime.tripId,
+      id: this.props.stopTime.id,
       departureTime: this.props.stopTime.departureTime,
       updatedDepartureTime: updatedDepartureTime
     };
     console.log(JSON.stringify(updatedStopTime));
 
     this.props.updateStopTime(updatedStopTime);
-    this.handleEditMode();
+    this.handleUpdateMode();
   }
 
   deleteStopTime() {
-    console.log("Deleting stop time: " + this.props.stopTime.departureTime);
-
-    var stopTimeToDelete = {
-      stopId: this.props.stopId,
-      tripId: this.props.stopTime.tripId,
-      departureTime: this.props.stopTime.departureTime,
-    };
-    console.log(JSON.stringify(stopTimeToDelete));
-
-    this.props.deleteStopTime(stopTimeToDelete);
-    this.handleDeleteMode();
-    this.state.onDelete();
-  }
-
-  handleEditMode() {
-    let currentEditMode = this.state.editMode;
-    this.setState({
-      editMode: !currentEditMode,
-      showDialog: false
-    });
-  }
-
-  handleDeleteMode() {
-    let currentDeleteMode = this.state.deleteMode;
-    console.log("Delete mode: " + !currentDeleteMode);
-    this.setState({
-      deleteMode: !currentDeleteMode,
-      showDialog: false
-    });
+    console.log("Deleting stop time with id " + this.props.stopTime.id);
+    this.props.deleteStopTime(this.props.stopTime.id);
+    this.handleUpdateMode();
   }
 
   renderView() {
-    if (this.state.editMode) {
-      if (this.props.updatedStopTime === null && !this.props.stopTimeError) {
-        return (<Grid item xs={12} className="margined centered">
-          <CircularProgress />
-        </Grid >);
-      }
+    if (this.props.updateResult === undefined && this.state.actionAwaited) {
+      return (<Grid item xs={12} className="margined centered">
+        <CircularProgress />
+      </Grid>);
+    }
 
+    if (this.state.editMode) {
       return (<React.Fragment>
+        <Tooltip title="Edytuj">
+          <IconButton onClick={this.handleEditMode}>
+            <EditIcon color="primary" />
+          </IconButton>
+        </Tooltip>
         <TextField
           id="updatedStopTime"
           label="Edytuj czas"
@@ -148,33 +156,31 @@ class StopTime extends Component {
       </React.Fragment>);
     }
 
-    const updatedStopTime = this.props.updatedStopTime;
+    const updatedStopTime = this.props.updateResult;
     var departureTime = this.props.stopTime.departureTime;
     if (updatedStopTime !== undefined && updatedStopTime.tripId === this.props.stopTime.tripId) {
-      departureTime = this.props.updatedStopTime.departureTime;
+      departureTime = updatedStopTime.departureTime;
     }
 
     return (<React.Fragment>
+      <Tooltip title="Edytuj">
+        <IconButton onClick={this.handleEditMode}>
+          <EditIcon color="primary" />
+        </IconButton>
+      </Tooltip>
       <ListItemText primary={departureTime} className="stopTimeText" />
       <Tooltip title="Usuń">
         <IconButton onClick={this.confirmDelete}>
           <DeleteIcon />
         </IconButton>
       </Tooltip>
-    </React.Fragment >);
+    </React.Fragment>);
   }
 
   render() {
-    console.log(this.props);
-
     return (
       <React.Fragment>
         <ListItem>
-          <Tooltip title="Edit">
-            <IconButton onClick={this.handleEditMode}>
-              <EditIcon color="primary" />
-            </IconButton>
-          </Tooltip>
           {this.renderView()}
         </ListItem>
         <StopTimeDialog
@@ -188,23 +194,25 @@ class StopTime extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  const stopTimeError = state.selectedStopTime === "ERROR";
-  let stopId, updatedStopTime, resultText;
-  if (state.selectedStop !== undefined && state.selectedStop !== null) {
-    stopId = state.selectedStop.id;
+const mapStateToProps = (state, ownProps) => {
+  let updateResult, resultText, status;
+
+  if (state.updatedStopTime !== undefined && state.updatedStopTime !== null) {
+    resultText = state.updatedStopTime.text;
+    updateResult = state.updatedStopTime.result;
+    status = state.updatedStopTime.statusCode;
   }
 
-  if (state.selectedStopTime !== undefined && state.selectedStopTime !== null) {
-    resultText = state.selectedStopTime.text;
-    updatedStopTime = state.selectedStopTime.result;
+  if (state.deletedStopTime !== undefined && state.deletedStopTime !== null) {
+    resultText = state.deletedStopTime.text;
+    status = state.deletedStopTime.statusCode;
   }
 
   return {
-    stopId,
+    stopId: state.selectedStop.id,
     resultText,
-    updatedStopTime,
-    stopTimeError
+    status,
+    updateResult
   };
 };
 

@@ -1,12 +1,12 @@
-﻿using System;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using MoreLinq;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Helpers;
+using System;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business.Profiles
 {
@@ -32,6 +32,19 @@ namespace MPK.Connect.Service.Business.Profiles
                 .ForMember(dst => dst.RouteType, st => st.MapFrom(src => src.Trip.Route.Type))
                 .ForMember(dst => dst.Direction, st => st.MapFrom(src => src.Trip.HeadSign))
                 .ForMember(dst => dst.DirectionId, st => st.MapFrom(src => src.Trip.DirectionId))
+                .ForAllOtherMembers(dst => dst.Ignore());
+
+            CreateMap<StopTime, StopTimeCore>()
+                .ForMember(dst => dst.Id, st => st.MapFrom(src => src.Id))
+                .ForMember(dst => dst.DepartureTime, st => st.MapFrom(src => src.DepartureTime))
+                .ForMember(dst => dst.TripId, st => st.MapFrom(src => src.TripId))
+                .ForAllOtherMembers(dst => dst.Ignore());
+
+            CreateMap<StopTime, StopTimeDto>()
+                .ForMember(dst => dst.Id, st => st.MapFrom(src => src.Id))
+                .ForMember(dst => dst.DepartureTime, st => st.MapFrom(src => src.DepartureTime))
+                .ForMember(dst => dst.TripId, st => st.MapFrom(src => src.TripId))
+                .ForMember(dst => dst.StopId, st => st.MapFrom(src => src.StopId))
                 .ForAllOtherMembers(dst => dst.Ignore());
 
             CreateMap<StopDto, Location>()

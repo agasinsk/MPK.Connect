@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Service.Business;
+using System;
 
 namespace MPK.Connect.WebApp.Controllers
 {
@@ -25,12 +25,12 @@ namespace MPK.Connect.WebApp.Controllers
             return response.GetActionResult();
         }
 
-        [HttpDelete]
+        [HttpDelete("{stopTimeId}")]
         [ProducesResponseType(200, Type = typeof(StopTimeDto))]
         [ProducesResponseType(400)]
-        public IActionResult DeleteStopTime([FromBody] StopTimeDto stopTimeUpdateDto)
+        public IActionResult DeleteStopTime(int stopTimeId)
         {
-            var response = _stopTimeService.DeleteStopTime(stopTimeUpdateDto);
+            var response = _stopTimeService.DeleteStopTime(stopTimeId);
             return response.GetActionResult();
         }
     }

@@ -1,4 +1,5 @@
 import mpkConnect from '../apis/mpkConnect';
+import { snackbarActions as snackbar } from 'material-ui-snackbar-redux';
 
 export const selectView = view => {
   return {
@@ -78,10 +79,20 @@ export const getTimeTable = (stop) => async dispatch => {
   await dispatch(selectStop(stop));
   await mpkConnect.get('TimeTable/' + stop.id)
     .then(response => {
+      if (response.data.length === 0) {
+        dispatch(snackbar.show({
+          message: 'Nie można znaleźć połączeń między wybranymi przystankami.',
+          action: 'Zamknij'
+        }));
+      }
       dispatch({ type: 'GET_TIMETABLE', payload: response.data })
     })
     .catch(error => {
       console.log(error.message);
+      dispatch(snackbar.show({
+        message: error.message,
+        action: 'Zamknij'
+      }));
       dispatch({ type: 'GET_TIMETABLE', payload: "ERROR" })
     });
 };
@@ -93,7 +104,6 @@ export const selectStop = stop => {
   };
 };
 
-
 export const selectStopTime = stopTime => {
   return {
     type: 'SELECT_STOP_TIME',
@@ -101,25 +111,56 @@ export const selectStopTime = stopTime => {
   };
 };
 
+export const selectRoute = route => {
+  return {
+    type: 'SELECT_ROUTE',
+    payload: route,
+  };
+};
+
+export const unselectRoute = () => {
+  return {
+    type: 'SELECT_ROUTE',
+    payload: null,
+  };
+};
+
+
 export const updateStopTime = (stopTime) => async dispatch => {
   await mpkConnect.put('StopTime', stopTime)
     .then(response => {
-      dispatch({ type: 'UPDATE_STOP_TIME', payload: response.data })
+      dispatch(snackbar.show({
+        message: response.data.text,
+        action: 'Zamknij'
+      }));
+      dispatch({ type: 'UPDATE_STOP_TIME', payload: response.data });
     })
     .catch(error => {
+      dispatch(snackbar.show({
+        message: error.message,
+        action: 'Zamknij'
+      }));
       console.log(error.message);
-      dispatch({ type: 'UPDATE_STOP_TIME', payload: error })
+      dispatch({ type: 'UPDATE_STOP_TIME', payload: error });
     });
 };
 
 
-export const deleteStopTime = (stopTime) => async dispatch => {
-  await mpkConnect.delete('StopTime', stopTime)
+export const deleteStopTime = (stopTimeId) => async dispatch => {
+  await mpkConnect.delete('StopTime/' + stopTimeId)
     .then(response => {
-      dispatch({ type: 'DELETE_STOP_TIME', payload: response.data })
+      dispatch(snackbar.show({
+        message: response.data.text,
+        action: 'Zamknij'
+      }));
+      dispatch({ type: 'DELETE_STOP_TIME', payload: response.data });
     })
     .catch(error => {
       console.log(error.message);
-      dispatch({ type: 'DELETE_STOP_TIME', payload: error })
+      dispatch(snackbar.show({
+        message: error.message,
+        action: 'Zamknij'
+      }));
+      dispatch({ type: 'DELETE_STOP_TIME', payload: error });
     });
 };

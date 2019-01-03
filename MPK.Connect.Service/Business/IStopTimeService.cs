@@ -5,7 +5,7 @@ namespace MPK.Connect.Service.Business
 {
     public interface IStopTimeService
     {
-        ApiResponse<StopTimeDto> DeleteStopTime(StopTimeDto stopTimeDto);
+        ApiResponse<StopTimeDto> DeleteStopTime(int stopTimeId);
 
         ApiResponse<StopTimeDto> UpdateStopTime(StopTimeUpdateDto stopTimeUpdateDto);
     }

@@ -7,7 +7,7 @@ import List from '@material-ui/core/List';
 
 import RouteCard from './RouteCard';
 import RouteStopTime from './RouteStopTime';
-import { getTimeTable } from '../../actions';
+import { getTimeTable, selectRoute, unselectRoute } from '../../actions';
 
 export class TimeTable extends Component {
 
@@ -24,32 +24,26 @@ export class TimeTable extends Component {
 
   handleRouteSelected(route) {
     console.log('Selected route: ' + route.routeId);
-    this.setState({
-      currentRoute: route,
-      isRouteSelected: true
-    });
+    this.props.selectRoute(route);
   }
 
   handleRouteUnselected(route) {
-    console.log('Unselected route: ' + route.routeId);
-    this.setState({
-      currentRoute: undefined,
-      isRouteSelected: false
-    });
+    this.props.unselectRoute();
   }
 
   renderView() {
     if (this.props.stopId === undefined) {
-      return (<Typography variant="headline" component="h5">
-        Wybierz przystanek z mapy, aby zobaczyć rozkład jazdy
-      </Typography>);
+      return (
+        <Typography variant="headline" component="h5">
+          Wybierz przystanek z mapy, aby zobaczyć rozkład jazdy
+        </Typography>);
     }
     else {
       let timeTableDetail;
 
-      if (this.state.isRouteSelected) {
+      if (this.props.selectedRoute !== null) {
         timeTableDetail = (<div>
-          <RouteStopTime stopId={this.props.stopId} route={this.state.currentRoute} onClick={() => this.handleRouteUnselected(this.state.currentRoute)} />
+          <RouteStopTime onClick={() => this.handleRouteUnselected()} />
         </div>);
       }
       else {
@@ -94,6 +88,7 @@ const mapStateToProps = (state) => {
     stopCode = state.selectedStop.code;
   }
   return {
+    selectedRoute: state.selectedRoute,
     stopId,
     stopCode,
     stopName,
@@ -102,4 +97,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, { getTimeTable })(TimeTable);
+export default connect(mapStateToProps, { getTimeTable, selectRoute, unselectRoute })(TimeTable);

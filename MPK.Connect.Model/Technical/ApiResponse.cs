@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Net;
-using Newtonsoft.Json;
 
 namespace MPK.Connect.Model.Technical
 {
     public abstract class ApiResponse<T> where T : class
     {
-        [JsonIgnore]
         public virtual HttpStatusCode StatusCode { get; set; }
 
         public string Text { get; set; }

@@ -1,10 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Technical;
+using System;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business
 {
@@ -12,25 +13,26 @@ namespace MPK.Connect.Service.Business
     {
         private readonly IGenericRepository<StopTime> _stopTimeRepository;
         private readonly ILogger<StopTimeService> _logger;
+        private readonly IMapper _mapper;
 
-        public StopTimeService(IGenericRepository<StopTime> stopTimeRepository, ILogger<StopTimeService> logger)
+        public StopTimeService(IGenericRepository<StopTime> stopTimeRepository, ILogger<StopTimeService> logger, IMapper mapper)
         {
             _stopTimeRepository = stopTimeRepository ?? throw new ArgumentNullException(nameof(stopTimeRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public ApiResponse<StopTimeDto> UpdateStopTime(StopTimeUpdateDto stopTimeUpdateDto)
         {
             var stopTime = _stopTimeRepository.FindBy(st =>
-                    st.TripId == stopTimeUpdateDto.TripId
-                    && st.StopId == stopTimeUpdateDto.StopId
+                    st.Id == stopTimeUpdateDto.Id
                     && st.DepartureTime == stopTimeUpdateDto.DepartureTime)
                 .SingleOrDefault();
 
             if (stopTime == null)
             {
-                _logger.LogError($"Stop time with {stopTimeUpdateDto} was not found!");
-                return new ErrorResponse<StopTimeDto>(null, $"Stop time with {stopTimeUpdateDto} was not found!");
+                _logger.LogError($"Stop time with id {stopTimeUpdateDto.Id} was not found!");
+                return new ErrorResponse<StopTimeDto>(null, $"Stop time with id {stopTimeUpdateDto.Id} was not found!");
             }
 
             stopTime.ArrivalTime = stopTimeUpdateDto.UpdatedDepartureTime;
@@ -38,27 +40,25 @@ namespace MPK.Connect.Service.Business
 
             _stopTimeRepository.Save();
 
-            return new OkResponse<StopTimeDto>(new StopTimeDto { DepartureTime = stopTime.DepartureTime, StopId = stopTime.Id, TripId = stopTime.TripId }, "Successfully updated stop time!");
+            return new OkResponse<StopTimeDto>(_mapper.Map<StopTimeDto>(stopTime), "Successfully updated stop time!");
         }
 
-        public ApiResponse<StopTimeDto> DeleteStopTime(StopTimeDto stopTimeDto)
+        public ApiResponse<StopTimeDto> DeleteStopTime(int stopTimeId)
         {
             var stopTime = _stopTimeRepository.FindBy(st =>
-                    st.TripId == stopTimeDto.TripId
-                    && st.StopId == stopTimeDto.StopId
-                    && st.DepartureTime == stopTimeDto.DepartureTime)
+                    st.Id == stopTimeId)
                 .SingleOrDefault();
 
             if (stopTime == null)
             {
-                _logger.LogError($"Stop time with {stopTimeDto} was not found!");
-                return new ErrorResponse<StopTimeDto>(null, $"Stop time with {stopTimeDto} was not found!");
+                _logger.LogError($"Stop time with id {stopTimeId} was not found!");
+                return new ErrorResponse<StopTimeDto>(null, $"Stop time with {stopTimeId} was not found!");
             }
 
             _stopTimeRepository.Delete(stopTime);
             _stopTimeRepository.Save();
 
-            return new OkResponse<StopTimeDto>(stopTimeDto, "Successfully deleted stop time!");
+            return new OkResponse<StopTimeDto>(_mapper.Map<StopTimeDto>(stopTime), "Successfully deleted stop time!");
         }
     }
 }

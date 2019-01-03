@@ -54,7 +54,6 @@ export class StopMap extends Component {
   handleFitBounds(leafletMap, layer) {
     if (layer._latlngs !== undefined && layer._latlngs.length > 1) {
       const bounds = layer._bounds;
-      console.log(bounds);
       leafletMap.fitBounds(bounds);
     }
   }
@@ -113,7 +112,7 @@ export class StopMap extends Component {
       return (<React.Fragment>
         {this.props.selectedTravelPlan.stops.map((stop) => {
           let position = [stop.stopInfo.latitude, stop.stopInfo.longitude];
-          return (<Marker key={`path-stop-${stop.stopInfo.id}`} position={position}>
+          return (<Marker key={`path-stop-${stop.stopInfo.id}-${stop.departureTime}`} position={position}>
             <Popup>
               <span>
                 <b>{stop.stopInfo.name}</b>

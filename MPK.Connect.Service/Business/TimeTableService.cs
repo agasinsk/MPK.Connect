@@ -38,6 +38,7 @@ namespace MPK.Connect.Service.Business
                 .Where(st => st.Trip.ServiceId == currentCalendar.ServiceId)
                 .Select(st => new
                 {
+                    st.Id,
                     st.DepartureTime,
                     st.TripId,
                     RouteId = st.Trip.Route.Id,
@@ -60,6 +61,7 @@ namespace MPK.Connect.Service.Business
                             StopTimes = d.Select(sti =>
                                 new StopTimeCore
                                 {
+                                    Id = sti.Id,
                                     DepartureTime = sti.DepartureTime,
                                     TripId = sti.TripId
                                 }).OrderBy(std => std.DepartureTime).ToList()

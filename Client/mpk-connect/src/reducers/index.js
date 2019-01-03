@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { snackbarReducer } from 'material-ui-snackbar-redux'
 
 import selectedViewReducer from './selectedViewReducer';
 import viewReducer from './viewReducer';
@@ -10,7 +11,9 @@ import travelPlanReducer from './travelPlanReducer';
 import selectedTravelPlanReducer from './selectedTravelPlanReducer';
 import timeTableReducer from './timeTableReducer';
 import selectedStopReducer from './selectedStopReducer';
-import selectedStopTimeReducer from './selectedStopTimeReducer';
+import updatedStopTimeReducer from './updatedStopTimeReducer';
+import deletedStopTimeReducer from './deletedStopTimeReducer';
+import selectedRouteReducer from './selectedRouteReducer';
 
 export default combineReducers({
   views: viewReducer,
@@ -23,5 +26,8 @@ export default combineReducers({
   selectedTravelPlan: selectedTravelPlanReducer,
   timeTable: timeTableReducer,
   selectedStop: selectedStopReducer,
-  selectedStopTime: selectedStopTimeReducer
+  updatedStopTime: updatedStopTimeReducer,
+  deletedStopTime: deletedStopTimeReducer,
+  selectedRoute: selectedRouteReducer,
+  snackbar: snackbarReducer
 });
