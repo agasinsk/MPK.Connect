@@ -38,14 +38,14 @@ export class StopMap extends Component {
     });
 
     leafletMap.on('moveend ', () => {
-      this.handleMapChange();
+      this.handleMapChange(leafletMap);
     });
 
     this.props.getStops();
   }
 
-  handleMapChange() {
-    const currentBounds = this.leafletMap.leafletElement.getBounds();
+  handleMapChange(leafletMap) {
+    const currentBounds = leafletMap.getBounds();
     this.setState({
       bounds: currentBounds
     });

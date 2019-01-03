@@ -32,7 +32,7 @@ namespace MPK.Connect.Service.Business
             if (stopTime == null)
             {
                 _logger.LogError($"Stop time with id {stopTimeUpdateDto.Id} was not found!");
-                return new ErrorResponse<StopTimeDto>(null, $"Stop time with id {stopTimeUpdateDto.Id} was not found!");
+                return new ErrorResponse<StopTimeDto>(null, "Wystąpił błąd!");
             }
 
             stopTime.ArrivalTime = stopTimeUpdateDto.UpdatedDepartureTime;
@@ -40,7 +40,7 @@ namespace MPK.Connect.Service.Business
 
             _stopTimeRepository.Save();
 
-            return new OkResponse<StopTimeDto>(_mapper.Map<StopTimeDto>(stopTime), "Successfully updated stop time!");
+            return new OkResponse<StopTimeDto>(_mapper.Map<StopTimeDto>(stopTime), "Pomyślnie zaktualizowano czas odjazdu!");
         }
 
         public ApiResponse<StopTimeDto> DeleteStopTime(int stopTimeId)
@@ -52,13 +52,13 @@ namespace MPK.Connect.Service.Business
             if (stopTime == null)
             {
                 _logger.LogError($"Stop time with id {stopTimeId} was not found!");
-                return new ErrorResponse<StopTimeDto>(null, $"Stop time with {stopTimeId} was not found!");
+                return new ErrorResponse<StopTimeDto>(null, "Wystąpił błąd!");
             }
 
             _stopTimeRepository.Delete(stopTime);
             _stopTimeRepository.Save();
 
-            return new OkResponse<StopTimeDto>(_mapper.Map<StopTimeDto>(stopTime), "Successfully deleted stop time!");
+            return new OkResponse<StopTimeDto>(_mapper.Map<StopTimeDto>(stopTime), "Pomyślnie usunięto!");
         }
     }
 }

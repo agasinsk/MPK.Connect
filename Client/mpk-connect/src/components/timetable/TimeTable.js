@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import Typography from '@material-ui/core/Typography';
+import './TimeTable.css';
 import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
+import Typography from '@material-ui/core/Typography';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
+import { getTimeTable, selectRoute, unselectRoute } from '../../actions';
 import RouteCard from './RouteCard';
 import RouteStopTime from './RouteStopTime';
-import { getTimeTable, selectRoute, unselectRoute } from '../../actions';
 
 export class TimeTable extends Component {
 
@@ -34,30 +35,37 @@ export class TimeTable extends Component {
   renderView() {
     if (this.props.stopId === undefined) {
       return (
-        <Typography variant="headline" component="h5">
+        <Typography variant="subtitle1" component="h5" className="top-margin">
           Wybierz przystanek z mapy, aby zobaczyć rozkład jazdy
         </Typography>);
     }
     else {
       let timeTableDetail;
 
-      if (this.props.selectedRoute !== null) {
-        timeTableDetail = (<div>
-          <RouteStopTime onClick={() => this.handleRouteUnselected()} />
-        </div>);
+      if (this.props.routes.length === 0) {
+        timeTableDetail =
+          <Typography variant="subtitle1" component="h5" className="top-margin">
+            O tej porze nie ma odjazdów z tego przystanku.
+          </Typography>;
       }
       else {
-        timeTableDetail =
-          <List>
-            {this.props.routes.map((route) => (
-              <RouteCard key={route.routeId} route={route} onClick={() => this.handleRouteSelected(route)} />
-            ))}
-          </List>
+        if (this.props.selectedRoute !== null) {
+          timeTableDetail =
+            <RouteStopTime className="top-margin" onClick={() => this.handleRouteUnselected()} />;
+        }
+        else {
+          timeTableDetail =
+            <List className="top-margin">
+              {this.props.routes.map((route) => (
+                <RouteCard key={route.routeId} route={route} onClick={() => this.handleRouteSelected(route)} />
+              ))}
+            </List>;
+        }
       }
 
       return (
         <React.Fragment>
-          <Typography variant="headline" component="h5" align="center">
+          <Typography className="top-margin" variant="headline" component="h5" align="center">
             {this.props.stopName}
           </Typography>
           <Chip label={this.props.stopCode} />
@@ -77,7 +85,7 @@ export class TimeTable extends Component {
   };
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   var routes = [], stopId, stopName, stopCode;
   if (state.timeTable !== null && state.timeTable !== undefined) {
     routes = state.timeTable.routeTimes;

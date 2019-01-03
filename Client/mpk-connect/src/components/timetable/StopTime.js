@@ -121,7 +121,7 @@ class StopTime extends Component {
   }
 
   renderView() {
-    if (this.props.updateResult === undefined && this.state.actionAwaited) {
+    if (this.props.result === undefined && this.state.actionAwaited) {
       return (<Grid item xs={12} className="margined centered">
         <CircularProgress />
       </Grid>);
@@ -156,7 +156,7 @@ class StopTime extends Component {
       </React.Fragment>);
     }
 
-    const updatedStopTime = this.props.updateResult;
+    const updatedStopTime = this.props.result;
     var departureTime = this.props.stopTime.departureTime;
     if (updatedStopTime !== undefined && updatedStopTime.tripId === this.props.stopTime.tripId) {
       departureTime = updatedStopTime.departureTime;
@@ -195,16 +195,17 @@ class StopTime extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  let updateResult, resultText, status;
+  let result, resultText, status;
 
   if (state.updatedStopTime !== undefined && state.updatedStopTime !== null) {
     resultText = state.updatedStopTime.text;
-    updateResult = state.updatedStopTime.result;
+    result = state.updatedStopTime.result;
     status = state.updatedStopTime.statusCode;
   }
 
   if (state.deletedStopTime !== undefined && state.deletedStopTime !== null) {
     resultText = state.deletedStopTime.text;
+    result = state.deletedStopTime.result;
     status = state.deletedStopTime.statusCode;
   }
 
@@ -212,7 +213,7 @@ const mapStateToProps = (state, ownProps) => {
     stopId: state.selectedStop.id,
     resultText,
     status,
-    updateResult
+    result
   };
 };
 

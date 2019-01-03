@@ -54,10 +54,20 @@ export const setTravelOptions = (source, destination, date) => {
 export const getTravelPlan = (travelOptions) => async dispatch => {
   await mpkConnect.post('TravelPlan', travelOptions)
     .then(response => {
+      if (response.data.length === 0) {
+        dispatch(snackbar.show({
+          message: 'Nie można znaleźć połączeń między wybranymi przystankami.',
+          action: 'Zamknij'
+        }));
+      }
       dispatch({ type: 'GET_TRAVEL_PLAN', payload: response.data })
     })
     .catch(error => {
       console.log(error.message);
+      dispatch(snackbar.show({
+        message: error.message,
+        action: 'Zamknij'
+      }));
       dispatch({ type: 'GET_TRAVEL_PLAN', payload: "ERROR" })
     });
 };
@@ -79,12 +89,6 @@ export const getTimeTable = (stop) => async dispatch => {
   await dispatch(selectStop(stop));
   await mpkConnect.get('TimeTable/' + stop.id)
     .then(response => {
-      if (response.data.length === 0) {
-        dispatch(snackbar.show({
-          message: 'Nie można znaleźć połączeń między wybranymi przystankami.',
-          action: 'Zamknij'
-        }));
-      }
       dispatch({ type: 'GET_TIMETABLE', payload: response.data })
     })
     .catch(error => {
@@ -97,11 +101,9 @@ export const getTimeTable = (stop) => async dispatch => {
     });
 };
 
-export const selectStop = stop => {
-  return {
-    type: 'SELECT_STOP',
-    payload: stop,
-  };
+export const selectStop = (stop) => async dispatch => {
+  await dispatch(unselectRoute());
+  dispatch({ type: 'SELECT_STOP', payload: stop });
 };
 
 export const selectStopTime = stopTime => {
@@ -125,15 +127,14 @@ export const unselectRoute = () => {
   };
 };
 
-
 export const updateStopTime = (stopTime) => async dispatch => {
   await mpkConnect.put('StopTime', stopTime)
     .then(response => {
+      dispatch({ type: 'UPDATE_STOP_TIME', payload: response.data });
       dispatch(snackbar.show({
         message: response.data.text,
         action: 'Zamknij'
       }));
-      dispatch({ type: 'UPDATE_STOP_TIME', payload: response.data });
     })
     .catch(error => {
       dispatch(snackbar.show({
@@ -145,15 +146,14 @@ export const updateStopTime = (stopTime) => async dispatch => {
     });
 };
 
-
 export const deleteStopTime = (stopTimeId) => async dispatch => {
   await mpkConnect.delete('StopTime/' + stopTimeId)
     .then(response => {
+      dispatch({ type: 'DELETE_STOP_TIME', payload: response.data });
       dispatch(snackbar.show({
         message: response.data.text,
         action: 'Zamknij'
       }));
-      dispatch({ type: 'DELETE_STOP_TIME', payload: response.data });
     })
     .catch(error => {
       console.log(error.message);

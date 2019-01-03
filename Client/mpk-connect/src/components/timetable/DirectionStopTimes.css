@@ -1,3 +1,19 @@
-.directionBackground{
-  background: #aaaaaa;
+.grey-background {
+    background: #aaaaaa;
+}
+
+.margined-side {
+    margin: 2vh !important;
+    border-radius: 0;
+    padding-bottom: 0 !important;
+}
+
+.direction-text {
+    line-height: 0.6 !important;
+}
+
+.stop-time-list {
+    overflow: auto;
+    max-height: calc(100vh - 350px);
+    margin-bottom: 0 !important;
 }
