@@ -108,7 +108,7 @@ export class StopMap extends Component {
   }
 
   renderPath() {
-    if (this.props.selectedTravelPlan !== null && this.props.selectedTravelPlan.stops !== undefined) {
+    if (this.props.selectedTravelPlan !== null && this.props.selectedTravelPlan.stops !== undefined && this.props.selectedView !== 1) {
       return (<React.Fragment>
         {this.props.selectedTravelPlan.stops.map((stop) => {
           let position = [stop.stopInfo.latitude, stop.stopInfo.longitude];
@@ -154,7 +154,9 @@ const mapStateToProps = (state) => {
   if (selectedTravelPlan !== null && selectedTravelPlan.stops !== undefined) {
     travelPlanCoordinates = selectedTravelPlan.stops.map(stop => [stop.stopInfo.latitude, stop.stopInfo.longitude]);
   }
+
   return {
+    selectedView: state.selectedView,
     allStops: state.stops,
     selectedTravelPlan: selectedTravelPlan,
     travelPlanCoordinates: travelPlanCoordinates,

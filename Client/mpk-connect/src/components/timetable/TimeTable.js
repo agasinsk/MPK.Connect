@@ -1,10 +1,10 @@
 import './TimeTable.css';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Chip from '@material-ui/core/Chip';
 import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 import { getTimeTable, selectRoute, unselectRoute } from '../../actions';
 import RouteCard from './RouteCard';
@@ -24,7 +24,6 @@ export class TimeTable extends Component {
   }
 
   handleRouteSelected(route) {
-    console.log('Selected route: ' + route.routeId);
     this.props.selectRoute(route);
   }
 
@@ -42,7 +41,7 @@ export class TimeTable extends Component {
     else {
       let timeTableDetail;
 
-      if (this.props.routes.length === 0) {
+      if (this.props.routes.length === 0 && this.props.timeTable !== null && this.props.stopId === this.props.timeTable.stopId) {
         timeTableDetail =
           <Typography variant="subtitle1" component="h5" className="top-margin">
             O tej porze nie ma odjazdów z tego przystanku.

@@ -1,11 +1,10 @@
 import mpkConnect from '../apis/mpkConnect';
 import { snackbarActions as snackbar } from 'material-ui-snackbar-redux';
 
-export const selectView = view => {
-  return {
-    type: 'VIEW_SELECTED',
-    payload: view,
-  };
+export const selectView = view => dispatch => {
+  dispatch(selectTravelPlan(null));
+  dispatch(clearTravelPlan());
+  dispatch({ type: 'VIEW_SELECTED', payload: view });
 };
 
 export const getStops = () => async dispatch => {
@@ -57,7 +56,8 @@ export const getTravelPlan = (travelOptions) => async dispatch => {
       if (response.data.length === 0) {
         dispatch(snackbar.show({
           message: 'Nie można znaleźć połączeń między wybranymi przystankami.',
-          action: 'Zamknij'
+          action: 'Zamknij',
+          handleAction: () => { }
         }));
       }
       dispatch({ type: 'GET_TRAVEL_PLAN', payload: response.data })
@@ -66,7 +66,8 @@ export const getTravelPlan = (travelOptions) => async dispatch => {
       console.log(error.message);
       dispatch(snackbar.show({
         message: error.message,
-        action: 'Zamknij'
+        action: 'Zamknij',
+        handleAction: () => { }
       }));
       dispatch({ type: 'GET_TRAVEL_PLAN', payload: "ERROR" })
     });
@@ -86,7 +87,7 @@ export const clearTravelPlan = () => {
 };
 
 export const getTimeTable = (stop) => async dispatch => {
-  await dispatch(selectStop(stop));
+  dispatch(selectStop(stop));
   await mpkConnect.get('TimeTable/' + stop.id)
     .then(response => {
       dispatch({ type: 'GET_TIMETABLE', payload: response.data })
@@ -95,15 +96,23 @@ export const getTimeTable = (stop) => async dispatch => {
       console.log(error.message);
       dispatch(snackbar.show({
         message: error.message,
-        action: 'Zamknij'
+        action: 'Zamknij',
+        handleAction: () => { }
       }));
       dispatch({ type: 'GET_TIMETABLE', payload: "ERROR" })
     });
 };
 
-export const selectStop = (stop) => async dispatch => {
-  await dispatch(unselectRoute());
+export const selectStop = (stop) => dispatch => {
+  dispatch(unselectRoute());
   dispatch({ type: 'SELECT_STOP', payload: stop });
+};
+
+export const setAwaitedAction = action => {
+  return {
+    type: 'SET_AWAITED_ACTION',
+    payload: action,
+  };
 };
 
 export const selectStopTime = stopTime => {
@@ -133,13 +142,15 @@ export const updateStopTime = (stopTime) => async dispatch => {
       dispatch({ type: 'UPDATE_STOP_TIME', payload: response.data });
       dispatch(snackbar.show({
         message: response.data.text,
-        action: 'Zamknij'
+        action: 'Zamknij',
+        handleAction: () => { }
       }));
     })
     .catch(error => {
       dispatch(snackbar.show({
         message: error.message,
-        action: 'Zamknij'
+        action: 'Zamknij',
+        handleAction: () => { }
       }));
       console.log(error.message);
       dispatch({ type: 'UPDATE_STOP_TIME', payload: error });
@@ -152,14 +163,16 @@ export const deleteStopTime = (stopTimeId) => async dispatch => {
       dispatch({ type: 'DELETE_STOP_TIME', payload: response.data });
       dispatch(snackbar.show({
         message: response.data.text,
-        action: 'Zamknij'
+        action: 'Zamknij',
+        handleAction: () => { }
       }));
     })
     .catch(error => {
       console.log(error.message);
       dispatch(snackbar.show({
         message: error.message,
-        action: 'Zamknij'
+        action: 'Zamknij',
+        handleAction: () => { }
       }));
       dispatch({ type: 'DELETE_STOP_TIME', payload: error });
     });

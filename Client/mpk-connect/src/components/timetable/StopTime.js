@@ -40,7 +40,6 @@ class StopTime extends Component {
 
   updateDepartureTime(event) {
     let currentValue = event.target.value;
-    console.log("Wants to update stop time to: " + currentValue);
     if (currentValue !== null && currentValue !== undefined) {
       this.setState({ updatedDepartureTime: currentValue });
     }
@@ -92,7 +91,7 @@ class StopTime extends Component {
   confirmDelete() {
     this.setState({
       dialogText: "Usunąć przystanek z kursu?",
-      dialogDescription: "Czy jesteś pewny, że chcesz to zrobić?",
+      dialogDescription: "Czy jesteś pewny, że chcesz usunąć przystanek z kursu?",
       showDialog: true,
       handleCancel: this.handleDialogCancel,
       handleConfirm: this.deleteStopTime
@@ -101,14 +100,12 @@ class StopTime extends Component {
 
   updateStopTime() {
     let updatedDepartureTime = this.state.updatedDepartureTime;
-    console.log("Updating stop time to: " + updatedDepartureTime);
 
     var updatedStopTime = {
       id: this.props.stopTime.id,
       departureTime: this.props.stopTime.departureTime,
       updatedDepartureTime: updatedDepartureTime
     };
-    console.log(JSON.stringify(updatedStopTime));
 
     this.props.updateStopTime(updatedStopTime);
     this.handleUpdateMode();
