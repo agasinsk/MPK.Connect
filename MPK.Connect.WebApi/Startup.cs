@@ -42,7 +42,6 @@ namespace MPK.Connect.WebApp
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
 
             app.UseMvc(routes =>
             {
@@ -50,16 +49,6 @@ namespace MPK.Connect.WebApp
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
             });
-
-            //app.UseSpa(spa =>
-            //{
-            //    spa.Options.SourcePath = "ClientApp";
-
-            //    if (env.IsDevelopment())
-            //    {
-            //        spa.UseReactDevelopmentServer(npmScript: "start");
-            //    }
-            //});
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -90,12 +79,6 @@ namespace MPK.Connect.WebApp
             services.AddDbContext<SimpleMpkContext>(options => options.UseSqlServer(Configuration.GetConnectionString(nameof(SimpleMpkContext))));
 
             services.AddScoped<IMpkContext, SimpleMpkContext>();
-
-            // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
         }
     }
 }

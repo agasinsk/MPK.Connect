@@ -1,13 +1,13 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MoreLinq.Extensions;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.Graph;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MPK.Connect.Service.Business
 {
@@ -46,13 +46,13 @@ namespace MPK.Connect.Service.Business
             availablePaths.ForEach(p => p.StartDate = startDate);
             var travelPlans = _mapper.Map<List<TravelPlan>>(availablePaths);
             var travelPlanId = 1;
-            travelPlans.ForEach(t =>
+            travelPlans?.ForEach(t =>
             {
                 t.Id = travelPlanId;
                 travelPlanId++;
             });
 
-            return travelPlans.OrderBy(t => t.Transfers).ThenBy(t => t.StartTime).ThenBy(t => t.Duration);
+            return travelPlans?.OrderBy(t => t.Transfers).ThenBy(t => t.StartTime).ThenBy(t => t.Duration);
         }
 
         private StopDto GetClosestStop(Location source, IEnumerable<StopDto> stops)
