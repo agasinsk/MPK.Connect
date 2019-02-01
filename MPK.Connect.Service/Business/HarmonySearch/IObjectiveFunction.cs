@@ -1,12 +1,12 @@
 ﻿namespace MPK.Connect.Service.Business.HarmonySearch
 {
-    public interface IObjectiveFunction<T>
+    public interface IObjectiveFunction<T> : ICalculator<T>
     {
         /// <summary>
         /// Return the objective function value given a solution vector containing each decision
         /// variable. In practice, vector should be a list of parameters.
         /// </summary>
-        /// <param name="arguments">Input decision variable vector</param>
+        /// <param name="arguments">Input vector of decision variables</param>
         /// <returns>Objective function value</returns>
         double CalculateObjectiveValue(params T[] arguments);
 
@@ -17,11 +17,12 @@
         int GetArgumentsCount();
 
         /// <summary>
-        /// Get a valid value of parameter i. You can return values any way you like - uniformly at
-        /// random, according to some distribution, etc.
+        /// Get a valid value of parameter argumentIndex. You can return values any way you like -
+        /// uniformly at random, according to some distribution, etc.
         ///
-        /// j is used only for discrete parameters in the pitch adjustment step. j maps to some value
-        /// the discrete parameter can take on. If parameter i is continuous, j should be ignored.
+        /// discreteValueIndex is used only for discrete parameters in the pitch adjustment step.
+        /// discreteValueIndex maps to some value the discrete parameter can take on. If parameter
+        /// argumentIndex is continuous, discreteValueIndex should be ignored.
         /// </summary>
         /// <param name="argumentIndex">Index of argument</param>
         /// <param name="discreteValueIndex">Index of discrete value</param>
@@ -46,7 +47,7 @@
         /// in the pitch adjustment step.
         /// </summary>
         /// <param name="argumentIndex">Index of an argument</param>
-        /// <returns></returns>
+        /// <returns>Lower bound</returns>
         T GetLowerBound(int argumentIndex);
 
         /// <summary>
@@ -54,7 +55,7 @@
         /// pitch adjustment may occur for continuous variables. Also known as continuous bandwidth.
         /// </summary>
         /// <returns>Maximum pitch adjustment proportion.</returns>
-        double GetMaximumContinuousPitchAdjustmentProportion();
+        T GetMaximumContinuousPitchAdjustmentProportion();
 
         /// <summary>
         /// Return the maximum pitch adjustment index. This determines the range from which pitch

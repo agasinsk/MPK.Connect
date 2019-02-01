@@ -4,16 +4,16 @@ using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 namespace MPK.Connect.Service.Business.HarmonySearch
 {
     /// <summary>
-    /// Generates solutions
+    /// Generates harmonies
     /// </summary>
     public class HarmonyGenerator<T>
     {
         private readonly IRandomGenerator<T> _random;
         public double HarmonyMemoryConsiderationRatio { get; }
-        public double PitchAdjustmentRatio { get; }
+        public double PitchAdjustmentRatio { get; set; }
         private int ArgumentsCount => Function.GetArgumentsCount();
         private IObjectiveFunction<T> Function { get; }
-        private HarmonyMemory<T> HarmonyMemory { get; set; }
+        private HarmonyMemory<T> HarmonyMemory { get; }
 
         /// <summary>
         /// The constructor
@@ -144,16 +144,16 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             var existingValue = UseMemoryConsideration(argumentIndex);
             var randomValue = _random.NextDouble();
 
-            var pitchAdjustment = _random.Next(Function.GetLowerBound(argumentIndex), Function.GetUpperBound(argumentIndex));
-            return pitchAdjustment;
-
-            //            if random.random() < 0.5:
-            //# adjust pitch down
-            //            harmony[i] -= (harmony[i] - self._obj_fun.get_lower_bound(i)) * random.random() * self._obj_fun.get_mpap()
-            //            else:
-            //# adjust pitch up
-            //            harmony[i] += (self._obj_fun.get_upper_bound(i) - harmony[i]) * random.random() * self._obj_fun.get_mpap()
-            throw new NotImplementedException();
+            if (randomValue < 0.5)
+            {
+                var pitchAdjustment = _random.Next(Function.GetLowerBound(argumentIndex), existingValue);
+                return Function.Subtract(existingValue, pitchAdjustment);
+            }
+            else
+            {
+                var pitchAdjustment = _random.Next(existingValue, Function.GetUpperBound(argumentIndex));
+                return Function.Add(existingValue, pitchAdjustment);
+            }
         }
 
         /// <summary>
