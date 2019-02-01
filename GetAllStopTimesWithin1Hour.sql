@@ -1,4 +1,4 @@
-use [MPK.Fast.Db]
+use [MPK.Connect.Db]
 go
 set arithabort on;
 go
@@ -10,7 +10,7 @@ declare @now time(7)
 set @now = CAST(GETDATE() as time)
 
 declare @later time(7)
-set @later = DATEADD(minute, 90, @now)
+set @later = DATEADD(minute, 75, @now)
 
 SELECT [st].[TripId], [st].[StopId], [st].[StopSequence], [st].[ArrivalTime], [st].[DepartureTime], 
 [st].[DropOffTypes], [st].[HeadSign], [st].[PickupType], [st].[ShapeDistTraveled], [st].[TimePoint],
