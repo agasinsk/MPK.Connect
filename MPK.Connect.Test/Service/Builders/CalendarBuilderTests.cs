@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MPK.Connect.Service.Builders;
-using System;
+﻿using System;
 using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MPK.Connect.Service.Builders;
 
 namespace MPK.Connect.Test.Service.Builders
 {
@@ -9,6 +9,14 @@ namespace MPK.Connect.Test.Service.Builders
     public class CalendarBuilderTests
     {
         private CalendarBuilder _calendarBuilder;
+
+        [TestInitialize]
+        public void SetUp()
+        {
+            _calendarBuilder = new CalendarBuilder();
+            _calendarBuilder.ReadEntityMappings(
+                "service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date");
+        }
 
         [TestMethod]
         public void TestBuild()
@@ -22,8 +30,8 @@ namespace MPK.Connect.Test.Service.Builders
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("6", result.Id);
-            Assert.AreEqual("6", result.ServiceId);
+            Assert.AreEqual(6, result.Id);
+            Assert.AreEqual(6, result.ServiceId);
             Assert.IsTrue(result.Monday);
             Assert.IsTrue(result.Tuesday);
             Assert.IsTrue(result.Wednesday);
@@ -34,14 +42,6 @@ namespace MPK.Connect.Test.Service.Builders
             Assert.AreEqual(new DateTime(2018, 6, 11).Date, result.StartDate.Date);
             Assert.AreEqual(new DateTime(2018, 6, 24).Date, result.EndDate.Date);
             Assert.IsTrue(result.GetRequiredProperties().All(p => p != null));
-        }
-
-        [TestInitialize]
-        public void SetUp()
-        {
-            _calendarBuilder = new CalendarBuilder();
-            _calendarBuilder.ReadEntityMappings(
-                "service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date");
         }
     }
 }

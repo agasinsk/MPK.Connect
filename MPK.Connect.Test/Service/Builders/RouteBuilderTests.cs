@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MPK.Connect.Model.Enums;
 using MPK.Connect.Service.Builders;
-using System.Linq;
 
 namespace MPK.Connect.Test.Service.Builders
 {
@@ -9,6 +9,13 @@ namespace MPK.Connect.Test.Service.Builders
     public class RouteBuilderTests
     {
         private RouteBuilder _builder;
+
+        [TestInitialize]
+        public void SetUp()
+        {
+            _builder = new RouteBuilder();
+            _builder.ReadEntityMappings("route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_type2_id,valid_from,valid_until");
+        }
 
         [TestMethod]
         public void TestBuild()
@@ -22,7 +29,7 @@ namespace MPK.Connect.Test.Service.Builders
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual("1", result.Id);
-            Assert.AreEqual("3", result.AgencyId);
+            Assert.AreEqual(3, result.AgencyId);
             Assert.AreEqual("1", result.ShortName);
             Assert.AreEqual("", result.LongName);
             Assert.AreEqual("POŚWIĘTNE - Żmigrodzka - Trzebnicka - pl. Powstańców Wielkopolskich - Słowiańska - Jedności Narodowej - Nowowiejska - Piastowska - Skłodowskiej-Curie - Wróblewskiego - Olszewskiego - BISKUPIN|BISKUPIN - Wróblewskiego - Skłodowskiej-Curie - Piastowska - Nowowiejska - Jedności Narodowej - Słowiańska - pl. Powstańców Wielkopolskich - Trzebnicka - Żmigrodzka - POŚWIĘTNE", result.Description);
@@ -32,13 +39,6 @@ namespace MPK.Connect.Test.Service.Builders
             Assert.IsNull(result.TextColor);
             Assert.IsNull(result.Url);
             Assert.IsTrue(result.GetRequiredProperties().All(p => p != null));
-        }
-
-        [TestInitialize]
-        public void SetUp()
-        {
-            _builder = new RouteBuilder();
-            _builder.ReadEntityMappings("route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_type2_id,valid_from,valid_until");
         }
     }
 }

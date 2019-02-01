@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MPK.Connect.Service.Builders;
-using System.Linq;
 
 namespace MPK.Connect.Test.Service.Builders
 {
@@ -8,6 +8,14 @@ namespace MPK.Connect.Test.Service.Builders
     public class AgencyBuilderTests
     {
         private AgencyBuilder _agencyBuilder;
+
+        [TestInitialize]
+        public void SetUp()
+        {
+            _agencyBuilder = new AgencyBuilder();
+            _agencyBuilder.ReadEntityMappings(
+                "agency_id,agency_name,agency_url,agency_timezone,agency_phone,agency_lang");
+        }
 
         [TestMethod]
         public void TestBuild()
@@ -21,7 +29,7 @@ namespace MPK.Connect.Test.Service.Builders
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("2", result.Id);
+            Assert.AreEqual(2, result.Id);
             Assert.AreEqual("MPK Autobusy", result.Name);
             Assert.AreEqual("http://www.mpk.wroc.pl", result.Url);
             Assert.AreEqual("Europe/Warsaw", result.Timezone);
@@ -30,14 +38,6 @@ namespace MPK.Connect.Test.Service.Builders
             Assert.IsNull(result.FareUrl);
             Assert.IsNull(result.Email);
             Assert.IsTrue(result.GetRequiredProperties().All(p => p != null));
-        }
-
-        [TestInitialize]
-        public void SetUp()
-        {
-            _agencyBuilder = new AgencyBuilder();
-            _agencyBuilder.ReadEntityMappings(
-                "agency_id,agency_name,agency_url,agency_timezone,agency_phone,agency_lang");
         }
     }
 }

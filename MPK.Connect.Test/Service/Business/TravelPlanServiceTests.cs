@@ -15,99 +15,19 @@ namespace MPK.Connect.Test.Service.Business
     [TestClass]
     public class TravelPlanServiceTests
     {
-        private TravelPlanService _travelPlanService;
         private Mock<IGraphBuilder> _graphBuilderMock;
-        private Mock<IPathProvider> _pathProviderMock;
         private Mock<IMapper> _mapper;
+        private Mock<IPathProvider> _pathProviderMock;
+        private TravelPlanService _travelPlanService;
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException), "Empty name in location was allowed.")]
-        public void TestIfGetTravelPlansThrowsExceptionWhenLocationNameIsEmpty()
+        [TestInitialize]
+        public void SetUp()
         {
-            // Arrange
-            var source = new Location("A");
-            var destination = new Location();
-            var travelOptions = new TravelOptions
-            {
-                Source = source,
-                Destination = destination
-            };
-
-            // Act
-            _travelPlanService.GetTravelPlans(travelOptions);
-
-            // Assert
-            _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
-            _pathProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<int, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException), "Empty name in location was allowed.")]
-        public void TestIfGetTravelPlansThrowsExceptionWhenSourceLocationNameIsEmpty()
-        {
-            // Arrange
-            var source = new Location();
-            var destination = new Location("B");
-            var travelOptions = new TravelOptions
-            {
-                Source = source,
-                Destination = destination
-            };
-
-            // Act
-            _travelPlanService.GetTravelPlans(travelOptions);
-
-            // Assert
-            _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
-            _pathProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<int, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException), "Empty latitude in location was allowed.")]
-        public void TestIfGetTravelPlansThrowsExceptionWhenLocationLatitudeIsEmpty()
-        {
-            // Arrange
-            var source = new Location("A");
-            var destination = new Location
-            {
-                Longitude = 12.121
-            };
-            var travelOptions = new TravelOptions
-            {
-                Source = source,
-                Destination = destination
-            };
-
-            // Act
-            _travelPlanService.GetTravelPlans(travelOptions);
-
-            // Assert
-            _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
-            _pathProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<int, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException), "Empty longitude in location was allowed.")]
-        public void TestIfGetTravelPlansThrowsExceptionWhenLocationLongitudeIsEmpty()
-        {
-            // Arrange
-            var source = new Location("A");
-            var destination = new Location
-            {
-                Latitude = 12.121
-            };
-            var travelOptions = new TravelOptions
-            {
-                Source = source,
-                Destination = destination
-            };
-
-            // Act
-            _travelPlanService.GetTravelPlans(travelOptions);
-
-            // Assert
-            _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
-            _pathProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<int, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
+            _graphBuilderMock = new Mock<IGraphBuilder>();
+            _pathProviderMock = new Mock<IPathProvider>();
+            var logger = new Logger<TravelPlanService>(new LoggerFactory());
+            _mapper = new Mock<IMapper>();
+            _travelPlanService = new TravelPlanService(_graphBuilderMock.Object, _pathProviderMock.Object, logger, _mapper.Object);
         }
 
         [TestMethod]
@@ -187,8 +107,8 @@ namespace MPK.Connect.Test.Service.Business
             _pathProviderMock.Setup(p => p.GetAvailablePaths(graph, It.Is<Location>(l => l.Name == "Third"), It.Is<Location>(l => l.Name == "Fourth")))
                 .Returns(new List<Path<StopTimeInfo>>());
 
-            _mapper.Setup(p => p.Map<TravelPlan>(It.IsAny<Path<StopTimeInfo>>()))
-                .Returns(new TravelPlan());
+            _mapper.Setup(p => p.Map<List<TravelPlan>>(It.IsAny<List<Path<StopTimeInfo>>>()))
+                .Returns(new List<TravelPlan>());
 
             // Act
             var result = _travelPlanService.GetTravelPlans(travelOptions);
@@ -202,14 +122,94 @@ namespace MPK.Connect.Test.Service.Business
             Assert.IsNotNull(result);
         }
 
-        [TestInitialize]
-        public void SetUp()
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException), "Empty latitude in location was allowed.")]
+        public void TestIfGetTravelPlansThrowsExceptionWhenLocationLatitudeIsEmpty()
         {
-            _graphBuilderMock = new Mock<IGraphBuilder>();
-            _pathProviderMock = new Mock<IPathProvider>();
-            var logger = new Logger<TravelPlanService>(new LoggerFactory());
-            _mapper = new Mock<IMapper>();
-            _travelPlanService = new TravelPlanService(_graphBuilderMock.Object, _pathProviderMock.Object, logger, _mapper.Object);
+            // Arrange
+            var source = new Location("A");
+            var destination = new Location
+            {
+                Longitude = 12.121
+            };
+            var travelOptions = new TravelOptions
+            {
+                Source = source,
+                Destination = destination
+            };
+
+            // Act
+            _travelPlanService.GetTravelPlans(travelOptions);
+
+            // Assert
+            _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
+            _pathProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<int, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException), "Empty longitude in location was allowed.")]
+        public void TestIfGetTravelPlansThrowsExceptionWhenLocationLongitudeIsEmpty()
+        {
+            // Arrange
+            var source = new Location("A");
+            var destination = new Location
+            {
+                Latitude = 12.121
+            };
+            var travelOptions = new TravelOptions
+            {
+                Source = source,
+                Destination = destination
+            };
+
+            // Act
+            _travelPlanService.GetTravelPlans(travelOptions);
+
+            // Assert
+            _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
+            _pathProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<int, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException), "Empty name in location was allowed.")]
+        public void TestIfGetTravelPlansThrowsExceptionWhenLocationNameIsEmpty()
+        {
+            // Arrange
+            var source = new Location("A");
+            var destination = new Location();
+            var travelOptions = new TravelOptions
+            {
+                Source = source,
+                Destination = destination
+            };
+
+            // Act
+            _travelPlanService.GetTravelPlans(travelOptions);
+
+            // Assert
+            _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
+            _pathProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<int, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException), "Empty name in location was allowed.")]
+        public void TestIfGetTravelPlansThrowsExceptionWhenSourceLocationNameIsEmpty()
+        {
+            // Arrange
+            var source = new Location();
+            var destination = new Location("B");
+            var travelOptions = new TravelOptions
+            {
+                Source = source,
+                Destination = destination
+            };
+
+            // Act
+            _travelPlanService.GetTravelPlans(travelOptions);
+
+            // Assert
+            _graphBuilderMock.Verify(p => p.GetGraph(It.IsAny<DateTime>(), It.IsAny<CoordinateLimits>()), Times.Never);
+            _pathProviderMock.Verify(p => p.GetAvailablePaths(It.IsAny<Graph<int, StopTimeInfo>>(), It.IsAny<Location>(), It.IsAny<Location>()), Times.Never);
         }
     }
 }

@@ -4,6 +4,7 @@ using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 
 namespace MPK.Connect.Test.Service.HarmonySearch.Helpers
 {
+    [TestClass]
     public class RandomGeneratorTest : IDisposable
     {
         private RandomGenerator _randomGenerator;

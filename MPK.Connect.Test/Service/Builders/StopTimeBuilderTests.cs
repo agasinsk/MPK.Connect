@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MPK.Connect.Model.Enums;
 using MPK.Connect.Service.Builders;
-using System;
-using System.Linq;
 
 namespace MPK.Connect.Test.Service.Builders
 {
@@ -29,10 +29,10 @@ namespace MPK.Connect.Test.Service.Builders
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("3_6357151", result.TripId);
+            Assert.AreEqual(6357151, result.TripId);
             Assert.AreEqual(new TimeSpan(0, 8, 55, 0), result.ArrivalTime);
             Assert.AreEqual(new TimeSpan(0, 8, 55, 0), result.DepartureTime);
-            Assert.AreEqual("1038", result.StopId);
+            Assert.AreEqual(1038, result.StopId);
             Assert.AreEqual(12, result.StopSequence);
             Assert.AreEqual(PickupTypes.Regular, result.PickupType);
             Assert.AreEqual(DropOffTypes.Regular, result.DropOffTypes);
@@ -51,10 +51,10 @@ namespace MPK.Connect.Test.Service.Builders
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("3_6357151", result.TripId);
+            Assert.AreEqual(6357151, result.TripId);
             Assert.AreEqual(new TimeSpan(0, 55, 0), result.ArrivalTime);
             Assert.AreEqual(new TimeSpan(1, 55, 0), result.DepartureTime);
-            Assert.AreEqual("1038", result.StopId);
+            Assert.AreEqual(1038, result.StopId);
             Assert.AreEqual(12, result.StopSequence);
             Assert.AreEqual(PickupTypes.Regular, result.PickupType);
             Assert.AreEqual(DropOffTypes.Regular, result.DropOffTypes);

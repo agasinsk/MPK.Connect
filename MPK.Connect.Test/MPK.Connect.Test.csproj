@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Service\HarmonySearch\" />
+    <Folder Include="Service\HarmonySearch\Core\" />
   </ItemGroup>
 
 </Project>
