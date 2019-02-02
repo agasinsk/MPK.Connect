@@ -9,11 +9,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch
     public class HarmonyGenerator<T>
     {
         private readonly IRandomGenerator<T> _random;
+        public int ArgumentsCount => Function.GetArgumentsCount();
+        public HarmonyMemory<T> HarmonyMemory { get; set; }
         public double HarmonyMemoryConsiderationRatio { get; }
         public double PitchAdjustmentRatio { get; set; }
-        private int ArgumentsCount => Function.GetArgumentsCount();
         private IObjectiveFunction<T> Function { get; }
-        private HarmonyMemory<T> HarmonyMemory { get; }
 
         /// <summary>
         /// The constructor
@@ -38,36 +38,18 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         }
 
         /// <summary>
-        /// Generates solution from random arguments
-        /// </summary>
-        public Harmony<T> GenerateRandomSolution()
-        {
-            var arguments = GenerateRandomArguments();
-            return CalculateSolution(arguments);
-        }
-
-        /// <summary>
-        /// Improvises new solution based on algorithm parameters
-        /// </summary>
-        public Harmony<T> ImproviseHarmony()
-        {
-            var improvisedArguments = ImproviseArguments();
-            return CalculateSolution(improvisedArguments);
-        }
-
-        /// <summary>
         /// Calculates solution for provided arguments
         /// </summary>
-        private Harmony<T> CalculateSolution(params T[] arguments)
+        public Harmony<T> CalculateSolution(params T[] arguments)
         {
-            var functionValue = Function.CalculateObjectiveValue();
+            var functionValue = Function.CalculateObjectiveValue(arguments);
             return new Harmony<T>(functionValue, arguments);
         }
 
         /// <summary>
         /// Chooses argument generation rule by their probabilities
         /// </summary>
-        private ArgumentGenerationRules EstablishArgumentGenerationRule(double probability)
+        public ArgumentGenerationRules EstablishArgumentGenerationRule(double probability)
         {
             if (probability > HarmonyMemoryConsiderationRatio)
             {
@@ -83,7 +65,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         /// <summary>
         /// Generates random argument values
         /// </summary>
-        private T[] GenerateRandomArguments()
+        public T[] GenerateRandomArguments()
         {
             var randomArguments = new T[ArgumentsCount];
 
@@ -93,6 +75,69 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             }
 
             return randomArguments;
+        }
+
+        /// <summary>
+        /// Generates solution from random arguments
+        /// </summary>
+        public Harmony<T> GenerateRandomSolution()
+        {
+            var arguments = GenerateRandomArguments();
+            return CalculateSolution(arguments);
+        }
+
+        /// <summary>
+        /// Generates arguments values based on the algorithm parameters
+        /// </summary>
+        public T[] ImproviseArguments()
+        {
+            var arguments = new T[ArgumentsCount];
+
+            for (var index = 0; index < ArgumentsCount; index++)
+            {
+                arguments[index] = ImproviseArgument(index);
+            }
+
+            return arguments;
+        }
+
+        /// <summary>
+        /// Improvises new solution based on algorithm parameters
+        /// </summary>
+        public Harmony<T> ImproviseHarmony()
+        {
+            var improvisedArguments = ImproviseArguments();
+            return CalculateSolution(improvisedArguments);
+        }
+
+        /// <summary>
+        /// Uses memory consideration technique
+        /// </summary>
+        /// <param name="argumentIndex">Index of argument</param>
+        /// <returns></returns>
+        public T UseMemoryConsideration(int argumentIndex)
+        {
+            return HarmonyMemory.GetArgumentFromRandomHarmony(argumentIndex);
+        }
+
+        /// <summary>
+        /// Uses pitch adjusting technique
+        /// </summary>
+        /// <param name="argumentIndex">Index of argument</param>
+        /// <returns>Pitch adjusted argument</returns>
+        public T UsePitchAdjustment(int argumentIndex)
+        {
+            if (Function.IsArgumentVariable(argumentIndex))
+            {
+                if (Function.IsArgumentDiscrete(argumentIndex))
+                {
+                    return UseDiscretePitchAdjustment(argumentIndex);
+                }
+
+                return UseContinuousPitchAdjustment(argumentIndex);
+            }
+
+            return default(T);
         }
 
         /// <summary>
@@ -122,21 +167,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         }
 
         /// <summary>
-        /// Generates arguments values based on the algorithm parameters
-        /// </summary>
-        private T[] ImproviseArguments()
-        {
-            var arguments = new T[ArgumentsCount];
-
-            for (var index = 0; index < ArgumentsCount; index++)
-            {
-                arguments[index] = ImproviseArgument(index);
-            }
-
-            return arguments;
-        }
-
-        /// <summary>
         /// Adjusts pitch for continuous variables
         /// </summary>
         private T UseContinuousPitchAdjustment(int argumentIndex)
@@ -144,16 +174,16 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             var existingValue = UseMemoryConsideration(argumentIndex);
             var randomValue = _random.NextDouble();
 
+            T pitchAdjustment;
             if (randomValue < 0.5)
             {
-                var pitchAdjustment = _random.Next(Function.GetLowerBound(argumentIndex), existingValue);
-                return Function.Subtract(existingValue, pitchAdjustment);
+                pitchAdjustment = _random.NextValue(Function.GetLowerBound(argumentIndex), existingValue);
             }
             else
             {
-                var pitchAdjustment = _random.Next(existingValue, Function.GetUpperBound(argumentIndex));
-                return Function.Add(existingValue, pitchAdjustment);
+                pitchAdjustment = _random.NextValue(existingValue, Function.GetUpperBound(argumentIndex));
             }
+            return Function.Add(existingValue, pitchAdjustment);
         }
 
         /// <summary>
@@ -179,36 +209,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch
                                                  allowedDiscreteValueIndex);
                 return Function.GetArgumentValue(argumentIndex, nextDiscreteValueIndex);
             }
-        }
-
-        /// <summary>
-        /// Uses memory consideration technique
-        /// </summary>
-        /// <param name="argumentIndex">Index of argument</param>
-        /// <returns></returns>
-        private T UseMemoryConsideration(int argumentIndex)
-        {
-            return HarmonyMemory.GetRandomArgumentByIndex(argumentIndex);
-        }
-
-        /// <summary>
-        /// Uses pitch adjusting technique
-        /// </summary>
-        /// <param name="argumentIndex">Index of argument</param>
-        /// <returns>Pitch adjusted argument</returns>
-        private T UsePitchAdjustment(int argumentIndex)
-        {
-            if (Function.IsArgumentVariable(argumentIndex))
-            {
-                if (Function.IsArgumentDiscrete(argumentIndex))
-                {
-                    return UseDiscretePitchAdjustment(argumentIndex);
-                }
-
-                return UseContinuousPitchAdjustment(argumentIndex);
-            }
-
-            return default(T);
         }
 
         /// <summary>

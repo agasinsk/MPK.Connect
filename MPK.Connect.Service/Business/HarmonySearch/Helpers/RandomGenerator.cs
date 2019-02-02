@@ -2,9 +2,9 @@
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IRandomGenerator{T}"/>
     /// <summary>
-    /// Random number generator
+    /// Random number generator with option to generate bounded values
     /// </summary>
     public class RandomGenerator : Random, IRandomGenerator<double>
     {
@@ -14,7 +14,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
         /// <param name="minValue">Minimum value</param>
         /// <param name="maxValue">Maximum value</param>
         /// <returns>Bounded double number</returns>
-        public double Next(double minValue, double maxValue)
+        public double NextValue(double minValue, double maxValue)
         {
             var randomDouble = NextDouble();
             randomDouble = randomDouble * (maxValue - minValue) + minValue;

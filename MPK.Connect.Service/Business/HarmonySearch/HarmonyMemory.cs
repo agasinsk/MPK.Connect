@@ -40,6 +40,26 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         }
 
         /// <summary>
+        /// Adds new solutions to harmony memory
+        /// </summary>
+        /// <param name="harmonies">New harmonies</param>
+        /// <returns>Result of additions</returns>
+        public bool AddRange(params Harmony<T>[] harmonies)
+        {
+            return harmonies.All(harmony => _harmonies.Add(harmony));
+        }
+
+        /// <summary>
+        /// Adds new solutions to harmony memory
+        /// </summary>
+        /// <param name="harmonies">New harmonies</param>
+        /// <returns>Result of additions</returns>
+        public bool AddRange(IEnumerable<Harmony<T>> harmonies)
+        {
+            return harmonies.All(harmony => _harmonies.Add(harmony));
+        }
+
+        /// <summary>
         /// Clears harmony memory
         /// </summary>
         public void Clear()
@@ -58,11 +78,23 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         }
 
         /// <summary>
+        /// Gets random argument
+        /// </summary>
+        /// <param name="argumentIndex">Index of argument</param>
+        /// <returns></returns>
+        public T GetArgumentFromRandomHarmony(int argumentIndex)
+        {
+            var nextIndex = _random.Next(_harmonies.Count);
+            var randomArgument = _harmonies.ElementAt(nextIndex).GetArgument(argumentIndex);
+            return randomArgument;
+        }
+
+        /// <summary>
         /// Gets list of arguments by their index
         /// </summary>
         /// <param name="argumentIndex">Index of arguments</param>
         /// <returns>List of arguments</returns>
-        public List<T> GetArgumentsByIndex(int argumentIndex)
+        public List<T> GetArguments(int argumentIndex)
         {
             return _harmonies.Select(s => s.GetArgument(argumentIndex)).ToList();
         }
@@ -74,21 +106,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         }
 
         /// <summary>
-        /// Gets random argument
-        /// </summary>
-        /// <param name="argumentIndex">Index of argument</param>
-        /// <returns></returns>
-        public T GetRandomArgumentByIndex(int argumentIndex)
-        {
-            var nextIndex = _random.Next(_harmonies.Count);
-            var randomArgument = _harmonies.Select(s => s.GetArgument(argumentIndex)).ElementAt(nextIndex);
-            return randomArgument;
-        }
-
-        /// <summary>
         /// Swaps new harmony with the current worst harmony
         /// </summary>
-        /// <param name="harmony">Harmony to be swapped into Harmony memory</param>
+        /// <param name="harmony">Harmony to be placed into memory</param>
         public void SwapWithWorstHarmony(Harmony<T> harmony)
         {
             _harmonies.Remove(WorstHarmony);

@@ -2,16 +2,16 @@
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 {
-    /// <inheritdoc />
+    /// <inheritdoc/>
     /// <summary>
     /// Sorted set with limited capacity
     /// </summary>
-    /// <typeparam name="T">Stored elements</typeparam>
+    /// <typeparam name="T">Type of stored elements</typeparam>
     public class BoundedSortedSet<T> : SortedSet<T>
     {
         public int Capacity { get; }
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         /// <summary>
         /// The constructor
         /// </summary>

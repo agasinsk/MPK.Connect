@@ -20,14 +20,14 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Helpers
         }
 
         [TestMethod]
-        public void TestNextDoubleWithBounds()
+        public void TestNextDoubleValue()
         {
             //Arrange
             const double origin = -10;
             const double bound = -9;
 
             //Act
-            var result = _randomGenerator.Next(origin, bound);
+            var result = _randomGenerator.NextValue(origin, bound);
 
             //Assert
             Assert.IsTrue(result >= origin);

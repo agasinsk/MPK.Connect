@@ -141,6 +141,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         /// <returns>Pitch Adjustment Ratio</returns>
         private double GetCurrentPitchAdjustingRatio(int iterationIndex)
         {
+            //TODO: add unit tests
             if (ShouldImprovePitchAdjustingScenario)
             {
                 PitchAdjustmentRatio = MaxPitchAdjustmentRatio - (MaxPitchAdjustmentRatio - MinPitchAdjustmentRatio) * iterationIndex / MaxImprovisationCount;

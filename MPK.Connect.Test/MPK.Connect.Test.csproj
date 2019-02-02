@@ -17,9 +17,4 @@
     <ProjectReference Include="..\MPK.Connect.Service\MPK.Connect.Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Service\HarmonySearch\" />
-    <Folder Include="Service\HarmonySearch\Core\" />
-  </ItemGroup>
-
 </Project>

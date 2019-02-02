@@ -4,8 +4,8 @@
     {
         int Next(int minValue, int maxValue);
 
-        T Next(T minValue, T maxValue);
-
         double NextDouble();
+
+        T NextValue(T minValue, T maxValue);
     }
 }
