@@ -29,7 +29,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         /// <returns>Comparison result</returns>
         public int CompareTo(Harmony<T> otherHarmony)
         {
-            return ObjectiveValue.CompareTo(otherHarmony.ObjectiveValue);
+            var objectiveValueComparison = ObjectiveValue.CompareTo(otherHarmony.ObjectiveValue);
+            return objectiveValueComparison;
         }
 
         /// <summary>

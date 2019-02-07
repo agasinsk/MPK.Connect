@@ -125,7 +125,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
                 }
 
                 var improvisedHarmony = _harmonyGenerator.ImproviseHarmony();
-                if (improvisedHarmony.IsBetterThan(worstHarmony))
+                if (improvisedHarmony.IsBetterThan(worstHarmony) && !HarmonyMemory.Contains(improvisedHarmony))
                 {
                     HarmonyMemory.SwapWithWorstHarmony(improvisedHarmony);
                 }

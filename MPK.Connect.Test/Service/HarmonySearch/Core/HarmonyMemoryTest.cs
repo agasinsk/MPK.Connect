@@ -42,6 +42,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             var result = _harmonyMemory.AddRange(harmonies);
 
             //Assert
+            Assert.AreEqual(_harmonyMemoryTestSize, _harmonyMemory.Count);
             Assert.IsFalse(result);
             Assert.IsTrue(!_harmonyMemory.Contains(testSolution));
         }
@@ -60,8 +61,34 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             var result = _harmonyMemory.Add(testSolution);
 
             //Assert
+            Assert.AreEqual(_harmonyMemoryTestSize, _harmonyMemory.Count);
             Assert.IsFalse(result);
             Assert.IsTrue(!_harmonyMemory.Contains(testSolution));
+        }
+
+        [TestMethod]
+        public void TestCountIfEmpty()
+        {
+            //Arrange
+
+            //Act
+            var size = _harmonyMemory.Count;
+
+            //Assert
+            Assert.AreEqual(0, size);
+        }
+
+        [TestMethod]
+        public void TestCountIfNotEmpty()
+        {
+            //Arrange
+            _harmonyMemory.Add(new Harmony<double>(22, 0, 11));
+
+            //Act
+            var size = _harmonyMemory.Count;
+
+            //Assert
+            Assert.AreEqual(1, size);
         }
 
         [TestMethod]
@@ -83,6 +110,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             var argument = _harmonyMemory.GetArgumentFromRandomHarmony(argumentIndex);
 
             // Assert
+            Assert.AreEqual(_harmonyMemoryTestSize, _harmonyMemory.Count);
             Assert.IsTrue(harmonies.Select(h => h.Arguments[1]).Contains(argument));
         }
 
@@ -115,31 +143,6 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         }
 
         [TestMethod]
-        public void TestGetSizeIfEmpty()
-        {
-            //Arrange
-
-            //Act
-            var size = _harmonyMemory.Count;
-
-            //Assert
-            Assert.AreEqual(0, size);
-        }
-
-        [TestMethod]
-        public void TestGetSizeIfNotEmpty()
-        {
-            //Arrange
-            _harmonyMemory.Add(new Harmony<double>(22, 0, 11));
-
-            //Act
-            var size = _harmonyMemory.Count;
-
-            //Assert
-            Assert.AreEqual(1, size);
-        }
-
-        [TestMethod]
         public void TestGetWorstSolution()
         {
             //Arrange
@@ -152,6 +155,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             var worst = _harmonyMemory.WorstHarmony;
 
             //Assert
+            Assert.AreEqual(_harmonyMemoryTestSize, _harmonyMemory.Count);
             Assert.AreEqual(newWorst, worst);
         }
 
@@ -170,6 +174,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             _harmonyMemory.SwapWithWorstHarmony(newSolution);
 
             //Assert
+            Assert.AreEqual(_harmonyMemoryTestSize, _harmonyMemory.Count);
             Assert.AreEqual(newSolution, _harmonyMemory.BestHarmony);
             Assert.IsFalse(_harmonyMemory.Contains(oldWorstSolution));
         }
@@ -189,6 +194,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             _harmonyMemory.SwapWithWorstHarmony(newSolution);
 
             //Assert
+            Assert.AreEqual(_harmonyMemoryTestSize, _harmonyMemory.Count);
             Assert.IsTrue(_harmonyMemory.Contains(newSolution));
             Assert.IsTrue(!_harmonyMemory.Contains(oldWorstSolution));
         }
@@ -208,6 +214,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             _harmonyMemory.SwapWithWorstHarmony(newSolution);
 
             //Assert
+            Assert.AreEqual(_harmonyMemoryTestSize, _harmonyMemory.Count);
             Assert.AreEqual(newSolution, _harmonyMemory.WorstHarmony);
             Assert.IsTrue(!_harmonyMemory.Contains(oldWorstSolution));
         }

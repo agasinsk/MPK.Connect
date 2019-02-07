@@ -32,13 +32,13 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             //Arrange
             var x1 = 2;
             var x2 = 0.7;
+            var expectedValue = _function.CalculateObjectiveValue(x1, x2);
 
             //Act
             var result = _harmonyGenerator.CalculateSolution(x1, x2);
 
             //Assert
-            Assert.AreEqual(5.4, result.ObjectiveValue);
-            //Assert.Collection<double>(result.Arguments, s => sx1, x2 });
+            Assert.AreEqual(expectedValue, result.ObjectiveValue);
         }
 
         [TestMethod]

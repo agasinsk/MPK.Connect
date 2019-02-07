@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MPK.Connect.Service.Business.HarmonySearch;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 
@@ -6,12 +7,24 @@ namespace MPK.Connect.Test.Service.HarmonySearch
 {
     public class DoubleObjectiveFunction : DoubleCalculator, IObjectiveFunction<double>
     {
+        private readonly List<ArgumentLimit> _argumentLimits;
         private readonly IRandomGenerator<double> _random = new RandomGenerator();
+
+        public DoubleObjectiveFunction()
+        {
+            _argumentLimits = new List<ArgumentLimit>
+            {
+                new ArgumentLimit(-1, 1),
+                new ArgumentLimit(-1, 1)
+            };
+        }
 
         public double CalculateObjectiveValue(params double[] arguments)
         {
-            // x1^2 + x1*x2;
-            return Math.Pow(arguments[0], 2) + arguments[0] * arguments[1];
+            // x1^4+x2^4 -0.62*x1^2 - 0.62*x2^3
+            var x1 = arguments[0];
+            var x2 = arguments[1];
+            return Math.Pow(x1, 4) + Math.Pow(x2, 4) - 0.62 * Math.Pow(x1, 2) - 0.62 * Math.Pow(x2, 2);
         }
 
         public int GetArgumentsCount()
@@ -34,52 +47,32 @@ namespace MPK.Connect.Test.Service.HarmonySearch
 
         public int GetIndexOfDiscreteValue(int argumentIndex, double argumentValue)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public double GetLowerBound(int argumentIndex)
         {
-            switch (argumentIndex)
-            {
-                case 0:
-                    return -10;
-
-                case 1:
-                    return -10;
-
-                default:
-                    return double.MinValue;
-            }
+            return _argumentLimits[argumentIndex].MinValue;
         }
 
         public double GetMaximumContinuousPitchAdjustmentProportion()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public int GetMaximumDiscretePitchAdjustmentIndex()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public int GetPossibleDiscreteValuesCount(int argumentIndex)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public double GetUpperBound(int argumentIndex)
         {
-            switch (argumentIndex)
-            {
-                case 0:
-                    return 10;
-
-                case 1:
-                    return 10;
-
-                default:
-                    return double.MaxValue;
-            }
+            return _argumentLimits[argumentIndex].MaxValue;
         }
 
         public bool IsArgumentDiscrete(int argumentIndex)
@@ -94,7 +87,17 @@ namespace MPK.Connect.Test.Service.HarmonySearch
 
         public bool IsWithinBounds(double value, int argumentIndex)
         {
-            return value < GetUpperBound(argumentIndex) && value > GetLowerBound(argumentIndex);
+            return _argumentLimits[argumentIndex].IsWithinLimits(value);
+        }
+
+        public void SetLowerBound(int argumentIndex, double value)
+        {
+            _argumentLimits[argumentIndex].MinValue = value;
+        }
+
+        public void SetUpperBound(int argumentIndex, double value)
+        {
+            _argumentLimits[argumentIndex].MaxValue = value;
         }
     }
 }
