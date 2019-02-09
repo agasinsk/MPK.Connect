@@ -24,6 +24,44 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         }
 
         [TestMethod]
+        public void TestGetCurrentPitchAdjustingRatioWhenImprovedScenarioIsOff()
+        {
+            // Arrange
+            var iterationIndex = 100;
+
+            // Act
+            var result = _harmonySearcher.GetCurrentPitchAdjustingRatio(iterationIndex);
+
+            // Assert
+            Assert.AreEqual(_harmonySearcher.PitchAdjustmentRatio, result);
+            Assert.AreEqual(DefaultPitchAdjustmentRatio, result);
+        }
+
+        [TestMethod]
+        public void TestGetCurrentPitchAdjustingRatioWhenImprovedScenarioIsOn()
+        {
+            // Arrange
+            var iterationIndex = 100;
+            var improvedHarmonySearcher = new HarmonySearcher<double>(_objectiveFunction, new RandomGenerator(), true);
+            var expectedResult = DefaultMaxPitchAdjustmentRatio -
+                                 (DefaultMaxPitchAdjustmentRatio - DefaultMinPitchAdjustmentRatio) * iterationIndex /
+                                 DefaultMaxImprovisationCount;
+
+            // Act
+            var result = improvedHarmonySearcher.GetCurrentPitchAdjustingRatio(iterationIndex);
+
+            // Assert
+            Assert.IsNotNull(improvedHarmonySearcher.PitchAdjustmentRatio);
+            Assert.IsTrue(improvedHarmonySearcher.ShouldImprovePitchAdjustingScenario);
+            Assert.AreEqual(DefaultMinPitchAdjustmentRatio, improvedHarmonySearcher.MinPitchAdjustmentRatio);
+            Assert.AreEqual(DefaultMaxPitchAdjustmentRatio, improvedHarmonySearcher.MaxPitchAdjustmentRatio);
+            Assert.AreEqual(DefaultMaxPitchAdjustmentRatio, improvedHarmonySearcher.PitchAdjustmentRatio);
+            Assert.AreEqual(DefaultHarmonyMemoryConsiderationRatio, improvedHarmonySearcher.HarmonyMemoryConsiderationRatio);
+
+            Assert.AreEqual(expectedResult, result);
+        }
+
+        [TestMethod]
         public void TestInitializeHarmonyMemory()
         {
             //Arrange

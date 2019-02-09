@@ -30,7 +30,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             MaxImprovisationCount = DefaultMaxImprovisationCount;
             HarmonyMemory = new HarmonyMemory<T>(DefaultHarmonyMemorySize);
 
-            _harmonyGenerator = new HarmonyGenerator<T>(function, randomGenerator, HarmonyMemory, DefaultHarmonyMemoryConsiderationRatio, DefaultPitchAdjustmentRatio);
+            _harmonyGenerator = new HarmonyGenerator<T>(function, randomGenerator, HarmonyMemory, DefaultHarmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             PitchAdjustmentRatio = pitchAdjustmentRatio;
             HarmonyMemory = new HarmonyMemory<T>(harmonyMemorySize);
 
-            _harmonyGenerator = new HarmonyGenerator<T>(function, randomGenerator, HarmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
+            _harmonyGenerator = new HarmonyGenerator<T>(function, randomGenerator, HarmonyMemory, harmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
         }
 
         /// <summary>
@@ -97,6 +97,42 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         }
 
         /// <summary>
+        /// The constructor
+        /// </summary>
+        /// <param name="function">Function to optimize</param>
+        /// <param name="randomGenerator">Random generator</param>
+        /// <param name="shouldImprovePitchAdjustingScenario">
+        /// Determines if pitch adjustment should be improved
+        /// </param>
+        public HarmonySearcher(IObjectiveFunction<T> function, IRandomGenerator<T> randomGenerator, bool shouldImprovePitchAdjustingScenario)
+        {
+            MaxImprovisationCount = DefaultMaxImprovisationCount;
+            HarmonyMemory = new HarmonyMemory<T>(DefaultHarmonyMemorySize);
+
+            ShouldImprovePitchAdjustingScenario = shouldImprovePitchAdjustingScenario;
+            MinPitchAdjustmentRatio = DefaultMinPitchAdjustmentRatio;
+            MaxPitchAdjustmentRatio = DefaultMaxPitchAdjustmentRatio;
+            PitchAdjustmentRatio = GetCurrentPitchAdjustingRatio(0);
+
+            _harmonyGenerator = new HarmonyGenerator<T>(function, randomGenerator, HarmonyMemory, DefaultHarmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
+        }
+
+        /// <summary>
+        /// Gets current Pitch Adjustment Ratio for iteration
+        /// </summary>
+        /// <param name="iterationIndex">Iteration number</param>
+        /// <returns>Pitch Adjustment Ratio</returns>
+        public double GetCurrentPitchAdjustingRatio(int iterationIndex)
+        {
+            if (ShouldImprovePitchAdjustingScenario)
+            {
+                return MaxPitchAdjustmentRatio - (MaxPitchAdjustmentRatio - MinPitchAdjustmentRatio) * iterationIndex / MaxImprovisationCount;
+            }
+
+            return PitchAdjustmentRatio;
+        }
+
+        /// <summary>
         /// Initializes harmony memory with random solutions
         /// </summary>
         public void InitializeHarmonyMemory()
@@ -132,22 +168,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch
                 ImprovisationCount++;
             }
             return HarmonyMemory.BestHarmony;
-        }
-
-        /// <summary>
-        /// Gets current Pitch Adjustment Ratio for iteration
-        /// </summary>
-        /// <param name="iterationIndex">Iteration number</param>
-        /// <returns>Pitch Adjustment Ratio</returns>
-        private double GetCurrentPitchAdjustingRatio(int iterationIndex)
-        {
-            //TODO: add unit tests
-            if (ShouldImprovePitchAdjustingScenario)
-            {
-                PitchAdjustmentRatio = MaxPitchAdjustmentRatio - (MaxPitchAdjustmentRatio - MinPitchAdjustmentRatio) * iterationIndex / MaxImprovisationCount;
-            }
-
-            return PitchAdjustmentRatio;
         }
 
         /// <summary>
