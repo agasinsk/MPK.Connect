@@ -80,6 +80,11 @@ namespace MPK.Connect.Test.Service.HarmonySearch
             return false;
         }
 
+        public bool IsArgumentValuePossible(double argumentValue)
+        {
+            return true;
+        }
+
         public bool IsArgumentVariable(int argumentIndex)
         {
             return true;
@@ -88,6 +93,10 @@ namespace MPK.Connect.Test.Service.HarmonySearch
         public bool IsWithinBounds(double value, int argumentIndex)
         {
             return _argumentLimits[argumentIndex].IsWithinLimits(value);
+        }
+
+        public void SaveArgumentValue(int argumentIndex, double argumentValue)
+        {
         }
 
         public void SetLowerBound(int argumentIndex, double value)

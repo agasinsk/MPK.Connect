@@ -91,11 +91,30 @@
         bool IsArgumentDiscrete(int argumentIndex);
 
         /// <summary>
+        /// Check if the argument value is possible to be used
+        ///
+        /// Used in problems that require the solutions to have distinct argument values
+        /// </summary>
+        /// <param name="argumentValue">Argument value to check</param>
+        /// <returns>If the argument value is possible to be used</returns>
+        bool IsArgumentValuePossible(T argumentValue);
+
+        /// <summary>
         /// Return whether or not the parameter at the specified index should be varied by HS. It may
         /// be the case that HS should only vary certain parameters while others should remain fixed.
         /// </summary>
         /// <param name="argumentIndex">Index of an argument</param>
         /// <returns></returns>
         bool IsArgumentVariable(int argumentIndex);
+
+        /// <summary>
+        /// Saves the argument value in function if there's a need to provide distinct values of
+        /// arguments to the solution
+        ///
+        /// Used when Harmony Memory consideration scenario is specified.
+        /// </summary>
+        /// <param name="argumentIndex">Argument index</param>
+        /// <param name="argumentValue">Argument value</param>
+        void SaveArgumentValue(int argumentIndex, T argumentValue);
     }
 }

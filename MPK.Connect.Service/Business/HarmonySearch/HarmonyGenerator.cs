@@ -72,6 +72,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             for (var index = 0; index < ArgumentsCount; index++)
             {
                 randomArguments[index] = UseRandomChoosing(index);
+                Function.SaveArgumentValue(index, randomArguments[index]);
             }
 
             return randomArguments;
@@ -96,6 +97,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             for (var index = 0; index < ArgumentsCount; index++)
             {
                 arguments[index] = ImproviseArgument(index);
+                Function.SaveArgumentValue(index, arguments[index]);
             }
 
             return arguments;
@@ -117,7 +119,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         /// <returns></returns>
         public T UseMemoryConsideration(int argumentIndex)
         {
-            return HarmonyMemory.GetArgumentFromRandomHarmony(argumentIndex);
+            var argumentValue = HarmonyMemory.GetArgumentFromRandomHarmony(argumentIndex);
+            while (!Function.IsArgumentValuePossible(argumentValue))
+            {
+                // TODO: think about possible impact
+                argumentValue = UseRandomChoosing(argumentIndex);
+            }
+            return argumentValue;
         }
 
         /// <summary>
@@ -196,19 +204,24 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             var randomValue = _random.NextDouble();
 
             var maximumPitchAdjustmentIndex = Function.GetMaximumDiscretePitchAdjustmentIndex();
+
+            T pitchAdjustedValue;
             if (randomValue < 0.5)
             {
+                // pitch down
                 var allowedDiscreteValueIndex = Math.Min(maximumPitchAdjustmentIndex, currentValueIndex);
                 var nextValueIndex = currentValueIndex - _random.Next(0, allowedDiscreteValueIndex);
-                return Function.GetArgumentValue(argumentIndex, nextValueIndex);
+                pitchAdjustedValue = Function.GetArgumentValue(argumentIndex, nextValueIndex);
             }
             else
             {
+                // pitch up
                 var allowedDiscreteValueIndex = Math.Min(maximumPitchAdjustmentIndex, Function.GetPossibleDiscreteValuesCount(argumentIndex) - currentValueIndex - 1);
-                var nextDiscreteValueIndex = currentValueIndex + _random.Next(0,
-                                                 allowedDiscreteValueIndex);
-                return Function.GetArgumentValue(argumentIndex, nextDiscreteValueIndex);
+                var nextDiscreteValueIndex = currentValueIndex + _random.Next(0, allowedDiscreteValueIndex);
+                pitchAdjustedValue = Function.GetArgumentValue(argumentIndex, nextDiscreteValueIndex);
             }
+
+            return pitchAdjustedValue == null || pitchAdjustedValue.Equals(default(T)) ? existingValue : pitchAdjustedValue;
         }
 
         /// <summary>
