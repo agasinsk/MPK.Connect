@@ -5,13 +5,14 @@ using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 
 namespace MPK.Connect.Test.Service.HarmonySearch
 {
-    public class DoubleObjectiveFunction : DoubleCalculator, IObjectiveFunction<double>
+    public class DoubleObjectiveFunction : IContinuousObjectiveFunction<double>
     {
         private readonly List<ArgumentLimit> _argumentLimits;
-        private readonly IRandomGenerator<double> _random = new RandomGenerator();
+        private readonly IBoundedRandom _random;
 
         public DoubleObjectiveFunction()
         {
+            _random = RandomFactory.GetInstance();
             _argumentLimits = new List<ArgumentLimit>
             {
                 new ArgumentLimit(-1, 1),
@@ -32,7 +33,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch
             return 2;
         }
 
-        public double GetArgumentValue(int argumentIndex, int? discreteValueIndex = null)
+        public double GetArgumentValue(int argumentIndex)
         {
             switch (argumentIndex)
             {
@@ -45,39 +46,30 @@ namespace MPK.Connect.Test.Service.HarmonySearch
             }
         }
 
-        public int GetIndexOfDiscreteValue(int argumentIndex, double argumentValue)
-        {
-            throw new NotImplementedException();
-        }
-
         public double GetLowerBound(int argumentIndex)
         {
             return _argumentLimits[argumentIndex].MinValue;
         }
 
-        public double GetMaximumContinuousPitchAdjustmentProportion()
+        public double GetPitchDownAdjustedValue(int argumentIndex, double existingValue)
         {
-            throw new NotImplementedException();
+            var minValue = GetLowerBound(argumentIndex);
+            var pitchAdjustment = _random.NextValue(minValue, existingValue);
+
+            return Math.Max(existingValue - pitchAdjustment, minValue);
         }
 
-        public int GetMaximumDiscretePitchAdjustmentIndex()
+        public double GetPitchUpAdjustedValue(int argumentIndex, double existingValue)
         {
-            throw new NotImplementedException();
-        }
+            var maxValue = GetUpperBound(argumentIndex);
+            var pitchAdjustment = _random.NextValue(existingValue, maxValue);
 
-        public int GetPossibleDiscreteValuesCount(int argumentIndex)
-        {
-            throw new NotImplementedException();
+            return Math.Min(existingValue + pitchAdjustment, maxValue);
         }
 
         public double GetUpperBound(int argumentIndex)
         {
             return _argumentLimits[argumentIndex].MaxValue;
-        }
-
-        public bool IsArgumentDiscrete(int argumentIndex)
-        {
-            return false;
         }
 
         public bool IsArgumentValuePossible(double argumentValue)
@@ -93,10 +85,6 @@ namespace MPK.Connect.Test.Service.HarmonySearch
         public bool IsWithinBounds(double value, int argumentIndex)
         {
             return _argumentLimits[argumentIndex].IsWithinLimits(value);
-        }
-
-        public void SaveArgumentValue(int argumentIndex, double argumentValue)
-        {
         }
 
         public void SetLowerBound(int argumentIndex, double value)

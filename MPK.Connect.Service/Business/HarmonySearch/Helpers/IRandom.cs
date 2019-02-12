@@ -1,11 +1,11 @@
 ﻿namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 {
-    public interface IRandomGenerator<T>
+    public interface IRandom
     {
         int Next(int minValue, int maxValue);
 
-        double NextDouble();
+        int Next(int maxValue);
 
-        T NextValue(T minValue, T maxValue);
+        double NextDouble();
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
@@ -13,7 +12,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
     public class HarmonyMemory<T> : IEnumerable<Harmony<T>>
     {
         private readonly BoundedSortedSet<Harmony<T>> _harmonies;
-        private readonly Random _random;
+        private readonly IRandom _random;
         public Harmony<T> BestHarmony => _harmonies.First();
         public int MaxCapacity => _harmonies.Capacity;
         public Harmony<T> WorstHarmony => _harmonies.Last();
@@ -23,10 +22,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         /// The constructor
         /// </summary>
         /// <param name="harmonyMemorySize">Size of harmony memory</param>
+        /// <param name="random">Random generator</param>
         public HarmonyMemory(int harmonyMemorySize)
         {
             _harmonies = new BoundedSortedSet<Harmony<T>>(harmonyMemorySize);
-            _random = new Random();
+            _random = RandomFactory.GetInstance();
         }
 
         /// <summary>

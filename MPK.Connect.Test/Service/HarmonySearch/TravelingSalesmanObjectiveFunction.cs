@@ -9,14 +9,13 @@ using TspLibNet.Tours;
 
 namespace MPK.Connect.Test.Service.HarmonySearch
 {
-    public class TravelingSalesmanObjectiveFunction : NodeCalculator, IObjectiveFunction<INode>
+    public class TravelingSalesmanObjectiveFunction : IDiscreteObjectiveFunction<INode>
     {
         public static string DefaultProblemName = "berlin52";
-        private const double MaxPitchAdjustingIndex = 0.2;
         private const string RootDir = @"..\..\..\TSPLIB95";
 
         private readonly List<INode> _nodes;
-        private readonly IRandomGenerator<double> _random;
+        private readonly IRandom _random;
         private List<INode> _unusedNodes;
         public TspLib95Item ProblemItem { get; }
 
@@ -32,7 +31,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch
             ProblemItem = tspLib.GetItemByName(problemName, ProblemType.TSP);
             _nodes = ProblemItem.Problem.NodeProvider.GetNodes();
             _unusedNodes = new List<INode>(_nodes);
-            _random = new RandomGenerator();
+            _random = new BoundedRandom();
         }
 
         public double CalculateObjectiveValue(params INode[] arguments)
@@ -46,14 +45,8 @@ namespace MPK.Connect.Test.Service.HarmonySearch
             return _nodes.Count;
         }
 
-        public INode GetArgumentValue(int argumentIndex, int? discreteValueIndex = null)
+        public INode GetArgumentValue(int argumentIndex)
         {
-            if (discreteValueIndex.HasValue)
-            {
-                var node = _nodes[discreteValueIndex.Value];
-                return _unusedNodes.Contains(node) ? node : null;
-            }
-
             var randomIndex = _random.Next(0, _unusedNodes.Count);
             var randomNode = _unusedNodes.ElementAt(randomIndex);
 
@@ -65,34 +58,13 @@ namespace MPK.Connect.Test.Service.HarmonySearch
             return _nodes.IndexOf(argumentValue);
         }
 
-        public INode GetLowerBound(int argumentIndex)
+        public INode GetNeighborValue(int argumentIndex, INode node)
         {
-            throw new NotImplementedException();
-        }
+            var distanceProvider = ProblemItem.Problem.EdgeWeightsProvider;
 
-        public INode GetMaximumContinuousPitchAdjustmentProportion()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int GetMaximumDiscretePitchAdjustmentIndex()
-        {
-            return (int)Math.Ceiling(MaxPitchAdjustingIndex * _unusedNodes.Count);
-        }
-
-        public int GetPossibleDiscreteValuesCount(int argumentIndex)
-        {
-            return _nodes.Count;
-        }
-
-        public INode GetUpperBound(int argumentIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsArgumentDiscrete(int argumentIndex)
-        {
-            return true;
+            var neighborNode = _unusedNodes.Aggregate((first, second) =>
+                distanceProvider.GetWeight(first, node) < distanceProvider.GetWeight(second, node) ? first : second);
+            return neighborNode;
         }
 
         public bool IsArgumentValuePossible(INode argumentValue)
@@ -100,14 +72,13 @@ namespace MPK.Connect.Test.Service.HarmonySearch
             return _unusedNodes.Contains(argumentValue);
         }
 
-        public bool IsArgumentVariable(int argumentIndex)
-        {
-            return true;
-        }
-
         public void SaveArgumentValue(int argumentIndex, INode argumentValue)
         {
-            _unusedNodes.Remove(argumentValue);
+            if (!_unusedNodes.Remove(argumentValue))
+            {
+                throw new InvalidOperationException($"Node with id {argumentValue.Id} has been already used!");
+            }
+
             if (argumentIndex == _nodes.Count - 1)
             {
                 _unusedNodes = new List<INode>(_nodes);

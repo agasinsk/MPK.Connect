@@ -15,7 +15,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         public HarmonySearcherTest()
         {
             _objectiveFunction = new DoubleObjectiveFunction();
-            _harmonySearcher = new HarmonySearcher<double>(_objectiveFunction, new RandomGenerator());
+            _harmonySearcher = new HarmonySearcher<double>(_objectiveFunction, new BoundedRandom());
         }
 
         public void Dispose()
@@ -42,7 +42,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         {
             // Arrange
             var iterationIndex = 100;
-            var improvedHarmonySearcher = new HarmonySearcher<double>(_objectiveFunction, new RandomGenerator(), true);
+            var improvedHarmonySearcher = new HarmonySearcher<double>(_objectiveFunction, true);
             var expectedResult = DefaultMaxPitchAdjustmentRatio -
                                  (DefaultMaxPitchAdjustmentRatio - DefaultMinPitchAdjustmentRatio) * iterationIndex /
                                  DefaultMaxImprovisationCount;

@@ -7,16 +7,16 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Helpers
     [TestClass]
     public class RandomGeneratorTest : IDisposable
     {
-        private RandomGenerator _randomGenerator;
+        private BoundedRandom _boundedRandom;
 
         public RandomGeneratorTest()
         {
-            _randomGenerator = new RandomGenerator();
+            _boundedRandom = new BoundedRandom();
         }
 
         public void Dispose()
         {
-            _randomGenerator = null;
+            _boundedRandom = null;
         }
 
         [TestMethod]
@@ -27,7 +27,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Helpers
             const double bound = -9;
 
             //Act
-            var result = _randomGenerator.NextValue(origin, bound);
+            var result = _boundedRandom.NextValue(origin, bound);
 
             //Assert
             Assert.IsTrue(result >= origin);

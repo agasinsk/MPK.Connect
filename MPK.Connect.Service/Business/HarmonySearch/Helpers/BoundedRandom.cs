@@ -2,11 +2,11 @@
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 {
-    /// <inheritdoc cref="IRandomGenerator{T}"/>
+    /// <inheritdoc cref="IRandom"/>
     /// <summary>
     /// Random number generator with option to generate bounded values
     /// </summary>
-    public class RandomGenerator : Random, IRandomGenerator<double>
+    public class BoundedRandom : Random, IBoundedRandom
     {
         /// <summary>
         /// Generates a double number bounded by two values
