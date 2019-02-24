@@ -20,17 +20,17 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         public override Harmony<T> ImproviseHarmony()
         {
             var randomValue = Random.NextDouble();
-            var generationRule = EstablishArgumentGenerationRule(randomValue);
+            var generationRule = EstablishHarmonyGenerationRule(randomValue);
 
             switch (generationRule)
             {
-                case ArgumentGenerationRules.MemoryConsideration:
+                case HarmonyGenerationRules.MemoryConsideration:
                     return UseMemoryConsideration();
 
-                case ArgumentGenerationRules.PitchAdjustment:
+                case HarmonyGenerationRules.PitchAdjustment:
                     return UsePitchAdjustment();
 
-                case ArgumentGenerationRules.RandomChoosing:
+                case HarmonyGenerationRules.RandomChoosing:
                     return UseRandomChoosing();
 
                 default:
@@ -45,7 +45,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch
 
         private Harmony<T> UsePitchAdjustment()
         {
-            throw new NotImplementedException();
+            var harmonyFromMemory = HarmonyMemory.GetRandomHarmony();
+
+            var pitchAdjustedHarmony = Function.UsePitchAdjustment(harmonyFromMemory);
+
+            return pitchAdjustedHarmony;
         }
 
         private Harmony<T> UseRandomChoosing()

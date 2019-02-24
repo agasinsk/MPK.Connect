@@ -5,7 +5,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
 {
     public abstract class HarmonyGeneratorBase<T> : IHarmonyGenerator<T>
     {
-        protected HarmonyMemory<T> HarmonyMemory;
+        public HarmonyMemory<T> HarmonyMemory { get; set; }
         protected readonly IRandom Random;
         protected IObjectiveFunction<T> Function;
         public double HarmonyMemoryConsiderationRatio { get; set; }
@@ -24,22 +24,24 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             HarmonyMemory = harmonyMemory ?? throw new ArgumentNullException(nameof(harmonyMemory));
         }
 
-        public ArgumentGenerationRules EstablishArgumentGenerationRule(double probability)
+        public HarmonyGenerationRules EstablishHarmonyGenerationRule(double probability)
         {
             if (probability > HarmonyMemoryConsiderationRatio)
             {
-                return ArgumentGenerationRules.RandomChoosing;
+                return HarmonyGenerationRules.RandomChoosing;
             }
             if (probability <= HarmonyMemoryConsiderationRatio * PitchAdjustmentRatio)
             {
-                return ArgumentGenerationRules.PitchAdjustment;
+                return HarmonyGenerationRules.PitchAdjustment;
             }
-            return ArgumentGenerationRules.MemoryConsideration;
+
+            return HarmonyGenerationRules.MemoryConsideration;
         }
 
         public Harmony<T> GetHarmony(params T[] arguments)
         {
             var functionValue = Function.CalculateObjectiveValue(arguments);
+
             return new Harmony<T>(functionValue, arguments);
         }
 

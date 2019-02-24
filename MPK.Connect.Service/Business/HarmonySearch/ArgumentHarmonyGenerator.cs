@@ -1,41 +1,28 @@
 ﻿using System;
-using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 
 namespace MPK.Connect.Service.Business.HarmonySearch
 {
-    public abstract class ArgumentHarmonyGenerator<T> : IHarmonyGenerator<T>
+    public abstract class ArgumentHarmonyGenerator<T> : HarmonyGeneratorBase<T>, IHarmonyGenerator<T>
     {
-        public HarmonyMemory<T> HarmonyMemory;
-        protected readonly IRandom Random;
-        protected IArgumentObjectiveFunction<T> Function;
-        public double HarmonyMemoryConsiderationRatio { get; set; }
-        public double PitchAdjustmentRatio { get; set; }
+        protected new IArgumentObjectiveFunction<T> Function;
         protected int ArgumentsCount => Function.GetArgumentsCount();
 
-        protected ArgumentHarmonyGenerator(IArgumentObjectiveFunction<T> function,
-            HarmonyMemory<T> harmonyMemory,
-            double harmonyMemoryConsiderationRatio,
-            double pitchAdjustmentRatio)
+        protected ArgumentHarmonyGenerator(IArgumentObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
-            HarmonyMemoryConsiderationRatio = harmonyMemoryConsiderationRatio;
-            PitchAdjustmentRatio = pitchAdjustmentRatio;
-
-            Random = RandomFactory.GetInstance();
             Function = function ?? throw new ArgumentNullException(nameof(function));
-            HarmonyMemory = harmonyMemory ?? throw new ArgumentNullException(nameof(harmonyMemory));
         }
 
-        public ArgumentGenerationRules EstablishArgumentGenerationRule(double probability)
+        public HarmonyGenerationRules EstablishArgumentGenerationRule(double probability)
         {
             if (probability > HarmonyMemoryConsiderationRatio)
             {
-                return ArgumentGenerationRules.RandomChoosing;
+                return HarmonyGenerationRules.RandomChoosing;
             }
             if (probability <= HarmonyMemoryConsiderationRatio * PitchAdjustmentRatio)
             {
-                return ArgumentGenerationRules.PitchAdjustment;
+                return HarmonyGenerationRules.PitchAdjustment;
             }
-            return ArgumentGenerationRules.MemoryConsideration;
+            return HarmonyGenerationRules.MemoryConsideration;
         }
 
         public T[] GenerateRandomArguments()
@@ -50,7 +37,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             return randomArguments;
         }
 
-        public virtual Harmony<T> GenerateRandomHarmony()
+        public override Harmony<T> GenerateRandomHarmony()
         {
             var arguments = GenerateRandomArguments();
             return GetHarmony(arguments);
@@ -74,7 +61,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             return arguments;
         }
 
-        public virtual Harmony<T> ImproviseHarmony()
+        public override Harmony<T> ImproviseHarmony()
         {
             var improvisedArguments = ImproviseArguments();
             return GetHarmony(improvisedArguments);
@@ -104,13 +91,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch
 
             switch (generationRule)
             {
-                case ArgumentGenerationRules.MemoryConsideration:
+                case HarmonyGenerationRules.MemoryConsideration:
                     return UseMemoryConsideration(argumentIndex);
 
-                case ArgumentGenerationRules.PitchAdjustment:
+                case HarmonyGenerationRules.PitchAdjustment:
                     return UsePitchAdjustment(argumentIndex);
 
-                case ArgumentGenerationRules.RandomChoosing:
+                case HarmonyGenerationRules.RandomChoosing:
                     return UseRandomChoosing(argumentIndex);
 
                 default:

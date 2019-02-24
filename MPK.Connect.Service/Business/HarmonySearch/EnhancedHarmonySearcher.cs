@@ -35,12 +35,12 @@ namespace MPK.Connect.Service.Business.HarmonySearch
 
         /// <inheritdoc/>
         /// <summary>
-        /// Initializes a collection of sub-harmony memories with random solution
+        /// Initializes a collection of sub-harmony memories with random solutions
         /// </summary>
         public override void InitializeHarmonyMemory()
         {
-            var subHarmonyMemoriesCount = (int)Math.Ceiling((decimal)HarmonyMemory.MaxCapacity / 4);
             _subHarmonyMemories = new List<HarmonyMemory<T>>(4);
+            var subHarmonyMemoriesCount = (int)Math.Ceiling((decimal)HarmonyMemory.MaxCapacity / 4);
             for (var i = 0; i < _subHarmonyMemories.Capacity; i++)
             {
                 _subHarmonyMemories.Add(new HarmonyMemory<T>(subHarmonyMemoriesCount));

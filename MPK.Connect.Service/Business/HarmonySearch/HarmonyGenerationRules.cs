@@ -1,9 +1,9 @@
 ﻿namespace MPK.Connect.Service.Business.HarmonySearch
 {
     /// <summary>
-    /// Enumeration for argument generation rules
+    /// Enumeration for harmony generation rules
     /// </summary>
-    public enum ArgumentGenerationRules
+    public enum HarmonyGenerationRules
     {
         MemoryConsideration,
         PitchAdjustment,

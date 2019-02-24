@@ -50,7 +50,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             var result = _argumentHarmonyGenerator.EstablishArgumentGenerationRule(value);
 
             //Assert
-            Assert.AreEqual(ArgumentGenerationRules.MemoryConsideration, result);
+            Assert.AreEqual(HarmonyGenerationRules.MemoryConsideration, result);
         }
 
         [TestMethod]
@@ -63,7 +63,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             var result = _argumentHarmonyGenerator.EstablishArgumentGenerationRule(value);
 
             //Assert
-            Assert.AreEqual(ArgumentGenerationRules.PitchAdjustment, result);
+            Assert.AreEqual(HarmonyGenerationRules.PitchAdjustment, result);
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             var result = _argumentHarmonyGenerator.EstablishArgumentGenerationRule(value);
 
             //Assert
-            Assert.AreEqual(ArgumentGenerationRules.RandomChoosing, result);
+            Assert.AreEqual(HarmonyGenerationRules.RandomChoosing, result);
         }
 
         [TestMethod]
