@@ -1,15 +1,13 @@
-﻿using MPK.Connect.Service.Business.HarmonySearch.Helpers;
-using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
+﻿using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
 namespace MPK.Connect.Service.Business.HarmonySearch
 {
-    /// <inheritdoc/>
     /// <summary>
     /// Implements harmony search algorithm
     /// </summary>
     public class HarmonySearcher<T>
     {
-        private readonly IHarmonyGenerator<T> _harmonyGenerator;
+        protected readonly IHarmonyGenerator<T> HarmonyGenerator;
         public HarmonyMemory<T> HarmonyMemory { get; }
         public int ImprovisationCount { get; set; }
         public long MaxImprovisationCount { get; }
@@ -17,21 +15,20 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         public double MinPitchAdjustmentRatio { get; set; }
         public double PitchAdjustmentRatio { get; set; }
         public bool ShouldImprovePitchAdjustingScenario { get; }
-        public double HarmonyMemoryConsiderationRatio => _harmonyGenerator.HarmonyMemoryConsiderationRatio;
+        public double HarmonyMemoryConsiderationRatio => HarmonyGenerator.HarmonyMemoryConsiderationRatio;
 
         /// <summary>
         /// The constructor
         /// </summary>
         /// <param name="function">Function to optimize</param>
-        /// <param name="random">Random generator</param>
-        public HarmonySearcher(IObjectiveFunction<T> function, IRandom random = null)
+        public HarmonySearcher(IObjectiveFunction<T> function)
         {
             PitchAdjustmentRatio = DefaultPitchAdjustmentRatio;
             MaxImprovisationCount = DefaultMaxImprovisationCount;
             HarmonyMemory = new HarmonyMemory<T>(DefaultHarmonyMemorySize);
 
-            _harmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory,
-                DefaultHarmonyMemoryConsiderationRatio, PitchAdjustmentRatio, random);
+            HarmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory,
+                DefaultHarmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
         }
 
         /// <summary>
@@ -48,14 +45,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             PitchAdjustmentRatio = pitchAdjustmentRatio;
             HarmonyMemory = new HarmonyMemory<T>(harmonyMemorySize);
 
-            _harmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory, harmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
+            HarmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory, harmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
         }
 
         /// <summary>
         /// The constructor
         /// </summary>
         /// <param name="function">Function to optimize</param>
-        /// <param name="randomGenerator">Random generator</param>
         /// <param name="harmonyMemorySize">Harmony memory size</param>
         /// <param name="maxImprovisationCount">Maximum improvisation count</param>
         /// <param name="harmonyMemoryConsiderationRatio">Harmony Memory Consideration Ratio</param>
@@ -71,14 +67,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             MaxPitchAdjustmentRatio = maxPitchAdjustmentRatio;
             PitchAdjustmentRatio = GetCurrentPitchAdjustingRatio(0);
 
-            _harmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory, harmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
+            HarmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory, harmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
         }
 
         /// <summary>
         /// The constructor
         /// </summary>
         /// <param name="function">Function to optimize</param>
-        /// <param name="random">Random generator</param>
         /// <param name="harmonyMemorySize">Harmony memory size</param>
         /// <param name="maxImprovisationCount">Maximum improvisation count</param>
         /// <param name="harmonyMemoryConsiderationRatio">Harmony Memory Consideration Ratio</param>
@@ -93,7 +88,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             MaxPitchAdjustmentRatio = DefaultMaxPitchAdjustmentRatio;
             PitchAdjustmentRatio = GetCurrentPitchAdjustingRatio(0);
 
-            _harmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory, harmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
+            HarmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory, harmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
         }
 
         /// <summary>
@@ -114,7 +109,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             MaxPitchAdjustmentRatio = DefaultMaxPitchAdjustmentRatio;
             PitchAdjustmentRatio = GetCurrentPitchAdjustingRatio(0);
 
-            _harmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory, DefaultHarmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
+            HarmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory, DefaultHarmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
         }
 
         /// <summary>
@@ -135,11 +130,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         /// <summary>
         /// Initializes harmony memory with random solutions
         /// </summary>
-        public void InitializeHarmonyMemory()
+        public virtual void InitializeHarmonyMemory()
         {
             for (var i = 0; i < HarmonyMemory.MaxCapacity; i++)
             {
-                var randomSolution = _harmonyGenerator.GenerateRandomHarmony();
+                var randomSolution = HarmonyGenerator.GenerateRandomHarmony();
                 HarmonyMemory.Add(randomSolution);
             }
         }
@@ -147,7 +142,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         /// <summary>
         /// Looks for optimal solution of a function
         /// </summary>
-        public Harmony<T> SearchForHarmony()
+        public virtual Harmony<T> SearchForHarmony()
         {
             InitializeHarmonyMemory();
 
@@ -157,10 +152,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch
                 var worstHarmony = HarmonyMemory.WorstHarmony;
                 if (ShouldImprovePitchAdjustingScenario)
                 {
-                    _harmonyGenerator.PitchAdjustmentRatio = GetCurrentPitchAdjustingRatio(ImprovisationCount);
+                    HarmonyGenerator.PitchAdjustmentRatio = GetCurrentPitchAdjustingRatio(ImprovisationCount);
                 }
 
-                var improvisedHarmony = _harmonyGenerator.ImproviseHarmony();
+                var improvisedHarmony = HarmonyGenerator.ImproviseHarmony();
                 if (improvisedHarmony.IsBetterThan(worstHarmony) && !HarmonyMemory.Contains(improvisedHarmony))
                 {
                     HarmonyMemory.SwapWithWorstHarmony(improvisedHarmony);
@@ -173,7 +168,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         /// <summary>
         /// Checks if algorithm should continue working
         /// </summary>
-        private bool SearchingShouldContinue()
+        protected bool SearchingShouldContinue()
         {
             return ImprovisationCount < MaxImprovisationCount;
         }

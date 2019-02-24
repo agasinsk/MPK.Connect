@@ -106,6 +106,16 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         }
 
         /// <summary>
+        /// Gets random harmony from memory
+        /// </summary>
+        /// <returns>Random harmony from memory</returns>
+        public Harmony<T> GetRandomHarmony()
+        {
+            var nextIndex = _random.Next(_harmonies.Count);
+            return _harmonies.ElementAt(nextIndex);
+        }
+
+        /// <summary>
         /// Swaps new harmony with the current worst harmony
         /// </summary>
         /// <param name="harmony">Harmony to be placed into memory</param>

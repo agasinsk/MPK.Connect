@@ -2,11 +2,11 @@
 
 namespace MPK.Connect.Service.Business.HarmonySearch
 {
-    public class ContinuousHarmonyGenerator<T> : HarmonyGeneratorBase<T>
+    public class ContinuousArgumentHarmonyGenerator<T> : ArgumentHarmonyGenerator<T>
     {
         protected new IContinuousObjectiveFunction<T> Function;
 
-        public ContinuousHarmonyGenerator(IContinuousObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
+        public ContinuousArgumentHarmonyGenerator(IContinuousObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));
         }

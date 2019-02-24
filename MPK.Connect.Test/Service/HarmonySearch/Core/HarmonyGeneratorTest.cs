@@ -8,21 +8,21 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
     [TestClass]
     public class HarmonyGeneratorTest : IDisposable
     {
-        private readonly DoubleObjectiveFunction _function;
-        private ContinuousHarmonyGenerator<double> _harmonyGenerator;
+        private readonly DoubleArgumentObjectiveFunction _function;
+        private ContinuousArgumentHarmonyGenerator<double> _argumentHarmonyGenerator;
 
         public HarmonyGeneratorTest()
         {
             var harmonyMemory = new HarmonyMemory<double>(DefaultHarmonyMemorySize);
 
-            _function = new DoubleObjectiveFunction();
-            _harmonyGenerator = new ContinuousHarmonyGenerator<double>(_function, harmonyMemory, DefaultHarmonyMemoryConsiderationRatio, DefaultPitchAdjustmentRatio);
+            _function = new DoubleArgumentObjectiveFunction();
+            _argumentHarmonyGenerator = new ContinuousArgumentHarmonyGenerator<double>(_function, harmonyMemory, DefaultHarmonyMemoryConsiderationRatio, DefaultPitchAdjustmentRatio);
         }
 
         [TestCleanup]
         public void Dispose()
         {
-            _harmonyGenerator = null;
+            _argumentHarmonyGenerator = null;
         }
 
         [TestMethod]
@@ -34,7 +34,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             var expectedValue = _function.CalculateObjectiveValue(x1, x2);
 
             //Act
-            var result = _harmonyGenerator.GetHarmony(x1, x2);
+            var result = _argumentHarmonyGenerator.GetHarmony(x1, x2);
 
             //Assert
             Assert.AreEqual(expectedValue, result.ObjectiveValue);
@@ -47,7 +47,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             var value = DefaultHarmonyMemoryConsiderationRatio * (1 - DefaultPitchAdjustmentRatio);
 
             //Act
-            var result = _harmonyGenerator.EstablishArgumentGenerationRule(value);
+            var result = _argumentHarmonyGenerator.EstablishArgumentGenerationRule(value);
 
             //Assert
             Assert.AreEqual(ArgumentGenerationRules.MemoryConsideration, result);
@@ -60,7 +60,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             const double value = DefaultHarmonyMemoryConsiderationRatio * DefaultPitchAdjustmentRatio - 0.01;
 
             //Act
-            var result = _harmonyGenerator.EstablishArgumentGenerationRule(value);
+            var result = _argumentHarmonyGenerator.EstablishArgumentGenerationRule(value);
 
             //Assert
             Assert.AreEqual(ArgumentGenerationRules.PitchAdjustment, result);
@@ -73,7 +73,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             const double value = 0.96;
 
             //Act
-            var result = _harmonyGenerator.EstablishArgumentGenerationRule(value);
+            var result = _argumentHarmonyGenerator.EstablishArgumentGenerationRule(value);
 
             //Assert
             Assert.AreEqual(ArgumentGenerationRules.RandomChoosing, result);
@@ -85,7 +85,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             //Arrange
 
             //Act
-            var result = _harmonyGenerator.GenerateRandomArguments();
+            var result = _argumentHarmonyGenerator.GenerateRandomArguments();
 
             //Assert
             Assert.AreEqual(_function.GetArgumentsCount(), result.Length);
@@ -99,11 +99,11 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             //Arrange
 
             //Act
-            var result = _harmonyGenerator.GenerateRandomHarmony();
+            var result = _argumentHarmonyGenerator.GenerateRandomHarmony();
 
             //Assert
             Assert.AreEqual(_function.GetArgumentsCount(), result.Arguments.Length);
-            Assert.AreEqual(_harmonyGenerator.GetHarmony(result.Arguments).ObjectiveValue, result.ObjectiveValue);
+            Assert.AreEqual(_argumentHarmonyGenerator.GetHarmony(result.Arguments).ObjectiveValue, result.ObjectiveValue);
             Assert.IsTrue(_function.IsWithinBounds(result.Arguments[0], 0));
             Assert.IsTrue(_function.IsWithinBounds(result.Arguments[1], 1));
         }
@@ -113,15 +113,15 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         {
             //Arrange
             var harmonyMemory = new HarmonyMemory<double>(3);
-            _harmonyGenerator.HarmonyMemory = harmonyMemory;
+            _argumentHarmonyGenerator.HarmonyMemory = harmonyMemory;
             for (var i = 0; i < harmonyMemory.MaxCapacity; i++)
             {
-                var randomSolution = _harmonyGenerator.GenerateRandomHarmony();
+                var randomSolution = _argumentHarmonyGenerator.GenerateRandomHarmony();
                 harmonyMemory.Add(randomSolution);
             }
 
             //Act
-            var result = _harmonyGenerator.ImproviseArguments();
+            var result = _argumentHarmonyGenerator.ImproviseArguments();
 
             //Assert
             Assert.AreEqual(_function.GetArgumentsCount(), result.Length);
@@ -134,18 +134,18 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         {
             //Arrange
             var harmonyMemory = new HarmonyMemory<double>(3);
-            _harmonyGenerator.HarmonyMemory = harmonyMemory;
+            _argumentHarmonyGenerator.HarmonyMemory = harmonyMemory;
             for (var i = 0; i < harmonyMemory.MaxCapacity; i++)
             {
-                var randomSolution = _harmonyGenerator.GenerateRandomHarmony();
+                var randomSolution = _argumentHarmonyGenerator.GenerateRandomHarmony();
                 harmonyMemory.Add(randomSolution);
             }
 
             //Act
-            var result = _harmonyGenerator.ImproviseHarmony();
+            var result = _argumentHarmonyGenerator.ImproviseHarmony();
 
             //Assert
-            Assert.AreEqual(_harmonyGenerator.GetHarmony(result.Arguments).ObjectiveValue, result.ObjectiveValue);
+            Assert.AreEqual(_argumentHarmonyGenerator.GetHarmony(result.Arguments).ObjectiveValue, result.ObjectiveValue);
             Assert.AreEqual(_function.GetArgumentsCount(), result.Arguments.Length);
         }
 
@@ -156,15 +156,15 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             var harmonyMemory = new HarmonyMemory<double>(3);
             for (var i = 0; i < harmonyMemory.MaxCapacity; i++)
             {
-                var randomSolution = _harmonyGenerator.GenerateRandomHarmony();
+                var randomSolution = _argumentHarmonyGenerator.GenerateRandomHarmony();
                 harmonyMemory.Add(randomSolution);
             }
 
-            _harmonyGenerator.HarmonyMemory = harmonyMemory;
+            _argumentHarmonyGenerator.HarmonyMemory = harmonyMemory;
             const int argumentIndex = 0;
 
             //Act
-            var result = _harmonyGenerator.UseMemoryConsideration(argumentIndex);
+            var result = _argumentHarmonyGenerator.UseMemoryConsideration(argumentIndex);
 
             //Assert
             Assert.IsTrue(harmonyMemory.GetArguments(argumentIndex).Contains(result));
@@ -175,16 +175,16 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         {
             //Arrange
             var harmonyMemory = new HarmonyMemory<double>(3);
-            _harmonyGenerator.HarmonyMemory = harmonyMemory;
+            _argumentHarmonyGenerator.HarmonyMemory = harmonyMemory;
             for (var i = 0; i < harmonyMemory.MaxCapacity; i++)
             {
-                var randomSolution = _harmonyGenerator.GenerateRandomHarmony();
+                var randomSolution = _argumentHarmonyGenerator.GenerateRandomHarmony();
                 harmonyMemory.Add(randomSolution);
             }
             const int argumentIndex = 0;
 
             //Act
-            var result = _harmonyGenerator.UsePitchAdjustment(argumentIndex);
+            var result = _argumentHarmonyGenerator.UsePitchAdjustment(argumentIndex);
 
             //Assert
             Assert.IsFalse(harmonyMemory.GetArguments(argumentIndex).Contains(result));

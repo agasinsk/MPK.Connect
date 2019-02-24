@@ -1,6 +1,6 @@
 ﻿namespace MPK.Connect.Service.Business.HarmonySearch
 {
-    public interface IDiscreteObjectiveFunction<T> : IObjectiveFunction<T>
+    public interface IDiscreteObjectiveFunction<T> : IArgumentObjectiveFunction<T>
     {
         int GetIndexOfDiscreteValue(int argumentIndex, T argumentValue);
 

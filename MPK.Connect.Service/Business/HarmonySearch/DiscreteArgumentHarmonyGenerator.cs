@@ -5,11 +5,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch
     /// <summary>
     /// Generates harmonies
     /// </summary>
-    public class DiscreteHarmonyGenerator<T> : HarmonyGeneratorBase<T>
+    public class DiscreteArgumentHarmonyGenerator<T> : ArgumentHarmonyGenerator<T>
     {
         protected new IDiscreteObjectiveFunction<T> Function;
 
-        public DiscreteHarmonyGenerator(IDiscreteObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
+        public DiscreteArgumentHarmonyGenerator(IDiscreteObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));
         }

@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MPK.Connect.Service.Business.HarmonySearch;
-using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
 namespace MPK.Connect.Test.Service.HarmonySearch.Core
@@ -9,13 +8,13 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
     [TestClass]
     public class HarmonySearcherTest : IDisposable
     {
-        private readonly DoubleObjectiveFunction _objectiveFunction;
+        private readonly DoubleArgumentObjectiveFunction _objectiveFunction;
         private HarmonySearcher<double> _harmonySearcher;
 
         public HarmonySearcherTest()
         {
-            _objectiveFunction = new DoubleObjectiveFunction();
-            _harmonySearcher = new HarmonySearcher<double>(_objectiveFunction, new BoundedRandom());
+            _objectiveFunction = new DoubleArgumentObjectiveFunction();
+            _harmonySearcher = new HarmonySearcher<double>(_objectiveFunction);
         }
 
         public void Dispose()

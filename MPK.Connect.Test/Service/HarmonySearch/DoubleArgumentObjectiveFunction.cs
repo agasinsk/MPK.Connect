@@ -5,12 +5,12 @@ using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 
 namespace MPK.Connect.Test.Service.HarmonySearch
 {
-    public class DoubleObjectiveFunction : IContinuousObjectiveFunction<double>
+    public class DoubleArgumentObjectiveFunction : IContinuousObjectiveFunction<double>
     {
         private readonly List<ArgumentLimit> _argumentLimits;
         private readonly IBoundedRandom _random;
 
-        public DoubleObjectiveFunction()
+        public DoubleArgumentObjectiveFunction()
         {
             _random = RandomFactory.GetInstance();
             _argumentLimits = new List<ArgumentLimit>

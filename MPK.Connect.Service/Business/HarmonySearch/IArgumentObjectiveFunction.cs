@@ -1,6 +1,6 @@
 ﻿namespace MPK.Connect.Service.Business.HarmonySearch
 {
-    public interface IContinuousObjectiveFunction<T> : IArgumentObjectiveFunction<T>
+    public interface IArgumentObjectiveFunction<T> : IObjectiveFunction<T>
     {
         /// <summary>
         /// Returns the number of parameters used by the objective function.
@@ -19,14 +19,6 @@
         /// <param name="argumentIndex">Index of argument</param>
         /// <returns>Valid value of parameter</returns>
         T GetArgumentValue(int argumentIndex);
-
-        T GetLowerBound(int argumentIndex);
-
-        T GetPitchDownAdjustedValue(int argumentIndex, T existingValue);
-
-        T GetPitchUpAdjustedValue(int argumentIndex, T existingValue);
-
-        T GetUpperBound(int argumentIndex);
 
         /// <summary>
         /// Check if the argument value is possible to be used
