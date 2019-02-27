@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MPK.Connect.Service.Business.HarmonySearch;
+using MPK.Connect.Service.Business.HarmonySearch.Core;
 using TspLibNet.Graph.Nodes;
 
 namespace MPK.Connect.Test.Service.HarmonySearch.Core

@@ -1,6 +1,8 @@
-﻿using MPK.Connect.Service.Business.HarmonySearch.Helpers;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Core;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 
-namespace MPK.Connect.Service.Business.HarmonySearch
+namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     public class HarmonyGeneratorFactory
     {
@@ -17,7 +19,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
                     return new DiscreteArgumentHarmonyGenerator<T>(discreteObjectiveFunction, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
 
                 case IGeneralObjectiveFunction<T> generalObjectiveFunction:
-                    return new GeneralArgumentHarmonyGenerator<T>(generalObjectiveFunction, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
+                    return new GeneralHarmonyGenerator<T>(generalObjectiveFunction, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
 
                 default:
                     return null;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.Service.Business.HarmonySearch;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 using TspLibNet;
 using TspLibNet.Graph.Nodes;

@@ -1,4 +1,6 @@
-﻿namespace MPK.Connect.Service.Business.HarmonySearch
+﻿using MPK.Connect.Service.Business.HarmonySearch.Core;
+
+namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {
     public interface IGeneralObjectiveFunction<T> : IObjectiveFunction<T>
     {

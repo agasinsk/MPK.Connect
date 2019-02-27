@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Calendar : IdentifiableEntity<int>
+    public class Calendar : Identifiable<int>
     {
         [NotMapped]
         public override int Id => ServiceId;

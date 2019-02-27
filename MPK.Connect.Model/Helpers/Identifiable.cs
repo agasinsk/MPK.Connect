@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace MPK.Connect.Model.Helpers
 {
-    public abstract class IdentifiableEntity<T> : IIdentifiableEntity
+    public abstract class Identifiable<T> : IIdentifiable
     {
         public virtual T Id { get; set; }
 

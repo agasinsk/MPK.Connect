@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Agency : IdentifiableEntity<int>
+    public class Agency : Identifiable<int>
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]

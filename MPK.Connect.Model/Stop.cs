@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Stop : IdentifiableEntity<int>
+    public class Stop : Identifiable<int>
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]

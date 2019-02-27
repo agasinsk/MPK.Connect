@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Shape : IdentifiableEntity<string>
+    public class Shape : Identifiable<string>
     {
         [NotMapped]
         public override string Id => $"{ShapeId}:{PointSequence}";

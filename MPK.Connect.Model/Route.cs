@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MPK.Connect.Model
 {
-    public class Route : IdentifiableEntity<string>
+    public class Route : Identifiable<string>
     {
         [Required]
         public override string Id { get; set; }

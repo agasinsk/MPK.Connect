@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Transfer : IdentifiableEntity<string>
+    public class Transfer : Identifiable<string>
     {
         [NotMapped]
         public override string Id => $"{FromStopId}>{ToStopId}";

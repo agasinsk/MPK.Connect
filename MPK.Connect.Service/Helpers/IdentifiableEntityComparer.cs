@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace MPK.Connect.Service.Helpers
 {
-    public class IdentifiableEntityComparer<T> : IEqualityComparer<IdentifiableEntity<T>>
+    public class IdentifiableEntityComparer<T> : IEqualityComparer<Identifiable<T>>
     {
-        public bool Equals(IdentifiableEntity<T> x, IdentifiableEntity<T> y)
+        public bool Equals(Identifiable<T> x, Identifiable<T> y)
         {
             return x.Id.Equals(y.Id);
         }
 
-        public int GetHashCode(IdentifiableEntity<T> obj)
+        public int GetHashCode(Identifiable<T> obj)
         {
             return obj.Id.GetHashCode();
         }

@@ -1,8 +1,10 @@
 ﻿using System;
+using MPK.Connect.Service.Business.HarmonySearch.Core;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 
-namespace MPK.Connect.Service.Business.HarmonySearch
+namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
-    public abstract class ArgumentHarmonyGenerator<T> : HarmonyGeneratorBase<T>, IHarmonyGenerator<T>
+    public abstract class ArgumentHarmonyGenerator<T> : HarmonyGeneratorBase<T>
     {
         protected new IArgumentObjectiveFunction<T> Function;
         protected int ArgumentsCount => Function.GetArgumentsCount();

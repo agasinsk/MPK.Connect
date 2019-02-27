@@ -1,13 +1,15 @@
 ﻿using System;
+using MPK.Connect.Service.Business.HarmonySearch.Core;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 
-namespace MPK.Connect.Service.Business.HarmonySearch
+namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     public abstract class HarmonyGeneratorBase<T> : IHarmonyGenerator<T>
     {
-        public HarmonyMemory<T> HarmonyMemory { get; set; }
         protected readonly IRandom Random;
         protected IObjectiveFunction<T> Function;
+        public HarmonyMemory<T> HarmonyMemory { get; set; }
         public double HarmonyMemoryConsiderationRatio { get; set; }
         public double PitchAdjustmentRatio { get; set; }
 
@@ -38,6 +40,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             return HarmonyGenerationRules.MemoryConsideration;
         }
 
+        public abstract Harmony<T> GenerateRandomHarmony();
+
         public Harmony<T> GetHarmony(params T[] arguments)
         {
             var functionValue = Function.CalculateObjectiveValue(arguments);
@@ -45,7 +49,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch
             return new Harmony<T>(functionValue, arguments);
         }
 
-        public abstract Harmony<T> GenerateRandomHarmony();
         public abstract Harmony<T> ImproviseHarmony();
     }
 }

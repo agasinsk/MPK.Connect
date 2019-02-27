@@ -1,12 +1,14 @@
 ﻿using System;
+using MPK.Connect.Service.Business.HarmonySearch.Core;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 
-namespace MPK.Connect.Service.Business.HarmonySearch
+namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
-    public class GeneralArgumentHarmonyGenerator<T> : HarmonyGeneratorBase<T>
+    public class GeneralHarmonyGenerator<T> : HarmonyGeneratorBase<T>
     {
         protected new IGeneralObjectiveFunction<T> Function;
 
-        public GeneralArgumentHarmonyGenerator(IGeneralObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
+        public GeneralHarmonyGenerator(IGeneralObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
             Function = function ?? throw new ArgumentNullException(nameof(function));
         }

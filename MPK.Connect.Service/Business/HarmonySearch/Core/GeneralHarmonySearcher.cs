@@ -1,35 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MoreLinq;
-using MoreLinq.Extensions;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
-namespace MPK.Connect.Service.Business.HarmonySearch
+namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
-    public class EnhancedHarmonySearcher<T> : HarmonySearcher<T>
+    public class GeneralHarmonySearcher<T> : HarmonySearcher<T>
     {
         private readonly int _diversityAmount;
         private readonly int _diversityInjectionRate;
-        private readonly int _regroupRate;
         private List<HarmonyMemory<T>> _subHarmonyMemories;
+        private long RegroupRate => MaxImprovisationCount / 10;
 
-        public EnhancedHarmonySearcher(IObjectiveFunction<T> function) : base(function)
+        public GeneralHarmonySearcher(IObjectiveFunction<T> function) : base(function)
         {
         }
 
-        public EnhancedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
+        public GeneralHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize = DefaultHarmonyMemorySize, long maxImprovisationCount = DefaultMaxImprovisationCount, double harmonyMemoryConsiderationRatio = DefaultHarmonyMemoryConsiderationRatio, double pitchAdjustmentRatio = DefaultPitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
         }
 
-        public EnhancedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount, double harmonyMemoryConsiderationRatio, double minPitchAdjustmentRatio, double maxPitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, minPitchAdjustmentRatio, maxPitchAdjustmentRatio)
-        {
-        }
-
-        public EnhancedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount, double harmonyMemoryConsiderationRatio, bool shouldImprovePitchAdjustingScenario) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, shouldImprovePitchAdjustingScenario)
-        {
-        }
-
-        public EnhancedHarmonySearcher(IObjectiveFunction<T> function, bool shouldImprovePitchAdjustingScenario) : base(function, shouldImprovePitchAdjustingScenario)
+        public GeneralHarmonySearcher(IObjectiveFunction<T> function, bool shouldImprovePitchAdjustingScenario = false) : base(function, shouldImprovePitchAdjustingScenario)
         {
         }
 
@@ -67,19 +59,20 @@ namespace MPK.Connect.Service.Business.HarmonySearch
                 //    IntroduceDiversity(_diversityAmount);
                 //}
 
-                if (improvisationCount % _regroupRate == 0)
+                if (improvisationCount % RegroupRate == 0)
                 {
                     RegroupHarmonyMemories();
                 }
 
-                var worstHarmony = HarmonyMemory.WorstHarmony;
-                if (ShouldImprovePitchAdjustingScenario)
-                {
-                    HarmonyGenerator.PitchAdjustmentRatio = GetCurrentPitchAdjustingRatio(improvisationCount);
-                }
-
                 foreach (var subHarmonyMemory in _subHarmonyMemories)
                 {
+                    HarmonyGenerator.HarmonyMemory = subHarmonyMemory;
+
+                    var worstHarmony = subHarmonyMemory.WorstHarmony;
+                    if (ShouldImprovePitchAdjustingScenario)
+                    {
+                        HarmonyGenerator.PitchAdjustmentRatio = GetCurrentPitchAdjustingRatio(improvisationCount);
+                    }
                     var improvisedHarmony = HarmonyGenerator.ImproviseHarmony();
                     if (improvisedHarmony.IsBetterThan(worstHarmony) && !subHarmonyMemory.Contains(improvisedHarmony))
                     {
@@ -98,12 +91,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch
 
         private void IntroduceDiversity(int diversityAmount)
         {
-            throw new NotImplementedException();
         }
 
         private void RegroupHarmonyMemories()
         {
-            throw new NotImplementedException();
         }
     }
 }

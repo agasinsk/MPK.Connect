@@ -2,7 +2,7 @@
 
 namespace MPK.Connect.Model.Business
 {
-    public abstract class LocalizableEntity<T> : IdentifiableEntity<T>
+    public abstract class LocalizableEntity<T> : Identifiable<T>
     {
         public abstract double GetDistanceTo(LocalizableEntity<T> otherEntity);
 

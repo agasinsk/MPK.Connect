@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using MPK.Connect.Service.Business.HarmonySearch;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 
 namespace MPK.Connect.Test.Service.HarmonySearch

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 
-namespace MPK.Connect.Service.Business.HarmonySearch
+namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
     /// <inheritdoc/>
     /// <summary>

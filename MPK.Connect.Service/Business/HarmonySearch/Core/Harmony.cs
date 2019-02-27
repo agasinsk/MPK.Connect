@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MPK.Connect.Service.Business.HarmonySearch
+namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
     /// <inheritdoc/>
     /// <summary>
@@ -29,8 +29,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch
         /// <returns>Comparison result</returns>
         public int CompareTo(Harmony<T> otherHarmony)
         {
-            var objectiveValueComparison = ObjectiveValue.CompareTo(otherHarmony.ObjectiveValue);
-            return objectiveValueComparison;
+            return ObjectiveValue.CompareTo(otherHarmony.ObjectiveValue);
         }
 
         /// <summary>

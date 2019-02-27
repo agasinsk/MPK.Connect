@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Frequency : IdentifiableEntity<string>
+    public class Frequency : Identifiable<string>
     {
         [NotMapped]
         public override string Id => $"{TripId}:{HeadwaySecs}";

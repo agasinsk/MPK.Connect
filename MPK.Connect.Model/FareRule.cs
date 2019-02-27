@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class FareRule : IdentifiableEntity<string>
+    public class FareRule : Identifiable<string>
     {
         [NotMapped]
         public override string Id => FareId;

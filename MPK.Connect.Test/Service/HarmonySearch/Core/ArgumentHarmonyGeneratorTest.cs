@@ -1,17 +1,19 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MPK.Connect.Service.Business.HarmonySearch;
+using MPK.Connect.Service.Business.HarmonySearch.Core;
+using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
 namespace MPK.Connect.Test.Service.HarmonySearch.Core
 {
     [TestClass]
-    public class HarmonyGeneratorTest : IDisposable
+    public class ArgumentHarmonyGeneratorTest : IDisposable
     {
         private readonly DoubleArgumentObjectiveFunction _function;
         private ContinuousArgumentHarmonyGenerator<double> _argumentHarmonyGenerator;
 
-        public HarmonyGeneratorTest()
+        public ArgumentHarmonyGeneratorTest()
         {
             var harmonyMemory = new HarmonyMemory<double>(DefaultHarmonyMemorySize);
 

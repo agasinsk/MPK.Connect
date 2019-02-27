@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class FeedInfo : IdentifiableEntity<string>
+    public class FeedInfo : Identifiable<string>
     {
         [NotMapped]
         public override string Id => PublisherName;

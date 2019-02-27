@@ -1,4 +1,4 @@
-﻿namespace MPK.Connect.Service.Business.HarmonySearch
+﻿namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {
     public interface IObjectiveFunction<T>
     {

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace MPK.Connect.Model
 {
     [DistinctId]
-    public class ShapeBase : IdentifiableEntity<string>
+    public class ShapeBase : Identifiable<string>
     {
         [Required]
         public override string Id { get; set; }

@@ -1,20 +1,14 @@
-﻿using MPK.Connect.Model.Helpers;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MPK.Connect.Model.Helpers;
 
 namespace MPK.Connect.Model.Graph
 {
-    public class Graph<TId, T> : IEnumerable<T> where T : IdentifiableEntity<TId>
+    public class Graph<TId, T> : IEnumerable<T> where T : Identifiable<TId>
     {
         public Dictionary<TId, GraphNode<TId, T>> Nodes { get; }
         public Dictionary<TId, GraphNode<TId, T>>.KeyCollection Keys => Nodes.Keys;
-
-        public GraphNode<TId, T> this[TId key]
-        {
-            get => Nodes[key];
-            set => Nodes[key] = value;
-        }
 
         public Graph()
         {
@@ -32,19 +26,25 @@ namespace MPK.Connect.Model.Graph
             Nodes = nodes;
         }
 
+        public GraphNode<TId, T> this[TId key]
+        {
+            get => Nodes[key];
+            set => Nodes[key] = value;
+        }
+
         public void AddDirectedEdge(T source, T destination, double edgeCost = 0)
         {
             var sourceNode = Nodes[source.Id];
-            sourceNode?.Neighbors.Add(new GraphEdge<TId>(source.Id, destination.Id, edgeCost));
+            sourceNode?.Neighbors.Add(new GraphEdge<TId>(destination.Id, edgeCost));
         }
 
         public void AddEdge(T source, T destination, double edgeCost = 0)
         {
             var sourceNode = Nodes[source.Id];
-            sourceNode?.Neighbors.Add(new GraphEdge<TId>(source.Id, destination.Id, edgeCost));
+            sourceNode?.Neighbors.Add(new GraphEdge<TId>(destination.Id, edgeCost));
 
             var destinationNode = Nodes[destination.Id];
-            destinationNode?.Neighbors.Add(new GraphEdge<TId>(destination.Id, source.Id, edgeCost));
+            destinationNode?.Neighbors.Add(new GraphEdge<TId>(source.Id, edgeCost));
         }
 
         public void AddNode(GraphNode<TId, T> newNode)
@@ -78,14 +78,19 @@ namespace MPK.Connect.Model.Graph
             return Nodes.ContainsKey(value.Id);
         }
 
+        public IEnumerator<T> GetEnumerator()
+        {
+            return Nodes.Select(n => n.Value.Data).GetEnumerator();
+        }
+
         public IEnumerable<GraphNode<TId, T>> GetNeighbors(TId sourceId)
         {
             return Nodes[sourceId].Neighbors.Select(n => Nodes[n.DestinationId]).ToList();
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public IQueryable<GraphNode<TId, T>> GetNeighborsQueryable(TId sourceId)
         {
-            return Nodes.Select(n => n.Value.Data).GetEnumerator();
+            return Nodes[sourceId].Neighbors.Select(n => Nodes[n.DestinationId]).AsQueryable();
         }
 
         public bool Remove(T valueToRemove)

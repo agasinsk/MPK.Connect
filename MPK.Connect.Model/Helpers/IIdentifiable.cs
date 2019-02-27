@@ -3,9 +3,10 @@ using System.Reflection;
 
 namespace MPK.Connect.Model.Helpers
 {
-    public interface IIdentifiableEntity
+    public interface IIdentifiable
     {
         List<PropertyInfo> GetRequiredProperties();
+
         bool HasDistinctId();
     }
 }

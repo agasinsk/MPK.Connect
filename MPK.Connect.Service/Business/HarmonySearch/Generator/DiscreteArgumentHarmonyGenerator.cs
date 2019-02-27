@@ -1,6 +1,8 @@
 ﻿using System;
+using MPK.Connect.Service.Business.HarmonySearch.Core;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 
-namespace MPK.Connect.Service.Business.HarmonySearch
+namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     /// <summary>
     /// Generates harmonies

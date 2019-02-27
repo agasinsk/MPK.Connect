@@ -3,7 +3,7 @@ using System;
 
 namespace MPK.Connect.Model.Business
 {
-    public class StopDto : IdentifiableEntity<int>
+    public class StopDto : Identifiable<int>
     {
         public string Code { get; set; }
         public double Latitude { get; set; }

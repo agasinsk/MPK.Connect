@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MPK.Connect.Model
 {
-    public class Trip : IdentifiableEntity<int>
+    public class Trip : Identifiable<int>
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]

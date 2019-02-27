@@ -2,7 +2,7 @@
 
 namespace MPK.Connect.DataAccess
 {
-    public class BaseRepository<T> : GenericRepository<T> where T : class, IIdentifiableEntity
+    public class BaseRepository<T> : GenericRepository<T> where T : class, IIdentifiable
     {
         public BaseRepository(IMpkContext context) : base(context)
         {

@@ -3,7 +3,7 @@ using MPK.Connect.Model.Helpers;
 
 namespace MPK.Connect.Model.Graph
 {
-    public class GraphNode<TId, T> : IdentifiableEntity<TId> where T : IdentifiableEntity<TId>
+    public class GraphNode<TId, T> : Identifiable<TId> where T : Identifiable<TId>
     {
         public ICollection<GraphEdge<TId>> Neighbors { get; set; }
         public T Data { get; set; }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MPK.Connect.Model
 {
-    public class FareAttribute : IdentifiableEntity<string>
+    public class FareAttribute : Identifiable<string>
     {
         public override string Id => FareId;
 
