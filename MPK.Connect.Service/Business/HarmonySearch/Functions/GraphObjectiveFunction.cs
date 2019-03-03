@@ -11,17 +11,17 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {
     public class GraphObjectiveFunction : IGeneralObjectiveFunction<StopTimeInfo>
     {
-        private readonly Location _destination;
         private readonly Dictionary<int, int> _distancesToDestinationStop;
         private readonly Graph<int, StopTimeInfo> _graph;
         private readonly StopDto _referentialDestinationStop;
-        private readonly Location _source;
         private readonly List<GraphNode<int, StopTimeInfo>> _sourceNodes;
+        public Location Destination { get; }
+        public Location Source { get; }
 
         public GraphObjectiveFunction(Graph<int, StopTimeInfo> graph, Location source, Location destination)
         {
-            _source = source ?? throw new ArgumentNullException(nameof(source));
-            _destination = destination ?? throw new ArgumentNullException(nameof(destination));
+            Source = source ?? throw new ArgumentNullException(nameof(source));
+            Destination = destination ?? throw new ArgumentNullException(nameof(destination));
 
             _graph = graph ?? throw new ArgumentNullException(nameof(graph));
 
@@ -37,7 +37,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             var transferCount = arguments.Select(s => s.Route).Distinct().Count();
 
             var additionalPenalty = 0d;
-            if (arguments.Last().StopDto.Name.TrimToLower() != _destination.Name.TrimToLower())
+            if (arguments.Last().StopDto.Name.TrimToLower() != Destination.Name.TrimToLower())
             {
                 // TODO: define cost function with penalties(!)
                 additionalPenalty = travelTime;
@@ -55,7 +55,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             };
             var currentNode = sourceNode;
 
-            while (currentNode.Data.StopDto.Name != _destination.Name)
+            while (currentNode.Data.StopDto.Name != Destination.Name)
             {
                 var randomNeighborNode = GetRandomNeighborNode(currentNode);
                 if (randomNeighborNode == null)
@@ -76,7 +76,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
             var graphNode = _graph[randomArgumentWithIndex.Value.Id];
 
-            var pitchAdjustedValue = GetRandomNeighborNodeCloserToDestination(graphNode);
+            var pitchAdjustedValue = GetRandomNeighborNode(graphNode);
             if (pitchAdjustedValue != null)
             {
                 harmony.Arguments[randomArgumentWithIndex.Key] = pitchAdjustedValue.Data;
@@ -153,14 +153,14 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
         private StopDto GetReferenceDestinationStop()
         {
-            return _graph.Nodes.Values.First(s => s.Data.StopDto.Name.TrimToLower() == _destination.Name.TrimToLower()).Data.StopDto;
+            return _graph.Nodes.Values.First(s => s.Data.StopDto.Name.TrimToLower() == Destination.Name.TrimToLower()).Data.StopDto;
         }
 
         private List<GraphNode<int, StopTimeInfo>> GetSourceNodes()
         {
             // Get source stops that have the same name
             var sourceStopTimesGroupedByStop = _graph.Nodes.Values
-                .Where(s => s.Data.StopDto.Name.TrimToLower() == _source.Name.TrimToLower())
+                .Where(s => s.Data.StopDto.Name.TrimToLower() == Source.Name.TrimToLower())
                 .GroupBy(s => s.Data.StopDto)
                 .ToDictionary(k => k.Key, g => g.GroupBy(st => st.Data.Route)
                     .Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First().Id).ToList());
@@ -176,7 +176,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
                 var neighborStops = stopWithTimes.Value
                     .SelectMany(stopTimeInfoId => _graph.GetNeighborsQueryable(stopTimeInfoId)
                         .Select(n => n.Data.StopDto)
-                        .Where(s => s.Name.TrimToLower() != _source.Name.TrimToLower()))
+                        .Where(s => s.Name.TrimToLower() != Source.Name.TrimToLower()))
                     .Distinct()
                     .ToList();
 

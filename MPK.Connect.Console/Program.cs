@@ -7,13 +7,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
-using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
 using MPK.Connect.Service.Business.Graph;
-using MPK.Connect.Service.Business.HarmonySearch.Core;
-using MPK.Connect.Service.Business.HarmonySearch.Functions;
-using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
+using MPK.Connect.Service.Experiment;
+using MPK.Connect.Service.Export;
 
 namespace MPK.Connect.Console
 {
@@ -63,6 +61,9 @@ namespace MPK.Connect.Console
 
             containerBuilder.Populate(services);
             containerBuilder.RegisterType(typeof(SimpleMpkContext)).As<IMpkContext>();
+            containerBuilder.RegisterType<ActionTimer>().AsImplementedInterfaces();
+            containerBuilder.RegisterType<ExporterService>().AsImplementedInterfaces();
+            containerBuilder.RegisterType<HarmonySearchAutomaticTester>().AsSelf();
 
             Container = containerBuilder.Build();
         }
@@ -80,12 +81,11 @@ namespace MPK.Connect.Console
                 var graphBuilder = scope.Resolve<IGraphBuilder>();
                 var graph = graphBuilder.GetGraph(DateTime.Now);
 
-                var source = new Location("Galeria Dominikańska");
-                var destination = new Location("Kwiska");
+                var source = new Location("Kwiska");
+                var destination = new Location("Świdnicka");
 
-                var graphObjectiveFunction = new GraphObjectiveFunction(graph, source, destination);
-                var harmonySearcher = new GeneralHarmonySearcher<StopTimeInfo>(graphObjectiveFunction, 60, 5000, DefaultHarmonyMemoryConsiderationRatio, true);
-                var bestHarmony = harmonySearcher.SearchForHarmony();
+                var automaticTester = scope.Resolve<HarmonySearchAutomaticTester>();
+                automaticTester.RunTests(graph, source, destination);
             }
         }
     }

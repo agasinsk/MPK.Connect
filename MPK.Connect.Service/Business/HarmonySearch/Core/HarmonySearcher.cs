@@ -167,6 +167,17 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             return HarmonyMemory.BestHarmony;
         }
 
+        public override string ToString()
+        {
+            return $"{nameof(HarmonyMemoryConsiderationRatio)}: {HarmonyMemoryConsiderationRatio}\n" +
+                   $"{nameof(MaxImprovisationCount)}: {MaxImprovisationCount}\n" +
+                   $"{nameof(HarmonyMemory.MaxCapacity)}: {HarmonyMemory.MaxCapacity}\n" +
+                   $"{nameof(ShouldImprovePitchAdjustingScenario)}: {ShouldImprovePitchAdjustingScenario}\n" +
+                   $"{nameof(PitchAdjustmentRatio)}: {PitchAdjustmentRatio}\n" +
+                   $"{nameof(MinPitchAdjustmentRatio)}: {MinPitchAdjustmentRatio}\n" +
+                   $"{nameof(MaxPitchAdjustmentRatio)}: {MaxPitchAdjustmentRatio}";
+        }
+
         /// <summary>
         /// Checks if algorithm should continue working
         /// </summary>

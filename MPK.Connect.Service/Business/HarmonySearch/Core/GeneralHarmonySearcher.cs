@@ -21,10 +21,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         {
         }
 
-        public GeneralHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize = DefaultHarmonyMemorySize, long maxImprovisationCount = DefaultMaxImprovisationCount, double harmonyMemoryConsiderationRatio = DefaultHarmonyMemoryConsiderationRatio, bool shouldImprovePitchAdjustingScenario = false) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, shouldImprovePitchAdjustingScenario)
-        {
-        }
-
         /// <inheritdoc/>
         /// <summary>
         /// Initializes a collection of sub-harmony memories with random solutions

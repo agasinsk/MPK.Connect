@@ -31,5 +31,10 @@ namespace MPK.Connect.Model.Business.TravelPlan
             Longitude = longitude;
             Name = name ?? throw new ArgumentNullException(nameof(name));
         }
+
+        public override string ToString()
+        {
+            return $"{Name}, {Latitude.ToString() ?? string.Empty}, {Longitude.ToString() ?? string.Empty}";
+        }
     }
 }

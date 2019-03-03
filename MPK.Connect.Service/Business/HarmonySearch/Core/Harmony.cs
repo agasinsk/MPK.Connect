@@ -42,6 +42,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             return ObjectiveValue < otherHarmony.ObjectiveValue;
         }
 
+        public override string ToString()
+        {
+            return $"{nameof(ObjectiveValue)}: {ObjectiveValue}";
+        }
+
         /// <summary>
         /// Gets argument by index
         /// </summary>
