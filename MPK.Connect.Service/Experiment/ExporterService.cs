@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.IO;
 using OfficeOpenXml;
 using OfficeOpenXml.Table;
@@ -7,8 +8,14 @@ namespace MPK.Connect.Service.Experiment
 {
     public class ExporterService : IExporterService
     {
-        private const string DefaultFileName = "../../../HarmonySearchTestResults.xlsx";
+        private const string DefaultFileName = "../../../results/HarmonySearchTestResults";
+
         private const string HarmonySearchSheetName = "Harmony search";
+
+        public ExporterService()
+        {
+            Directory.CreateDirectory("../../../results/");
+        }
 
         public void ExportToExcel(DataTable data, DataTable solutionDataTable, string fileName)
         {
@@ -22,8 +29,8 @@ namespace MPK.Connect.Service.Experiment
 
                 excelWorksheet.Cells.AutoFitColumns();
 
-                //Save the new workbook. We haven't specified the filename so use the Save as method.
-                excelPackage.SaveAs(new FileInfo(string.IsNullOrEmpty(fileName) ? DefaultFileName : fileName));
+                var excelFilename = string.IsNullOrEmpty(fileName) ? DefaultFileName : fileName;
+                excelPackage.SaveAs(new FileInfo($"{excelFilename}_{DateTime.Now:ddMMyyyy_HHmmsss}.xlsx"));
             }
         }
     }

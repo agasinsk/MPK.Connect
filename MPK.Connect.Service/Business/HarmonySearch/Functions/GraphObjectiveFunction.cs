@@ -72,11 +72,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
         public Harmony<StopTimeInfo> UsePitchAdjustment(Harmony<StopTimeInfo> harmony)
         {
-            var randomArgumentWithIndex = harmony.Arguments.GetRandomElementWithIndex();
+            var randomArgumentWithIndex = harmony.Arguments.Skip(1).ToArray().GetRandomElementWithIndex();
 
             var graphNode = _graph[randomArgumentWithIndex.Value.Id];
 
-            var pitchAdjustedValue = GetRandomNeighborNode(graphNode);
+            var pitchAdjustedValue = GetRandomNeighborNodeExceptExisting(graphNode, harmony.Arguments);
             if (pitchAdjustedValue != null)
             {
                 harmony.Arguments[randomArgumentWithIndex.Key] = pitchAdjustedValue.Data;
@@ -144,6 +144,29 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             var randomNeighbor = _graph[randomNeighborId];
 
             return randomNeighbor;
+        }
+
+        private GraphNode<int, StopTimeInfo> GetRandomNeighborNodeExceptExisting(GraphNode<int, StopTimeInfo> currentNode,
+                                    StopTimeInfo[] harmonyArguments)
+        {
+            var neighbors = currentNode.Neighbors;
+
+            if (!neighbors.Any())
+            {
+                return null;
+            }
+
+            var forbiddenIds = harmonyArguments.Select(a => a.Id);
+            var possibleNeighborIds = neighbors.Select(n => n.DestinationId).Except(forbiddenIds).ToArray();
+
+            if (!possibleNeighborIds.Any())
+            {
+                return null;
+            }
+
+            var randomNeighborId = possibleNeighborIds.GetRandomElement();
+
+            return _graph[randomNeighborId];
         }
 
         private GraphNode<int, StopTimeInfo> GetRandomSourceNode()

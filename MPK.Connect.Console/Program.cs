@@ -70,8 +70,6 @@ namespace MPK.Connect.Console
 
         private static void Main(string[] args)
         {
-            System.Console.WriteLine("Hello World!");
-
             // Create service collection
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
