@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
 using MPK.Connect.Model.Business;
@@ -25,19 +21,6 @@ namespace MPK.Connect.Console
     {
         public static IConfigurationRoot Configuration { get; set; }
         public static IContainer Container { get; set; }
-
-        public static IEnumerable<Type> GetAllTypes(Type genericType)
-        {
-            var platform = Environment.OSVersion.Platform.ToString();
-            var runtimeAssemblyNames = DependencyContext.Default.GetRuntimeAssemblyNames(platform);
-
-            return runtimeAssemblyNames
-                .Select(Assembly.Load)
-                .SelectMany(assembly => assembly.GetTypes()
-                    .Where(type =>
-                        type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericType) &&
-                        !type.IsAbstract));
-        }
 
         private static void ConfigureServices(IServiceCollection services)
         {

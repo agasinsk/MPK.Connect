@@ -12,6 +12,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
     public class GraphObjectiveFunction : IGeneralObjectiveFunction<StopTimeInfo>
     {
         private readonly Location _destination;
+        private readonly Dictionary<int, int> _distancesToDestinationStop;
         private readonly Graph<int, StopTimeInfo> _graph;
         private readonly StopDto _referentialDestinationStop;
         private readonly Location _source;
@@ -27,6 +28,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             // Set up source and destination nodes
             _referentialDestinationStop = GetReferenceDestinationStop();
             _sourceNodes = GetSourceNodes();
+            _distancesToDestinationStop = GetDistancesToDestinationStop();
         }
 
         public double CalculateObjectiveValue(params StopTimeInfo[] arguments)
@@ -34,11 +36,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             var travelTime = (arguments.Last().DepartureTime - arguments.First().DepartureTime).TotalMinutes;
             var transferCount = arguments.Select(s => s.Route).Distinct().Count();
 
-            var additionalPenalty = 0;
-            if (arguments.Last().StopDto.Name.TrimToLower() != _destination.Name)
+            var additionalPenalty = 0d;
+            if (arguments.Last().StopDto.Name.TrimToLower() != _destination.Name.TrimToLower())
             {
                 // TODO: define cost function with penalties(!)
-                additionalPenalty = int.MaxValue;
+                additionalPenalty = travelTime;
             }
 
             return travelTime + 10 * transferCount + additionalPenalty;
@@ -83,6 +85,16 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             return harmony;
         }
 
+        private Dictionary<int, int> GetDistancesToDestinationStop()
+        {
+            var distances = _graph.Nodes
+                .Select(n => n.Value.Data.StopDto)
+                .Distinct()
+                .ToDictionary(k => k.Id, k => k.GetDistanceTo(_referentialDestinationStop));
+
+            return distances;
+        }
+
         /// <summary>
         /// Gets a random neighbor of specified node
         /// </summary>
@@ -116,18 +128,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
             var distanceToDestination = currentNode.Data.StopDto.GetDistanceTo(_referentialDestinationStop);
 
-            var distances = _graph.GetNeighborsQueryable(currentNode.Id)
-                .GroupBy(s => s.Data.StopDto)
-                .ToDictionary(n => n.Key, n => n.Key.GetDistanceTo(_referentialDestinationStop));
-
-            var neighborStopWithNodeIds = _graph.GetNeighborsQueryable(currentNode.Id)
-                .GroupBy(s => s.Data.StopDto)
-                .Where(n => n.Key.GetDistanceTo(_referentialDestinationStop) < distanceToDestination)
-                .ToDictionary(k => k.Key, g => g.GroupBy(st => st.Data.Route)
-                    .Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First().Id));
-
-            var neighborsCloserToDestinationIds = neighborStopWithNodeIds
-                .SelectMany(x => x.Value)
+            var neighborsCloserToDestinationIds = _graph.GetNeighborsQueryable(currentNode.Id)
+                .Where(n => _distancesToDestinationStop[n.Data.StopId] < distanceToDestination)
+                .GroupBy(st => st.Data.Route)
+                .Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First().Id)
                 .ToList();
 
             var randomNeighborId = neighborsCloserToDestinationIds.GetRandomElement();

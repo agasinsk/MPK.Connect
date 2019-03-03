@@ -22,8 +22,7 @@ namespace MPK.Connect.Model.Graph
 
         public Graph(Dictionary<TId, T> nodeSet)
         {
-            var nodes = nodeSet.ToDictionary(k => k.Key, v => new GraphNode<TId, T>(v.Value));
-            Nodes = nodes;
+            Nodes = nodeSet.ToDictionary(k => k.Key, v => new GraphNode<TId, T>(v.Value));
         }
 
         public GraphNode<TId, T> this[TId key]

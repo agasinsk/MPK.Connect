@@ -61,6 +61,46 @@ namespace MPK.Connect.Service.Business.Graph
             return graph;
         }
 
+        public Graph<int, StopDto> GetStopGraph(DateTime startDate)
+        {
+            // Get stops matching the bounds
+            var dbStops = GetStops();
+
+            // Get calendar matching current day of the week
+            var currentCalendar = GetCalendar(startDate);
+
+            var graph = new Graph<int, StopDto>(dbStops);
+
+            var dbStopTimes = GetStopTimes(dbStops, currentCalendar.ServiceId, startDate);
+
+            CreateDirectedEdgesForStops(dbStopTimes, graph);
+
+            return graph;
+        }
+
+        private void CreateDirectedEdgesForStops(Dictionary<int, StopTimeInfo> dbStopTimes, Graph<int, StopDto> graph)
+        {
+            var stopTimesGroupedByTrips = dbStopTimes.Values
+                .GroupBy(st => st.TripId)
+                .ToDictionary(k => k.Key, v => v.OrderBy(st => st.StopSequence));
+
+            foreach (var tripStopTimes in stopTimesGroupedByTrips)
+            {
+                var tripTimes = tripStopTimes.Value.ToList();
+                for (var i = 0; i < tripTimes.Count - 1; i++)
+                {
+                    var source = tripTimes[i];
+                    var destination = tripTimes[i + 1];
+                    var cost = destination.DepartureTime - source.DepartureTime;
+
+                    if (graph[source.StopId].Neighbors.All(n => n.DestinationId != destination.StopId))
+                    {
+                        graph[source.StopId].Neighbors.Add(new GraphEdge<int>(destination.StopId, cost.TotalMinutes));
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Groups stop times by stop name and creates edges between the different stops of the same name
         /// </summary>
