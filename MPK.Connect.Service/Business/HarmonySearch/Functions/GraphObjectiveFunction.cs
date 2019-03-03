@@ -79,7 +79,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             var pitchAdjustedValue = GetRandomNeighborNodeExceptExisting(graphNode, harmony.Arguments);
             if (pitchAdjustedValue != null)
             {
-                harmony.Arguments[randomArgumentWithIndex.Key] = pitchAdjustedValue.Data;
+                harmony.Arguments[randomArgumentWithIndex.Key + 1] = pitchAdjustedValue.Data;
             }
 
             return harmony;
