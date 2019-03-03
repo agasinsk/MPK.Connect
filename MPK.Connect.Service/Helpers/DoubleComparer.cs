@@ -23,7 +23,10 @@ namespace MPK.Connect.Service.Helpers
 
         private static int CompareTo(this double x, double y, double precision = 0.0001)
         {
-            return Math.Abs(x - y).CompareTo(precision);
+            var xAsInt = (int)(x / precision);
+            var yAsInt = (int)(y / precision);
+
+            return xAsInt.CompareTo(yAsInt);
         }
     }
 

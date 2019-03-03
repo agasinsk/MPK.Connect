@@ -21,7 +21,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         {
         }
 
-        public GeneralHarmonySearcher(IObjectiveFunction<T> function, bool shouldImprovePitchAdjustingScenario = false) : base(function, shouldImprovePitchAdjustingScenario)
+        public GeneralHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize = DefaultHarmonyMemorySize, long maxImprovisationCount = DefaultMaxImprovisationCount, double harmonyMemoryConsiderationRatio = DefaultHarmonyMemoryConsiderationRatio, bool shouldImprovePitchAdjustingScenario = false) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, shouldImprovePitchAdjustingScenario)
         {
         }
 

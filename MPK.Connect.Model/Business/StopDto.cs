@@ -1,5 +1,5 @@
-﻿using MPK.Connect.Model.Helpers;
-using System;
+﻿using System;
+using MPK.Connect.Model.Helpers;
 
 namespace MPK.Connect.Model.Business
 {
@@ -10,16 +10,11 @@ namespace MPK.Connect.Model.Business
         public double Longitude { get; set; }
         public string Name { get; set; }
 
-        public override string ToString()
-        {
-            return $"{Name}:{Code}";
-        }
-
-        public double GetDistanceTo(StopDto destination)
+        public int GetDistanceTo(StopDto destination)
         {
             if (destination == null)
             {
-                return double.MaxValue;
+                return int.MaxValue;
             }
 
             if (destination == this)
@@ -30,9 +25,9 @@ namespace MPK.Connect.Model.Business
             return GetDistanceTo(destination.Latitude, destination.Longitude);
         }
 
-        public double GetDistanceTo(double destinationLatitude, double destinationLongitude)
+        public int GetDistanceTo(double destinationLatitude, double destinationLongitude)
         {
-            const double earthRadius = 6371; //km
+            const int earthRadius = 6371000; //km
 
             var φ1 = Latitude.ToRadians();
             var φ2 = destinationLatitude.ToRadians();
@@ -44,8 +39,13 @@ namespace MPK.Connect.Model.Business
                     Math.Sin(Δλ / 2) * Math.Sin(Δλ / 2);
             var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
 
-            var distance = earthRadius * c;
+            var distance = (int)(earthRadius * c);
             return distance;
+        }
+
+        public override string ToString()
+        {
+            return $"{Name}:{Code}";
         }
     }
 }

@@ -17,6 +17,7 @@ using MPK.Connect.Service.Business;
 using MPK.Connect.Service.Business.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
 namespace MPK.Connect.Console
 {
@@ -100,7 +101,7 @@ namespace MPK.Connect.Console
                 var destination = new Location("Kwiska");
 
                 var graphObjectiveFunction = new GraphObjectiveFunction(graph, source, destination);
-                var harmonySearcher = new GeneralHarmonySearcher<StopTimeInfo>(graphObjectiveFunction, 100, 5000);
+                var harmonySearcher = new GeneralHarmonySearcher<StopTimeInfo>(graphObjectiveFunction, 60, 5000, DefaultHarmonyMemoryConsiderationRatio, true);
                 var bestHarmony = harmonySearcher.SearchForHarmony();
             }
         }
