@@ -115,35 +115,28 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
         }
 
         /// <summary>
-        /// Gets a random neighbor of specified node
+        /// Gets a random neighbor of specified node except if it already exists in harmony
         /// </summary>
         /// <param name="currentNode">Node with neighbors</param>
+        /// <param name="harmonyArguments"></param>
         /// <returns>Random node neighbor</returns>
-        private GraphNode<int, StopTimeInfo> GetRandomNeighborNodeCloserToDestination(GraphNode<int, StopTimeInfo> currentNode)
+        private GraphNode<int, StopTimeInfo> GetRandomNeighborNodeCloserToDestination(GraphNode<int, StopTimeInfo> currentNode, StopTimeInfo[] harmonyArguments)
         {
             if (!currentNode.Neighbors.Any())
             {
                 return null;
             }
 
-            var distanceToDestination = currentNode.Data.StopDto.GetDistanceTo(_referentialDestinationStop);
+            var distanceToDestination = _distancesToDestinationStop[currentNode.Data.StopId];
 
-            var neighborsCloserToDestinationIds = _graph.GetNeighborsQueryable(currentNode.Id)
+            var forbiddenIds = harmonyArguments.Select(a => a.Id);
+
+            var neighborsCloserToDestination = _graph.GetNeighborsQueryable(currentNode.Id)
+                .Where(n => !forbiddenIds.Contains(n.Id))
                 .Where(n => _distancesToDestinationStop[n.Data.StopId] < distanceToDestination)
-                .GroupBy(st => st.Data.Route)
-                .Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First().Id)
                 .ToList();
 
-            var randomNeighborId = neighborsCloserToDestinationIds.GetRandomElement();
-
-            if (randomNeighborId == default(int))
-            {
-                return null;
-            }
-
-            var randomNeighbor = _graph[randomNeighborId];
-
-            return randomNeighbor;
+            return neighborsCloserToDestination.GetRandomElement();
         }
 
         private GraphNode<int, StopTimeInfo> GetRandomNeighborNodeExceptExisting(GraphNode<int, StopTimeInfo> currentNode,
