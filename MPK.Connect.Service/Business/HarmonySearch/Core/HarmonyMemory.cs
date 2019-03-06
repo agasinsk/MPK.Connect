@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
@@ -9,11 +10,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
     /// <summary>
     /// Stores best solutions for harmony search algorithm
     /// </summary>
-    public class HarmonyMemory<T> : IEnumerable<Harmony<T>>
+    public class HarmonyMemory<T> : ICollection<Harmony<T>>
     {
         private readonly BoundedSortedSet<Harmony<T>> _harmonies;
-        private readonly IRandom _random;
         public Harmony<T> BestHarmony => _harmonies.First();
+        public bool IsReadOnly => false;
         public int MaxCapacity => _harmonies.Capacity;
         public Harmony<T> WorstHarmony => _harmonies.Last();
         public int Count => _harmonies.Count;
@@ -22,11 +23,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// The constructor
         /// </summary>
         /// <param name="harmonyMemorySize">Size of harmony memory</param>
-        /// <param name="random">Random generator</param>
         public HarmonyMemory(int harmonyMemorySize)
         {
             _harmonies = new BoundedSortedSet<Harmony<T>>(harmonyMemorySize);
-            _random = RandomFactory.GetInstance();
         }
 
         /// <summary>
@@ -77,6 +76,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             return _harmonies.Contains(harmony);
         }
 
+        public void CopyTo(Harmony<T>[] array, int arrayIndex)
+        {
+            _harmonies.CopyTo(array, arrayIndex);
+        }
+
         public IEnumerable<Harmony<T>> GetAll()
         {
             return _harmonies.AsEnumerable();
@@ -89,9 +93,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// <returns></returns>
         public T GetArgumentFromRandomHarmony(int argumentIndex)
         {
-            var nextIndex = _random.Next(_harmonies.Count);
-            var randomArgument = _harmonies.ElementAt(nextIndex).GetArgument(argumentIndex);
-            return randomArgument;
+            return _harmonies.GetRandomElement().GetArgument(argumentIndex);
         }
 
         /// <summary>
@@ -110,14 +112,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             return _harmonies.GetEnumerator();
         }
 
-        /// <summary>
-        /// Gets random harmony from memory
-        /// </summary>
-        /// <returns>Random harmony from memory</returns>
-        public Harmony<T> GetRandomHarmony()
+        public bool Remove(Harmony<T> harmony)
         {
-            var nextIndex = _random.Next(_harmonies.Count);
-            return _harmonies.ElementAt(nextIndex);
+            return _harmonies.Remove(harmony);
         }
 
         /// <summary>
@@ -128,6 +125,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         {
             _harmonies.Remove(WorstHarmony);
             _harmonies.Add(harmony);
+        }
+
+        void ICollection<Harmony<T>>.Add(Harmony<T> harmony)
+        {
+            Add(harmony);
         }
 
         /// <inheritdoc/>

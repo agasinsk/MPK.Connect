@@ -75,6 +75,8 @@ namespace MPK.Connect.Service.Business.Graph
 
             CreateDirectedEdgesForStops(dbStopTimes, graph);
 
+            CreateDirectedEdgesForStopsWithTheSameName(dbStops, graph);
+
             return graph;
         }
 
@@ -95,7 +97,29 @@ namespace MPK.Connect.Service.Business.Graph
 
                     if (graph[source.StopId].Neighbors.All(n => n.DestinationId != destination.StopId))
                     {
-                        graph[source.StopId].Neighbors.Add(new GraphEdge<int>(destination.StopId, cost.TotalMinutes));
+                        graph.AddDirectedEdge(source.StopDto, destination.StopDto, cost.TotalMinutes);
+                    }
+                }
+            }
+        }
+
+        private void CreateDirectedEdgesForStopsWithTheSameName(Dictionary<int, StopDto> dbStops, Graph<int, StopDto> graph)
+        {
+            var stopsGroupedByName = dbStops.Values
+                .GroupBy(s => s.Name)
+                .ToDictionary(k => k.Key, v => v.ToList());
+
+            foreach (var stopNamePair in stopsGroupedByName)
+            {
+                var stopsWithTheSameName = stopNamePair.Value;
+                foreach (var stopDto in stopsWithTheSameName)
+                {
+                    foreach (var otherStopWithSameName in stopsWithTheSameName.Except(new List<StopDto> { stopDto }))
+                    {
+                        if (graph[stopDto.Id].Neighbors.All(n => n.DestinationId != otherStopWithSameName.Id))
+                        {
+                            graph.AddDirectedEdge(stopDto, otherStopWithSameName, 1d);
+                        }
                     }
                 }
             }

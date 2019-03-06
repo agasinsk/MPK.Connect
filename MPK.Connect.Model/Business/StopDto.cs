@@ -45,7 +45,7 @@ namespace MPK.Connect.Model.Business
 
         public override string ToString()
         {
-            return $"{Name}:{Code}";
+            return $"{Name}:{Id}";
         }
     }
 }

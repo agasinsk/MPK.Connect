@@ -7,18 +7,16 @@ using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchC
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
-    public class GeneralHarmonySearcher<T> : HarmonySearcher<T>
+    public class GroupedHarmonySearcher<T> : HarmonySearcher<T>
     {
-        private readonly int _diversityAmount;
-        private readonly int _diversityInjectionRate;
         private List<HarmonyMemory<T>> _subHarmonyMemories;
         private long RegroupRate => MaxImprovisationCount / 10;
 
-        public GeneralHarmonySearcher(IObjectiveFunction<T> function) : base(function)
+        public GroupedHarmonySearcher(IObjectiveFunction<T> function) : base(function)
         {
         }
 
-        public GeneralHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize = DefaultHarmonyMemorySize, long maxImprovisationCount = DefaultMaxImprovisationCount, double harmonyMemoryConsiderationRatio = DefaultHarmonyMemoryConsiderationRatio, double pitchAdjustmentRatio = DefaultPitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
+        public GroupedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize = DefaultHarmonyMemorySize, long maxImprovisationCount = DefaultMaxImprovisationCount, double harmonyMemoryConsiderationRatio = DefaultHarmonyMemoryConsiderationRatio, double pitchAdjustmentRatio = DefaultPitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
         }
 
@@ -51,12 +49,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
             for (var improvisationCount = 0; improvisationCount < MaxImprovisationCount; improvisationCount++)
             {
-                //if (improvisationCount % _diversityInjectionRate == 0)
-                //{
-                //    IntroduceDiversity(_diversityAmount);
-                //}
-
-                if (improvisationCount % RegroupRate == 0)
+                if (improvisationCount > 0 && improvisationCount % RegroupRate == 0)
                 {
                     RegroupHarmonyMemories();
                 }
@@ -81,15 +74,18 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             return GetBestHarmony();
         }
 
+        /// <summary>
+        /// Gets best harmony from sub Harmony memories
+        /// </summary>
+        /// <returns>Best harmony</returns>
         private Harmony<T> GetBestHarmony()
         {
             return _subHarmonyMemories.Select(x => x.BestHarmony).OrderByDescending(h => h.ObjectiveValue).First();
         }
 
-        private void IntroduceDiversity(int diversityAmount)
-        {
-        }
-
+        /// <summary>
+        /// Regroups sub Harmony Memories
+        /// </summary>
         private void RegroupHarmonyMemories()
         {
             var allSolutions = _subHarmonyMemories.SelectMany(h => h.GetAll()).ToList();

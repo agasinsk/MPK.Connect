@@ -97,7 +97,7 @@ namespace MPK.Connect.Console
                 var stopGraph = graphBuilder.GetStopGraph(DateTime.Now);
 
                 var graphObjectiveFunction = new StopGraphObjectiveFunction(stopGraph, source, destination);
-                var harmonySearcher = new GeneralHarmonySearcher<StopDto>(graphObjectiveFunction, 20, 5000);
+                var harmonySearcher = new GroupedHarmonySearcher<StopDto>(graphObjectiveFunction, 20, 5000);
 
                 automaticTester.RunTests(harmonySearcher, source, destination);
             }

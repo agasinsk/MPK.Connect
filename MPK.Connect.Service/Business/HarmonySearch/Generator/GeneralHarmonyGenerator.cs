@@ -1,6 +1,7 @@
 ﻿using System;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
@@ -42,12 +43,12 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
         public Harmony<T> UseMemoryConsideration()
         {
-            return HarmonyMemory.GetRandomHarmony();
+            return HarmonyMemory.GetRandomElement();
         }
 
         private Harmony<T> UsePitchAdjustment()
         {
-            var harmonyFromMemory = HarmonyMemory.GetRandomHarmony();
+            var harmonyFromMemory = HarmonyMemory.GetRandomElement();
 
             var pitchAdjustedHarmony = Function.UsePitchAdjustment(harmonyFromMemory);
 
