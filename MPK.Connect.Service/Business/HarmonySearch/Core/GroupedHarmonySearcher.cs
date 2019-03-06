@@ -89,13 +89,12 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// </summary>
         private void RegroupHarmonyMemories()
         {
-            var allSolutions = _subHarmonyMemories
+            var allSolutions = new List<Harmony<T>>(_subHarmonyMemories
                 .SelectMany(h => h.GetAll())
                 .GroupBy(h => h.ObjectiveValue)
-                .Select(g => g.First())
-                .ToList();
+                .Select(g => g.First()));
 
-            var distinctSolutionCount = allSolutions.Count;
+            // TODO: figure out how to handle the same arguments when comparing
 
             // TODO: investigate where the null solutions come from
             foreach (var subHarmonyMemory in _subHarmonyMemories)
@@ -105,20 +104,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                 for (var index = 0; index < subHarmonyMemory.MaxCapacity; index++)
                 {
                     var randomSolution = allSolutions.GetRandomElement();
-                    if (subHarmonyMemory.Add(randomSolution))
+                    if (subHarmonyMemory.Add(new Harmony<T>(randomSolution)))
                     {
                         allSolutions.Remove(randomSolution);
                     }
                 }
-            }
-
-            var missingHarmoniesCount = HarmonyMemory.MaxCapacity - distinctSolutionCount;
-            for (int i = 0; i < missingHarmoniesCount; i++)
-            {
-                var randomHarmony = HarmonyGenerator.GenerateRandomHarmony();
-
-                var subHarmonyMemory = _subHarmonyMemories.FirstOrDefault(hm => hm.Count < hm.MaxCapacity);
-                subHarmonyMemory?.Add(randomHarmony);
             }
         }
     }

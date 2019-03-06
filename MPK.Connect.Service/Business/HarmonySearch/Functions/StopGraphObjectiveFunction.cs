@@ -88,6 +88,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
                 harmony.Arguments[randomIndex] = pitchAdjustedValue.Data;
             }
 
+            harmony.ObjectiveValue = CalculateObjectiveValue(harmony.Arguments);
+
             return harmony;
         }
 

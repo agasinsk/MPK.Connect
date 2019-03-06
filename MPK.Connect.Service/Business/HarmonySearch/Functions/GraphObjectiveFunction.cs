@@ -33,15 +33,14 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
         public double CalculateObjectiveValue(params StopTimeInfo[] arguments)
         {
-            var travelTime = (arguments.Last().DepartureTime - arguments.First().DepartureTime).TotalMinutes;
-            var transferCount = arguments.Select(s => s.Route).Distinct().Count();
-
             var additionalPenalty = 0d;
             if (arguments.Last().StopDto.Name.TrimToLower() != Destination.Name.TrimToLower())
             {
-                // TODO: define cost function with penalties(!)
-                additionalPenalty = travelTime;
+                additionalPenalty = double.PositiveInfinity;
             }
+
+            var travelTime = (arguments.Last().DepartureTime - arguments.First().DepartureTime).TotalMinutes;
+            var transferCount = arguments.Select(s => s.Route).Distinct().Count();
 
             return travelTime + 10 * transferCount + additionalPenalty;
         }
@@ -219,16 +218,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
                 .ToList();
 
             return filteredSourceNodes;
-        }
-
-        /// <summary>
-        /// Gets maximum distance to destination
-        /// </summary>
-        /// <param name="stops"></param>
-        /// <returns></returns>
-        private double GetStraightLineDistanceToDestination(IEnumerable<StopDto> stops)
-        {
-            return stops.Select(s => s.GetDistanceTo(_referentialDestinationStop)).Max();
         }
     }
 }

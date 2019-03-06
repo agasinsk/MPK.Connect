@@ -4,12 +4,12 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
     /// <inheritdoc/>
     /// <summary>
-    /// Represents single problem harmony (arguments and corresponding function value)
+    /// Represents single harmony (arguments and corresponding function value)
     /// </summary>
 	public class Harmony<T> : IComparable<Harmony<T>>
     {
-        public readonly double ObjectiveValue;
         public T[] Arguments;
+        public double ObjectiveValue;
 
         /// <summary>
         /// The constructor
@@ -20,6 +20,18 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         {
             ObjectiveValue = objectiveValue;
             Arguments = arguments;
+        }
+
+        /// <summary>
+        /// The constructor
+        /// </summary>
+        /// <param name="otherHarmony">Other harmony</param>
+        public Harmony(Harmony<T> otherHarmony)
+        {
+            if (otherHarmony == null) throw new ArgumentNullException(nameof(otherHarmony));
+
+            ObjectiveValue = otherHarmony.ObjectiveValue;
+            Arguments = otherHarmony.Arguments;
         }
 
         /// <summary>

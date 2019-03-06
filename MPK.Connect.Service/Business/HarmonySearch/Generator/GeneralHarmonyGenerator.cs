@@ -29,8 +29,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
             switch (generationRule)
             {
                 case HarmonyGenerationRules.MemoryConsideration:
-                    var fromMemory = UseMemoryConsideration();
-                    return fromMemory;
+                    return UseMemoryConsideration();
 
                 case HarmonyGenerationRules.PitchAdjustment:
                     return UsePitchAdjustment();
