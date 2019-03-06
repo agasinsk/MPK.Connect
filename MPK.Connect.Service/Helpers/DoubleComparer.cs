@@ -6,7 +6,7 @@ namespace MPK.Connect.Service.Helpers
 {
     public static class DoubleExtensions
     {
-        public static bool Equals(this double x, double y, double precision = 0.0001)
+        public static bool AlmostEquals(this double x, double y, double precision = 0.0001)
         {
             return x.CompareTo(y, precision) == 0;
         }
@@ -23,10 +23,7 @@ namespace MPK.Connect.Service.Helpers
 
         private static int CompareTo(this double x, double y, double precision = 0.0001)
         {
-            var xAsInt = (int)(x / precision);
-            var yAsInt = (int)(y / precision);
-
-            return xAsInt.CompareTo(yAsInt);
+            return Math.Abs(x - y).CompareTo(precision);
         }
     }
 

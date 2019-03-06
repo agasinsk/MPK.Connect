@@ -8,8 +8,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
     /// </summary>
 	public class Harmony<T> : IComparable<Harmony<T>>
     {
+        public readonly double ObjectiveValue;
         public T[] Arguments;
-        public double ObjectiveValue;
 
         /// <summary>
         /// The constructor

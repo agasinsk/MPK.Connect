@@ -17,6 +17,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         public override Harmony<T> GenerateRandomHarmony()
         {
             var arguments = Function.GetRandomArguments();
+
             return GetHarmony(arguments);
         }
 
@@ -28,7 +29,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
             switch (generationRule)
             {
                 case HarmonyGenerationRules.MemoryConsideration:
-                    return UseMemoryConsideration();
+                    var fromMemory = UseMemoryConsideration();
+                    return fromMemory;
 
                 case HarmonyGenerationRules.PitchAdjustment:
                     return UsePitchAdjustment();
@@ -37,7 +39,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
                     return UseRandomChoosing();
 
                 default:
-                    return null;
+                    return new Harmony<T>(double.MaxValue);
             }
         }
 
@@ -48,7 +50,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
         private Harmony<T> UsePitchAdjustment()
         {
-            var harmonyFromMemory = HarmonyMemory.GetRandomElement();
+            var harmonyFromMemory = UseMemoryConsideration();
 
             var pitchAdjustedHarmony = Function.UsePitchAdjustment(harmonyFromMemory);
 

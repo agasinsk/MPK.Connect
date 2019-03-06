@@ -33,7 +33,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
         {
             if (arguments.Last().Name.TrimToLower() != Destination.Name.TrimToLower())
             {
-                return double.MaxValue;
+                return double.PositiveInfinity;
             }
 
             var graphEdges = _graph.GetEdges();
@@ -76,14 +76,16 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
         public Harmony<StopDto> UsePitchAdjustment(Harmony<StopDto> harmony)
         {
-            var randomArgumentWithIndex = harmony.Arguments.Skip(1).ToArray().GetRandomElementWithIndex();
+            var randomIndex = harmony.Arguments.GetRandomIndexMinimum(1);
 
-            var graphNode = _graph[randomArgumentWithIndex.Value.Id];
+            // Get the predecessor of randomly selected node
+            var predecessorIndex = harmony.Arguments[randomIndex - 1].Id;
+            var predecessorNode = _graph[predecessorIndex];
 
-            var pitchAdjustedValue = GetRandomNeighborNodeExceptExisting(graphNode, harmony.Arguments);
+            var pitchAdjustedValue = GetRandomNeighborNodeExceptExisting(predecessorNode, harmony.Arguments);
             if (pitchAdjustedValue != null)
             {
-                harmony.Arguments[randomArgumentWithIndex.Key + 1] = pitchAdjustedValue.Data;
+                harmony.Arguments[randomIndex] = pitchAdjustedValue.Data;
             }
 
             return harmony;

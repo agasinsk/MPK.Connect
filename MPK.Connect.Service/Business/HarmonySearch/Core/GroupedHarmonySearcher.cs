@@ -63,6 +63,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                     {
                         HarmonyGenerator.PitchAdjustmentRatio = GetCurrentPitchAdjustingRatio(improvisationCount);
                     }
+
                     var improvisedHarmony = HarmonyGenerator.ImproviseHarmony();
                     if (improvisedHarmony.IsBetterThan(worstHarmony) && !subHarmonyMemory.Contains(improvisedHarmony))
                     {
@@ -88,17 +89,36 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// </summary>
         private void RegroupHarmonyMemories()
         {
-            var allSolutions = _subHarmonyMemories.SelectMany(h => h.GetAll()).ToList();
-            _subHarmonyMemories.ForEach(h => h.Clear());
+            var allSolutions = _subHarmonyMemories
+                .SelectMany(h => h.GetAll())
+                .GroupBy(h => h.ObjectiveValue)
+                .Select(g => g.First())
+                .ToList();
 
+            var distinctSolutionCount = allSolutions.Count;
+
+            // TODO: investigate where the null solutions come from
             foreach (var subHarmonyMemory in _subHarmonyMemories)
             {
-                while (subHarmonyMemory.Count < subHarmonyMemory.MaxCapacity)
+                subHarmonyMemory.Clear();
+
+                for (var index = 0; index < subHarmonyMemory.MaxCapacity; index++)
                 {
                     var randomSolution = allSolutions.GetRandomElement();
-                    subHarmonyMemory.Add(randomSolution);
-                    allSolutions.Remove(randomSolution);
+                    if (subHarmonyMemory.Add(randomSolution))
+                    {
+                        allSolutions.Remove(randomSolution);
+                    }
                 }
+            }
+
+            var missingHarmoniesCount = HarmonyMemory.MaxCapacity - distinctSolutionCount;
+            for (int i = 0; i < missingHarmoniesCount; i++)
+            {
+                var randomHarmony = HarmonyGenerator.GenerateRandomHarmony();
+
+                var subHarmonyMemory = _subHarmonyMemories.FirstOrDefault(hm => hm.Count < hm.MaxCapacity);
+                subHarmonyMemory?.Add(randomHarmony);
             }
         }
     }

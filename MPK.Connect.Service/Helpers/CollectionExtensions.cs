@@ -20,5 +20,15 @@ namespace MPK.Connect.Service.Helpers
 
             return new KeyValuePair<int, T>(randomIndex, randomElement);
         }
+
+        public static int GetRandomIndex<T>(this ICollection<T> collection)
+        {
+            return RandomFactory.GetInstance().Next(0, collection.Count);
+        }
+
+        public static int GetRandomIndexMinimum<T>(this ICollection<T> collection, int startIndex)
+        {
+            return RandomFactory.GetInstance().Next(startIndex, collection.Count);
+        }
     }
 }
