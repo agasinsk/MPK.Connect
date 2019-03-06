@@ -7,9 +7,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
+using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
 using MPK.Connect.Service.Business.Graph;
+using MPK.Connect.Service.Business.HarmonySearch.Core;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Experiment;
 using MPK.Connect.Service.Export;
 
@@ -63,7 +66,7 @@ namespace MPK.Connect.Console
             containerBuilder.RegisterType(typeof(SimpleMpkContext)).As<IMpkContext>();
             containerBuilder.RegisterType<ActionTimer>().AsImplementedInterfaces();
             containerBuilder.RegisterType<ExporterService>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<HarmonySearchAutomaticTester>().AsSelf();
+            containerBuilder.RegisterGeneric(typeof(HarmonySearchAutomaticTester<>)).AsSelf();
 
             Container = containerBuilder.Build();
         }
@@ -77,13 +80,26 @@ namespace MPK.Connect.Console
             using (var scope = Container.BeginLifetimeScope())
             {
                 var graphBuilder = scope.Resolve<IGraphBuilder>();
-                var graph = graphBuilder.GetGraph(DateTime.Now);
 
                 var source = new Location("Kwiska");
                 var destination = new Location("Świdnicka");
 
-                var automaticTester = scope.Resolve<HarmonySearchAutomaticTester>();
-                automaticTester.RunTests(graph, source, destination);
+                //var graph = graphBuilder.GetGraph(DateTime.Now);
+                //var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopTimeInfo>>();
+
+                //var graphObjectiveFunction = new GraphObjectiveFunction(graph, source, destination);
+                //var harmonySearcher = new GeneralHarmonySearcher<StopTimeInfo>(graphObjectiveFunction, 20, 5000);
+
+                //automaticTester.RunTests(harmonySearcher, source, destination);
+
+                var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopDto>>();
+
+                var stopGraph = graphBuilder.GetStopGraph(DateTime.Now);
+
+                var graphObjectiveFunction = new StopGraphObjectiveFunction(stopGraph, source, destination);
+                var harmonySearcher = new GeneralHarmonySearcher<StopDto>(graphObjectiveFunction, 20, 5000);
+
+                automaticTester.RunTests(harmonySearcher, source, destination);
             }
         }
     }

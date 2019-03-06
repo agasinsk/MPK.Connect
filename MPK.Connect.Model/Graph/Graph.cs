@@ -7,6 +7,11 @@ namespace MPK.Connect.Model.Graph
 {
     public class Graph<TId, T> : IEnumerable<T> where T : Identifiable<TId>
     {
+        private Dictionary<TId, Dictionary<TId, double>> _edges;
+
+        public Dictionary<TId, ICollection<GraphEdge<TId>>> Edges =>
+         Nodes.Values.ToDictionary(n => n.Id, v => v.Neighbors);
+
         public Dictionary<TId, GraphNode<TId, T>> Nodes { get; }
         public Dictionary<TId, GraphNode<TId, T>>.KeyCollection Keys => Nodes.Keys;
 
@@ -75,6 +80,13 @@ namespace MPK.Connect.Model.Graph
         public bool Contains(T value)
         {
             return Nodes.ContainsKey(value.Id);
+        }
+
+        public Dictionary<TId, Dictionary<TId, double>> GetEdges()
+        {
+            return _edges ?? (_edges = Nodes.Values
+                       .ToDictionary(n => n.Id, v => v.Neighbors
+                           .ToDictionary(x => x.DestinationId, x => x.Cost)));
         }
 
         public IEnumerator<T> GetEnumerator()

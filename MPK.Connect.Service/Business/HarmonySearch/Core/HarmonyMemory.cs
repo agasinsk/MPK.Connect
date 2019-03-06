@@ -77,6 +77,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             return _harmonies.Contains(harmony);
         }
 
+        public IEnumerable<Harmony<T>> GetAll()
+        {
+            return _harmonies.AsEnumerable();
+        }
+
         /// <summary>
         /// Gets random argument
         /// </summary>

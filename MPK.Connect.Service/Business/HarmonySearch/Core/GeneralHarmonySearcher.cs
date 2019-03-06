@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using MPK.Connect.Service.Helpers;
 using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
@@ -36,7 +37,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
             foreach (var subHarmonyMemory in _subHarmonyMemories)
             {
-                for (var i = 0; i < subHarmonyMemory.MaxCapacity; i++)
+                while (subHarmonyMemory.Count < subHarmonyMemory.MaxCapacity)
                 {
                     var randomHarmony = HarmonyGenerator.GenerateRandomHarmony();
                     subHarmonyMemory.Add(randomHarmony);
@@ -91,6 +92,18 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
         private void RegroupHarmonyMemories()
         {
+            var allSolutions = _subHarmonyMemories.SelectMany(h => h.GetAll()).ToList();
+            _subHarmonyMemories.ForEach(h => h.Clear());
+
+            foreach (var subHarmonyMemory in _subHarmonyMemories)
+            {
+                while (subHarmonyMemory.Count < subHarmonyMemory.MaxCapacity)
+                {
+                    var randomSolution = allSolutions.GetRandomElement();
+                    subHarmonyMemory.Add(randomSolution);
+                    allSolutions.Remove(randomSolution);
+                }
+            }
         }
     }
 }

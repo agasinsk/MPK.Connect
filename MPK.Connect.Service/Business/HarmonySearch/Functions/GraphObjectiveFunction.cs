@@ -57,7 +57,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
             while (currentNode.Data.StopDto.Name != Destination.Name)
             {
-                var randomNeighborNode = GetRandomNeighborNode(currentNode);
+                var randomNeighborNode = GetRandomNeighborNodeExceptExisting(currentNode, randomPath.ToArray());
                 if (randomNeighborNode == null)
                 {
                     break;

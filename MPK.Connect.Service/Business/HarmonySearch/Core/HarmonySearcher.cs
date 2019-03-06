@@ -7,7 +7,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
     /// <summary>
     /// Implements harmony search algorithm
     /// </summary>
-    public class HarmonySearcher<T>
+    public class HarmonySearcher<T> : IHarmonySearcher<T>
     {
         protected readonly IHarmonyGenerator<T> HarmonyGenerator;
         public HarmonyMemory<T> HarmonyMemory { get; }
@@ -165,17 +165,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                 ImprovisationCount++;
             }
             return HarmonyMemory.BestHarmony;
-        }
-
-        public override string ToString()
-        {
-            return $"{nameof(HarmonyMemoryConsiderationRatio)}: {HarmonyMemoryConsiderationRatio}\n" +
-                   $"{nameof(MaxImprovisationCount)}: {MaxImprovisationCount}\n" +
-                   $"{nameof(HarmonyMemory.MaxCapacity)}: {HarmonyMemory.MaxCapacity}\n" +
-                   $"{nameof(ShouldImprovePitchAdjustingScenario)}: {ShouldImprovePitchAdjustingScenario}\n" +
-                   $"{nameof(PitchAdjustmentRatio)}: {PitchAdjustmentRatio}\n" +
-                   $"{nameof(MinPitchAdjustmentRatio)}: {MinPitchAdjustmentRatio}\n" +
-                   $"{nameof(MaxPitchAdjustmentRatio)}: {MaxPitchAdjustmentRatio}";
         }
 
         /// <summary>
