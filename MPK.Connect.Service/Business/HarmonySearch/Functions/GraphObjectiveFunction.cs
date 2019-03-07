@@ -15,6 +15,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
         private readonly Graph<int, StopTimeInfo> _graph;
         private readonly StopDto _referentialDestinationStop;
         private readonly List<GraphNode<int, StopTimeInfo>> _sourceNodes;
+        private readonly Dictionary<int, int> _stopTimeIdToStopId;
         public Location Destination { get; }
         public Location Source { get; }
 
@@ -29,20 +30,20 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             _referentialDestinationStop = GetReferenceDestinationStop();
             _sourceNodes = GetSourceNodes();
             _distancesToDestinationStop = GetDistancesToDestinationStop();
+            _stopTimeIdToStopId = _graph.Nodes.Values.ToDictionary(k => k.Id, v => v.Data.StopId);
         }
 
         public double CalculateObjectiveValue(params StopTimeInfo[] arguments)
         {
-            var additionalPenalty = 0d;
             if (arguments.Last().StopDto.Name.TrimToLower() != Destination.Name.TrimToLower())
             {
-                additionalPenalty = double.PositiveInfinity;
+                return double.PositiveInfinity;
             }
 
             var travelTime = (arguments.Last().DepartureTime - arguments.First().DepartureTime).TotalMinutes;
-            var transferCount = arguments.Select(s => s.Route).Distinct().Count();
+            var transferCount = arguments.Select(s => s.Route).Distinct().Count() - 1;
 
-            return travelTime + 10 * transferCount + additionalPenalty;
+            return travelTime + transferCount;
         }
 
         public StopTimeInfo[] GetRandomArguments()
@@ -54,9 +55,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             };
             var currentNode = sourceNode;
 
-            while (currentNode.Data.StopDto.Name != Destination.Name)
+            while (currentNode.Data.StopDto.Name.TrimToLower() != Destination.Name.TrimToLower())
             {
-                var randomNeighborNode = GetRandomNeighborNodeExceptExisting(currentNode, randomPath.ToArray());
+                var randomNeighborNode = GetRandomNeighborNodeCloserToDestination(currentNode, randomPath.ToArray());
                 if (randomNeighborNode == null)
                 {
                     break;
@@ -71,15 +72,23 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
         public Harmony<StopTimeInfo> UsePitchAdjustment(Harmony<StopTimeInfo> harmony)
         {
-            var randomArgumentWithIndex = harmony.Arguments.Skip(1).ToArray().GetRandomElementWithIndex();
-
-            var graphNode = _graph[randomArgumentWithIndex.Value.Id];
-
-            var pitchAdjustedValue = GetRandomNeighborNodeExceptExisting(graphNode, harmony.Arguments);
-            if (pitchAdjustedValue != null)
+            if (harmony.Arguments.Last().StopDto.Name.TrimToLower() == Destination.Name.TrimToLower())
             {
-                harmony.Arguments[randomArgumentWithIndex.Key + 1] = pitchAdjustedValue.Data;
+                return harmony;
             }
+
+            var randomIndex = harmony.Arguments.GetRandomIndexMinimum(1);
+
+            var predecessorStopTimeId = harmony.Arguments[randomIndex - 1].Id;
+            var predecessorNode = _graph[predecessorStopTimeId];
+
+            var pitchAdjustedSuccessor = GetRandomNeighborNodeExceptExisting(predecessorNode, harmony.Arguments);
+            if (pitchAdjustedSuccessor != null)
+            {
+                harmony.Arguments[randomIndex] = pitchAdjustedSuccessor.Data;
+            }
+
+            harmony.ObjectiveValue = CalculateObjectiveValue(harmony.Arguments);
 
             return harmony;
         }
@@ -128,18 +137,33 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
             var distanceToDestination = _distancesToDestinationStop[currentNode.Data.StopId];
 
-            var forbiddenIds = harmonyArguments.Select(a => a.Id);
-
-            var neighborsCloserToDestination = _graph.GetNeighborsQueryable(currentNode.Id)
-                .Where(n => !forbiddenIds.Contains(n.Id))
-                .Where(n => _distancesToDestinationStop[n.Data.StopId] < distanceToDestination)
+            var neighborStopIds = _graph.GetNeighborsQueryable(currentNode.Id)
+                .Select(n => n.Data.StopId)
+                .Distinct()
                 .ToList();
 
-            return neighborsCloserToDestination.GetRandomElement();
+            var stopsCloserToDestinationIds = neighborStopIds
+                .Where(stopId => _distancesToDestinationStop[stopId] < distanceToDestination)
+                .ToList();
+
+            var randomStopId = stopsCloserToDestinationIds.GetRandomElement();
+
+            if (randomStopId == default(int))
+            {
+                return null;
+            }
+
+            var forbiddenStopTimeIds = harmonyArguments.Select(a => a.Id).ToList();
+
+            var firstStopTimeWithStop = _graph.GetNeighborsQueryable(currentNode.Id)
+                .Where(s => s.Data.StopId == randomStopId && !forbiddenStopTimeIds.Contains(s.Data.Id))
+                .OrderBy(s => s.Data.DepartureTime)
+                .FirstOrDefault();
+
+            return firstStopTimeWithStop;
         }
 
-        private GraphNode<int, StopTimeInfo> GetRandomNeighborNodeExceptExisting(GraphNode<int, StopTimeInfo> currentNode,
-                                    StopTimeInfo[] harmonyArguments)
+        private GraphNode<int, StopTimeInfo> GetRandomNeighborNodeExceptExisting(GraphNode<int, StopTimeInfo> currentNode, StopTimeInfo[] harmonyArguments)
         {
             var neighbors = currentNode.Neighbors;
 

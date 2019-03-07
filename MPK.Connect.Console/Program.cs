@@ -84,22 +84,22 @@ namespace MPK.Connect.Console
                 var source = new Location("Kwiska");
                 var destination = new Location("Świdnicka");
 
-                //var graph = graphBuilder.GetGraph(DateTime.Now);
-                //var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopTimeInfo>>();
+                var graph = graphBuilder.GetGraph(DateTime.Now);
+                var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopTimeInfo>>();
 
-                //var graphObjectiveFunction = new GraphObjectiveFunction(graph, source, destination);
-                //var harmonySearcher = new GeneralHarmonySearcher<StopTimeInfo>(graphObjectiveFunction, 20, 5000);
-
-                //automaticTester.RunTests(harmonySearcher, source, destination);
-
-                var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopDto>>();
-
-                var stopGraph = graphBuilder.GetStopGraph(DateTime.Now);
-
-                var graphObjectiveFunction = new StopGraphObjectiveFunction(stopGraph, source, destination);
-                var harmonySearcher = new GroupedHarmonySearcher<StopDto>(graphObjectiveFunction, 20, 5000);
+                var graphObjectiveFunction = new GraphObjectiveFunction(graph, source, destination);
+                var harmonySearcher = new GroupedHarmonySearcher<StopTimeInfo>(graphObjectiveFunction, 20, 1000);
 
                 automaticTester.RunTests(harmonySearcher, source, destination);
+
+                //var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopDto>>();
+
+                //var stopGraph = graphBuilder.GetStopGraph(DateTime.Now);
+
+                //var graphObjectiveFunction = new StopGraphObjectiveFunction(stopGraph, source, destination);
+                //var harmonySearcher = new GroupedHarmonySearcher<StopDto>(graphObjectiveFunction, 20, 5000);
+
+                //automaticTester.RunTests(harmonySearcher, source, destination);
             }
         }
     }

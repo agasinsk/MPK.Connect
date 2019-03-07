@@ -25,7 +25,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// <param name="harmonyMemorySize">Size of harmony memory</param>
         public HarmonyMemory(int harmonyMemorySize)
         {
-            _harmonies = new BoundedSortedSet<Harmony<T>>(harmonyMemorySize);
+            _harmonies = new BoundedSortedSet<Harmony<T>>(harmonyMemorySize, new HarmonyComparer<T>());
         }
 
         /// <summary>

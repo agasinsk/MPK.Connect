@@ -81,7 +81,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// <returns>Best harmony</returns>
         private Harmony<T> GetBestHarmony()
         {
-            return _subHarmonyMemories.Select(x => x.BestHarmony).OrderByDescending(h => h.ObjectiveValue).First();
+            return _subHarmonyMemories.Select(x => x.BestHarmony).OrderBy(h => h.ObjectiveValue).First();
         }
 
         /// <summary>
@@ -89,25 +89,34 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// </summary>
         private void RegroupHarmonyMemories()
         {
-            var allSolutions = new List<Harmony<T>>(_subHarmonyMemories
-                .SelectMany(h => h.GetAll())
-                .GroupBy(h => h.ObjectiveValue)
-                .Select(g => g.First()));
+            var allSolutions = _subHarmonyMemories.SelectMany(h => h.GetAll()).ToList();
+            var solutionIds = Enumerable.Range(0, allSolutions.Count).ToList();
 
             // TODO: figure out how to handle the same arguments when comparing
 
-            // TODO: investigate where the null solutions come from
             foreach (var subHarmonyMemory in _subHarmonyMemories)
             {
                 subHarmonyMemory.Clear();
 
                 for (var index = 0; index < subHarmonyMemory.MaxCapacity; index++)
                 {
-                    var randomSolution = allSolutions.GetRandomElement();
+                    var randomIndex = solutionIds.GetRandomElement();
+                    var randomSolution = allSolutions.ElementAt(randomIndex);
                     if (subHarmonyMemory.Add(new Harmony<T>(randomSolution)))
                     {
-                        allSolutions.Remove(randomSolution);
+                        solutionIds.Remove(randomIndex);
                     }
+                }
+            }
+
+            foreach (var subHarmonyMemory in _subHarmonyMemories.Where(hm => hm.Count < hm.MaxCapacity))
+            {
+                var triesCount = 0;
+                while (subHarmonyMemory.Count < subHarmonyMemory.MaxCapacity)
+                {
+                    var randomHarmony = HarmonyGenerator.GenerateRandomHarmony();
+                    subHarmonyMemory.Add(randomHarmony);
+                    triesCount++;
                 }
             }
         }

@@ -76,10 +76,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
         public Harmony<StopDto> UsePitchAdjustment(Harmony<StopDto> harmony)
         {
+            // TODO: rethink strategy
             var randomIndex = harmony.Arguments.GetRandomIndexMinimum(1);
 
             // Get the predecessor of randomly selected node
-            var predecessorIndex = harmony.Arguments[randomIndex - 1].Id;
+            var predecessorIndex = harmony.Arguments[randomIndex].Id;
             var predecessorNode = _graph[predecessorIndex];
 
             var pitchAdjustedValue = GetRandomNeighborNodeExceptExisting(predecessorNode, harmony.Arguments);

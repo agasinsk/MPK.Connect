@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
@@ -48,14 +47,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
         public override bool Equals(object obj)
         {
-            return obj is Harmony<T> harmony &&
-                   Arguments.SequenceEqual(harmony.Arguments) &&
+            return obj is Harmony<T> harmony && Arguments.Length == harmony.Arguments.Length &&
                    ObjectiveValue.AlmostEquals(harmony.ObjectiveValue);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Arguments, ObjectiveValue);
+            return HashCode.Combine(Arguments.Length, ObjectiveValue);
         }
 
         /// <summary>

@@ -75,7 +75,7 @@ namespace MPK.Connect.Service.Business.Graph
 
             CreateDirectedEdgesForStops(dbStopTimes, graph);
 
-            CreateDirectedEdgesForStopsWithTheSameName(dbStops, graph);
+            //CreateDirectedEdgesForStopsWithTheSameName(dbStops, graph);
 
             return graph;
         }

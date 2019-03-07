@@ -21,6 +21,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
             Capacity = capacity;
         }
 
+        public BoundedSortedSet(int capacity, IComparer<T> comparer) : base(comparer)
+        {
+            Capacity = capacity;
+        }
+
         /// <summary>
         /// Adds new element if set is not already full
         /// </summary>
