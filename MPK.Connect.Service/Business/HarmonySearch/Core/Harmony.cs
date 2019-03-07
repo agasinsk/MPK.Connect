@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
@@ -42,6 +44,18 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         public int CompareTo(Harmony<T> otherHarmony)
         {
             return ObjectiveValue.CompareTo(otherHarmony.ObjectiveValue);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Harmony<T> harmony &&
+                   Arguments.SequenceEqual(harmony.Arguments) &&
+                   ObjectiveValue.AlmostEquals(harmony.ObjectiveValue);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Arguments, ObjectiveValue);
         }
 
         /// <summary>
