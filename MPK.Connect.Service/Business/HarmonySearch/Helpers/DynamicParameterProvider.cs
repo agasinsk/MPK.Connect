@@ -37,7 +37,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
             var parameterSet = ParameterSets[_currentParameterSetIndex];
             WinningParameterSets.Add(parameterSet);
 
-            if (_currentParameterSetIndex >= ParameterSets.Count)
+            if (_currentParameterSetIndex >= ParameterSets.Count - 1)
             {
                 ResetParameterSets();
             }
@@ -93,6 +93,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
                     ParameterSets.Add(randomParameterSet);
                 }
             }
+
+            WinningParameterSets.Clear();
         }
     }
 }

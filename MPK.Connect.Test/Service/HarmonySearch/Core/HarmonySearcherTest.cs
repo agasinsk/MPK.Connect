@@ -41,7 +41,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         {
             // Arrange
             var iterationIndex = 100;
-            var improvedHarmonySearcher = new HarmonySearcher<double>(_objectiveFunction, 20, 200, 0.87, 0, true, 0.2, 0.99);
+            var improvedHarmonySearcher = new HarmonySearcher<double>(_objectiveFunction, 20, 200, 0.87, 0, true, 0.2, 0.95);
             var expectedResult = DefaultMaxPitchAdjustmentRatio -
                                  (DefaultMaxPitchAdjustmentRatio - DefaultMinPitchAdjustmentRatio) * iterationIndex /
                                  DefaultMaxImprovisationCount;
@@ -52,7 +52,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             // Assert
             Assert.IsNotNull(improvedHarmonySearcher.PitchAdjustmentRatio);
             Assert.IsTrue(improvedHarmonySearcher.ShouldImprovePitchAdjustingScenario);
-            Assert.AreEqual(DefaultMinPitchAdjustmentRatio, improvedHarmonySearcher.MinPitchAdjustmentRatio);
+            Assert.AreEqual(0.2, improvedHarmonySearcher.MinPitchAdjustmentRatio);
             Assert.AreEqual(DefaultMaxPitchAdjustmentRatio, improvedHarmonySearcher.MaxPitchAdjustmentRatio);
             Assert.AreEqual(DefaultMaxPitchAdjustmentRatio, improvedHarmonySearcher.PitchAdjustmentRatio);
             Assert.AreEqual(DefaultHarmonyMemoryConsiderationRatio, improvedHarmonySearcher.HarmonyMemoryConsiderationRatio);
