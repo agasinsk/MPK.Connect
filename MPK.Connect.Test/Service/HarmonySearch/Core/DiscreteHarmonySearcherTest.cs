@@ -15,7 +15,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         public DiscreteHarmonySearcherTest()
         {
             _objectiveFunction = new TravelingSalesmanObjectiveFunction();
-            _harmonySearcher = new HarmonySearcher<INode>(_objectiveFunction, HarmonyMemorySize, 10000, 0.92, 0.35);
+            _harmonySearcher = new HarmonySearcher<INode>(_objectiveFunction, HarmonyMemorySize, 10000, 0.92, 0.35, false, 0, 0);
         }
 
         public void Dispose()

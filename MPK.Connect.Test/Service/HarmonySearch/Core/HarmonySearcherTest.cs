@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MPK.Connect.Service.Business.HarmonySearch;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
@@ -42,7 +41,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         {
             // Arrange
             var iterationIndex = 100;
-            var improvedHarmonySearcher = new HarmonySearcher<double>(_objectiveFunction, true);
+            var improvedHarmonySearcher = new HarmonySearcher<double>(_objectiveFunction, 20, 200, 0.87, 0, true, 0.2, 0.99);
             var expectedResult = DefaultMaxPitchAdjustmentRatio -
                                  (DefaultMaxPitchAdjustmentRatio - DefaultMinPitchAdjustmentRatio) * iterationIndex /
                                  DefaultMaxImprovisationCount;

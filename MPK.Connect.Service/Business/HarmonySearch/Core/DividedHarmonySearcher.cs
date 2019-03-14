@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Helpers;
-using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
-    public class GroupedHarmonySearcher<T> : HarmonySearcher<T>
+    public class DividedHarmonySearcher<T> : HarmonySearcher<T>
     {
         private List<HarmonyMemory<T>> _subHarmonyMemories;
         private long RegroupRate => MaxImprovisationCount / 10;
 
-        public GroupedHarmonySearcher(IObjectiveFunction<T> function) : base(function)
+        public DividedHarmonySearcher(IObjectiveFunction<T> function) : base(function)
         {
         }
 
-        public GroupedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize = DefaultHarmonyMemorySize, long maxImprovisationCount = DefaultMaxImprovisationCount, double harmonyMemoryConsiderationRatio = DefaultHarmonyMemoryConsiderationRatio, double pitchAdjustmentRatio = DefaultPitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
+        public DividedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio, bool shouldImprovePitchAdjustingScenario, double minPitchAdjustmentRatio, double maxPitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio, shouldImprovePitchAdjustingScenario, minPitchAdjustmentRatio, maxPitchAdjustmentRatio)
         {
         }
 

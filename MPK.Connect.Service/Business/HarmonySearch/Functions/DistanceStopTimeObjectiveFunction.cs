@@ -9,17 +9,18 @@ using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {
-    public class GraphObjectiveFunction : IGeneralObjectiveFunction<StopTimeInfo>
+    public class DistanceStopTimeObjectiveFunction : IGeneralObjectiveFunction<StopTimeInfo>
     {
         private readonly Dictionary<int, int> _distancesToDestinationStop;
         private readonly Graph<int, StopTimeInfo> _graph;
         private readonly StopDto _referentialDestinationStop;
         private readonly List<GraphNode<int, StopTimeInfo>> _sourceNodes;
         private readonly Dictionary<int, int> _stopTimeIdToStopId;
+
         public Location Destination { get; }
         public Location Source { get; }
 
-        public GraphObjectiveFunction(Graph<int, StopTimeInfo> graph, Location source, Location destination)
+        public DistanceStopTimeObjectiveFunction(Graph<int, StopTimeInfo> graph, Location source, Location destination)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Destination = destination ?? throw new ArgumentNullException(nameof(destination));
@@ -137,9 +138,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
             var distanceToDestination = _distancesToDestinationStop[currentNode.Data.StopId];
 
-            var neighborStopIds = _graph.GetNeighborsQueryable(currentNode.Id)
-                .Select(n => n.Data.StopId)
-                .Distinct()
+            var neighborIds = currentNode.Neighbors.Select(n => n.DestinationId);
+
+            var neighborStopIds = _stopTimeIdToStopId
+                .Where(x => neighborIds.Contains(x.Key))
+                .Select(x => x.Value)
                 .ToList();
 
             var stopsCloserToDestinationIds = neighborStopIds

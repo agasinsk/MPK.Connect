@@ -1,6 +1,6 @@
 ﻿namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {
-    public interface IObjectiveFunction<T>
+    public interface IObjectiveFunction<in T>
     {
         /// <summary>
         /// Return the objective function value given a solution vector containing each decision

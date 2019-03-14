@@ -11,8 +11,6 @@ using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
 using MPK.Connect.Service.Business.Graph;
-using MPK.Connect.Service.Business.HarmonySearch.Core;
-using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Experiment;
 using MPK.Connect.Service.Export;
 
@@ -79,27 +77,13 @@ namespace MPK.Connect.Console
 
             using (var scope = Container.BeginLifetimeScope())
             {
-                var graphBuilder = scope.Resolve<IGraphBuilder>();
+                var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopTimeInfo>>();
 
+                var scenarios = new HarmonySearchTestScenarios<StopTimeInfo>();
                 var source = new Location("Kwiska");
                 var destination = new Location("Świdnicka");
 
-                var graph = graphBuilder.GetGraph(DateTime.Now);
-                var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopTimeInfo>>();
-
-                var graphObjectiveFunction = new GraphObjectiveFunction(graph, source, destination);
-                var harmonySearcher = new GroupedHarmonySearcher<StopTimeInfo>(graphObjectiveFunction, 20, 1000);
-
-                automaticTester.RunTests(harmonySearcher, source, destination);
-
-                //var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopDto>>();
-
-                //var stopGraph = graphBuilder.GetStopGraph(DateTime.Now);
-
-                //var graphObjectiveFunction = new StopGraphObjectiveFunction(stopGraph, source, destination);
-                //var harmonySearcher = new GroupedHarmonySearcher<StopDto>(graphObjectiveFunction, 20, 5000);
-
-                //automaticTester.RunTests(harmonySearcher, source, destination);
+                automaticTester.RunTestsWithScenario(scenarios, source, destination);
             }
         }
     }
