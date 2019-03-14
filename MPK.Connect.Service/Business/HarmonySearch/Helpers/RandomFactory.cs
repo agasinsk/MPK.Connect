@@ -2,7 +2,7 @@
 {
     public class RandomFactory
     {
-        private static IBoundedRandom _random;
+        private static IBoundedRandom _random = null;
 
         public static IBoundedRandom GetInstance()
         {

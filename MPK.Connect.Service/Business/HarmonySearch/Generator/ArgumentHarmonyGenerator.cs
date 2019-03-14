@@ -14,19 +14,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
             Function = function ?? throw new ArgumentNullException(nameof(function));
         }
 
-        public HarmonyGenerationRules EstablishArgumentGenerationRule(double probability)
-        {
-            if (probability > HarmonyMemoryConsiderationRatio)
-            {
-                return HarmonyGenerationRules.RandomChoosing;
-            }
-            if (probability <= HarmonyMemoryConsiderationRatio * PitchAdjustmentRatio)
-            {
-                return HarmonyGenerationRules.PitchAdjustment;
-            }
-            return HarmonyGenerationRules.MemoryConsideration;
-        }
-
         public T[] GenerateRandomArguments()
         {
             var randomArguments = new T[ArgumentsCount];
@@ -43,12 +30,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         {
             var arguments = GenerateRandomArguments();
             return GetHarmony(arguments);
-        }
-
-        public Harmony<T> GetHarmony(params T[] arguments)
-        {
-            var functionValue = Function.CalculateObjectiveValue(arguments);
-            return new Harmony<T>(functionValue, arguments);
         }
 
         public T[] ImproviseArguments()
@@ -89,7 +70,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         protected T ImproviseArgument(int argumentIndex)
         {
             var randomValue = Random.NextDouble();
-            var generationRule = EstablishArgumentGenerationRule(randomValue);
+            var generationRule = EstablishHarmonyGenerationRule(randomValue);
 
             switch (generationRule)
             {

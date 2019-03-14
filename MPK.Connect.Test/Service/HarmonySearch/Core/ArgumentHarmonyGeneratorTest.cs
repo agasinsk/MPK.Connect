@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MPK.Connect.Service.Business.HarmonySearch;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
@@ -49,7 +48,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             var value = DefaultHarmonyMemoryConsiderationRatio * (1 - DefaultPitchAdjustmentRatio);
 
             //Act
-            var result = _argumentHarmonyGenerator.EstablishArgumentGenerationRule(value);
+            var result = _argumentHarmonyGenerator.EstablishHarmonyGenerationRule(value);
 
             //Assert
             Assert.AreEqual(HarmonyGenerationRules.MemoryConsideration, result);
@@ -62,7 +61,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             const double value = DefaultHarmonyMemoryConsiderationRatio * DefaultPitchAdjustmentRatio - 0.01;
 
             //Act
-            var result = _argumentHarmonyGenerator.EstablishArgumentGenerationRule(value);
+            var result = _argumentHarmonyGenerator.EstablishHarmonyGenerationRule(value);
 
             //Assert
             Assert.AreEqual(HarmonyGenerationRules.PitchAdjustment, result);
@@ -75,7 +74,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
             const double value = 0.96;
 
             //Act
-            var result = _argumentHarmonyGenerator.EstablishArgumentGenerationRule(value);
+            var result = _argumentHarmonyGenerator.EstablishHarmonyGenerationRule(value);
 
             //Assert
             Assert.AreEqual(HarmonyGenerationRules.RandomChoosing, result);

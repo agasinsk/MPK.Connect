@@ -42,6 +42,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
             }
         }
 
+        public override void MarkCurrentParametersAsWinning()
+        {
+        }
+
         public Harmony<T> UseMemoryConsideration()
         {
             return HarmonyMemory.GetRandomElement();

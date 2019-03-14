@@ -52,6 +52,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             PitchAdjustmentRatio = pitchAdjustmentRatio;
             HarmonyMemory = new HarmonyMemory<T>(harmonyMemorySize);
 
+            ShouldImprovePitchAdjustingScenario = shouldImprovePitchAdjustingScenario;
             if (shouldImprovePitchAdjustingScenario)
             {
                 MinPitchAdjustmentRatio = minPitchAdjustmentRatio;

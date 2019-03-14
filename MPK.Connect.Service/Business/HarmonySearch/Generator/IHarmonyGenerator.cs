@@ -12,5 +12,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         Harmony<T> GenerateRandomHarmony();
 
         Harmony<T> ImproviseHarmony();
+
+        void MarkCurrentParametersAsWinning();
     }
 }

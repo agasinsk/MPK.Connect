@@ -7,7 +7,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     public abstract class HarmonyGeneratorBase<T> : IHarmonyGenerator<T>
     {
-        protected readonly IRandom Random;
+        protected readonly IBoundedRandom Random;
         protected IObjectiveFunction<T> Function;
         public HarmonyMemory<T> HarmonyMemory { get; set; }
         public double HarmonyMemoryConsiderationRatio { get; set; }
@@ -26,7 +26,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
             HarmonyMemory = harmonyMemory ?? throw new ArgumentNullException(nameof(harmonyMemory));
         }
 
-        public HarmonyGenerationRules EstablishHarmonyGenerationRule(double probability)
+        public virtual HarmonyGenerationRules EstablishHarmonyGenerationRule(double probability)
         {
             if (probability > HarmonyMemoryConsiderationRatio)
             {
@@ -50,5 +50,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         }
 
         public abstract Harmony<T> ImproviseHarmony();
+
+        public virtual void MarkCurrentParametersAsWinning()
+        {
+        }
     }
 }
