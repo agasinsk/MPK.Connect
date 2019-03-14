@@ -41,10 +41,10 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         {
             // Arrange
             var iterationIndex = 100;
-            var improvedHarmonySearcher = new HarmonySearcher<double>(_objectiveFunction, 20, 200, 0.87, 0, true, 0.2, 0.95);
-            var expectedResult = DefaultMaxPitchAdjustmentRatio -
-                                 (DefaultMaxPitchAdjustmentRatio - DefaultMinPitchAdjustmentRatio) * iterationIndex /
-                                 DefaultMaxImprovisationCount;
+            var improvedHarmonySearcher = new HarmonySearcher<double>(_objectiveFunction, 20, 200, 0.9, 0, true, 0.2, 0.95);
+            var expectedResult = 0.95 -
+                                 (0.95 - 0.2) * iterationIndex /
+                                 200;
 
             // Act
             var result = improvedHarmonySearcher.GetCurrentPitchAdjustingRatio(iterationIndex);
