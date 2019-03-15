@@ -83,7 +83,7 @@ namespace MPK.Connect.Console
                 var source = new Location("Kwiska");
                 var destination = new Location("Świdnicka");
 
-                automaticTester.RunTestsWithScenario(scenarios, source, destination);
+                automaticTester.RunTestsWithScenarios(scenarios, source, destination);
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace MPK.Connect.Service.Business.HarmonySearch.Core
+﻿using System;
+
+namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
     public interface IHarmonySearcher<T>
     {
@@ -9,6 +11,8 @@
         double MinPitchAdjustmentRatio { get; set; }
         double PitchAdjustmentRatio { get; set; }
         bool ShouldImprovePitchAdjustingScenario { get; }
+
+        Type GetObjectiveFunctionType();
 
         /// <summary>
         /// Looks for optimal solution of a function

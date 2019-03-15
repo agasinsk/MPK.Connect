@@ -1,4 +1,5 @@
-﻿using MPK.Connect.Service.Business.HarmonySearch.Constants;
+﻿using System;
+using MPK.Connect.Service.Business.HarmonySearch.Constants;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
 
@@ -76,6 +77,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             }
 
             return PitchAdjustmentRatio;
+        }
+
+        public Type GetObjectiveFunctionType()
+        {
+            return HarmonyGenerator.ObjectiveFunction.GetType();
         }
 
         /// <summary>

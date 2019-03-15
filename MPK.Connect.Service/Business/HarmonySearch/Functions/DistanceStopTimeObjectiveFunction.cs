@@ -143,6 +143,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             var neighborStopIds = _stopTimeIdToStopId
                 .Where(x => neighborIds.Contains(x.Key))
                 .Select(x => x.Value)
+                .Distinct()
                 .ToList();
 
             var stopsCloserToDestinationIds = neighborStopIds

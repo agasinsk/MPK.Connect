@@ -8,9 +8,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
     public abstract class HarmonyGeneratorBase<T> : IHarmonyGenerator<T>
     {
         protected readonly IBoundedRandom Random;
-        protected IObjectiveFunction<T> Function;
         public HarmonyMemory<T> HarmonyMemory { get; set; }
         public double HarmonyMemoryConsiderationRatio { get; set; }
+        public IObjectiveFunction<T> ObjectiveFunction { get; }
         public double PitchAdjustmentRatio { get; set; }
 
         protected HarmonyGeneratorBase(IObjectiveFunction<T> function,
@@ -22,7 +22,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
             PitchAdjustmentRatio = pitchAdjustmentRatio;
 
             Random = RandomFactory.GetInstance();
-            Function = function ?? throw new ArgumentNullException(nameof(function));
+            ObjectiveFunction = function ?? throw new ArgumentNullException(nameof(function));
             HarmonyMemory = harmonyMemory ?? throw new ArgumentNullException(nameof(harmonyMemory));
         }
 
@@ -44,7 +44,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
         public Harmony<T> GetHarmony(params T[] arguments)
         {
-            var functionValue = Function.CalculateObjectiveValue(arguments);
+            var functionValue = ObjectiveFunction.CalculateObjectiveValue(arguments);
 
             return new Harmony<T>(functionValue, arguments);
         }

@@ -38,13 +38,14 @@ namespace MPK.Connect.Console
                 });
 
                 solutionsDataTable.Rows.Add(i, bestHarmony.ObjectiveValue,
-                    string.Concat(bestHarmony.Arguments.Select(a => $"{a.ToString()}\n")), elapsed);
+                    string.Concat(bestHarmony.Arguments.Select(a => $" {a.ToString()} |")), elapsed);
+                System.Console.WriteLine($"Finished testing {harmonySearcher.GetType().Name}, with {harmonySearcher.GetObjectiveFunctionType().Name}, iteration {i}.");
             }
 
-            _exporterService.ExportToExcel(dataTable, solutionsDataTable);
+            _exporterService.ExportToExcel(dataTable, solutionsDataTable, $"{harmonySearcher.GetType().Name}TestResults");
         }
 
-        public void RunTestsWithScenario(HarmonySearchTestScenarios<T> scenarios, Location source, Location destination)
+        public void RunTestsWithScenarios(HarmonySearchTestScenarios<T> scenarios, Location source, Location destination)
         {
             _source = source;
             _destination = destination;
@@ -67,6 +68,7 @@ namespace MPK.Connect.Console
             dataTable.Rows.Add($"{nameof(DateTime)}", DateTime.Now);
             dataTable.Rows.Add($"Source", _source.ToString());
             dataTable.Rows.Add($"Destination", _destination.ToString());
+            dataTable.Rows.Add($"{nameof(Type)}", harmonySearcher.GetType().Name);
             dataTable.Rows.Add($"{nameof(harmonySearcher.HarmonyMemoryConsiderationRatio)}",
                 harmonySearcher.HarmonyMemoryConsiderationRatio);
             dataTable.Rows.Add($"{nameof(harmonySearcher.MaxImprovisationCount)}", harmonySearcher.MaxImprovisationCount);
@@ -79,6 +81,7 @@ namespace MPK.Connect.Console
                 harmonySearcher.MinPitchAdjustmentRatio);
             dataTable.Rows.Add($"{nameof(harmonySearcher.MaxPitchAdjustmentRatio)}",
                 harmonySearcher.MaxPitchAdjustmentRatio);
+
             return dataTable;
         }
 
