@@ -114,7 +114,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             var forbiddenStopTimeIds = harmonyArguments.Select(a => a.Id).ToList();
 
             var firstStopTimeWithStop = _stopIdToStopTimes[randomStopId]
-                .FirstOrDefault(s => !forbiddenStopTimeIds.Contains(s.Data.Id));
+                .FirstOrDefault(s => !forbiddenStopTimeIds.Contains(s.Data.Id)
+                                     && s.Data.DepartureTime > currentNode.Data.DepartureTime);
 
             return firstStopTimeWithStop;
         }

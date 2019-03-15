@@ -9,6 +9,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
     public class DividedHarmonySearcher<T> : HarmonySearcher<T>
     {
         private List<HarmonyMemory<T>> _subHarmonyMemories;
+        public override HarmonySearchType Type => HarmonySearchType.SubHm;
         private long RegroupRate => MaxImprovisationCount / 10;
 
         public DividedHarmonySearcher(IObjectiveFunction<T> function) : base(function)

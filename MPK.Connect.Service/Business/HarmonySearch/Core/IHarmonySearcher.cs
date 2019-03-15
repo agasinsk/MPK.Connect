@@ -11,6 +11,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         double MinPitchAdjustmentRatio { get; set; }
         double PitchAdjustmentRatio { get; set; }
         bool ShouldImprovePitchAdjustingScenario { get; }
+        HarmonySearchType Type { get; }
 
         Type GetObjectiveFunctionType();
 

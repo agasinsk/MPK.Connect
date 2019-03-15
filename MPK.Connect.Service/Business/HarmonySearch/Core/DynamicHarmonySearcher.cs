@@ -4,6 +4,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
     public class DynamicHarmonySearcher<T> : HarmonySearcher<T>
     {
+        public override HarmonySearchType Type => HarmonySearchType.Dynamic;
+
         public DynamicHarmonySearcher(IObjectiveFunction<T> function) : base(function)
         {
         }

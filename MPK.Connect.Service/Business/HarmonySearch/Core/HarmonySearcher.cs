@@ -18,6 +18,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         public double MinPitchAdjustmentRatio { get; set; }
         public double PitchAdjustmentRatio { get; set; }
         public bool ShouldImprovePitchAdjustingScenario { get; }
+
+        public virtual HarmonySearchType Type => ShouldImprovePitchAdjustingScenario
+            ? HarmonySearchType.ImprovedPar
+            : HarmonySearchType.Standard;
+
         public double HarmonyMemoryConsiderationRatio => HarmonyGenerator.HarmonyMemoryConsiderationRatio;
 
         /// <summary>

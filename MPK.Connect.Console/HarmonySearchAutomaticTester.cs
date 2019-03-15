@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.IO;
 using System.Linq;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business.Graph;
@@ -24,7 +25,7 @@ namespace MPK.Connect.Console
             _graphBuilder = graphBuilder ?? throw new ArgumentNullException(nameof(graphBuilder));
         }
 
-        public void RunTests(IHarmonySearcher<T> harmonySearcher)
+        public void RunTests(IHarmonySearcher<T> harmonySearcher, string resultPath)
         {
             var dataTable = GetParameterDataTable(harmonySearcher);
             var solutionsDataTable = GetSolutionsDataTable();
@@ -39,10 +40,11 @@ namespace MPK.Connect.Console
 
                 solutionsDataTable.Rows.Add(i, bestHarmony.ObjectiveValue,
                     string.Concat(bestHarmony.Arguments.Select(a => $" {a.ToString()} |")), elapsed);
-                System.Console.WriteLine($"Finished testing {harmonySearcher.GetType().Name}, with {harmonySearcher.GetObjectiveFunctionType().Name}, iteration {i}.");
+                System.Console.WriteLine($"Finished testing {harmonySearcher.GetType().Name.TrimEnd('`', '1')}, with {harmonySearcher.GetObjectiveFunctionType().Name}, improved PAR: {harmonySearcher.ShouldImprovePitchAdjustingScenario}, iteration {i}.");
             }
 
-            _exporterService.ExportToExcel(dataTable, solutionsDataTable, $"{harmonySearcher.GetType().Name}TestResults");
+            var filePath = Path.Combine(resultPath, $"{harmonySearcher.GetType().Name.TrimEnd('`', '1')}TestResults");
+            _exporterService.ExportToExcel(dataTable, solutionsDataTable, filePath);
         }
 
         public void RunTestsWithScenarios(HarmonySearchTestScenarios<T> scenarios, Location source, Location destination)
@@ -52,10 +54,13 @@ namespace MPK.Connect.Console
 
             var graph = _graphBuilder.GetGraph(DateTime.Now);
 
+            var resultPath = $"Tests_{DateTime.Now:ddMMyyyy_HHmm}";
+            Directory.CreateDirectory(resultPath);
+
             foreach (var harmonySearchTestSettings in scenarios.Settings)
             {
                 var harmonySearcher = harmonySearchTestSettings.GetHarmonySearcher(graph, source, destination);
-                RunTests(harmonySearcher);
+                RunTests(harmonySearcher, resultPath);
             }
         }
 
@@ -66,9 +71,10 @@ namespace MPK.Connect.Console
             dataTable.Columns.Add("Value", typeof(string));
 
             dataTable.Rows.Add($"{nameof(DateTime)}", DateTime.Now);
-            dataTable.Rows.Add($"Source", _source.ToString());
-            dataTable.Rows.Add($"Destination", _destination.ToString());
-            dataTable.Rows.Add($"{nameof(Type)}", harmonySearcher.GetType().Name);
+            dataTable.Rows.Add("Source", _source.ToString());
+            dataTable.Rows.Add("Destination", _destination.ToString());
+            dataTable.Rows.Add($"{nameof(Type)}", harmonySearcher.GetType().Name.TrimEnd('`', '1'));
+            dataTable.Rows.Add("ObjectiveFunction", harmonySearcher.GetObjectiveFunctionType().Name.TrimEnd('`', '1'));
             dataTable.Rows.Add($"{nameof(harmonySearcher.HarmonyMemoryConsiderationRatio)}",
                 harmonySearcher.HarmonyMemoryConsiderationRatio);
             dataTable.Rows.Add($"{nameof(harmonySearcher.MaxImprovisationCount)}", harmonySearcher.MaxImprovisationCount);
