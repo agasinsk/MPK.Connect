@@ -40,10 +40,10 @@ namespace MPK.Connect.Console
 
                 solutionsDataTable.Rows.Add(i, bestHarmony.ObjectiveValue,
                     string.Concat(bestHarmony.Arguments.Select(a => $" {a.ToString()} |")), elapsed);
-                System.Console.WriteLine($"Finished testing {harmonySearcher.GetType().Name.TrimEnd('`', '1')}, with {harmonySearcher.GetObjectiveFunctionType().Name}, improved PAR: {harmonySearcher.ShouldImprovePitchAdjustingScenario}, iteration {i}.");
+                System.Console.WriteLine($"Finished testing {harmonySearcher.Type.ToString()}, with {harmonySearcher.GetObjectiveFunctionType().Name}, improved PAR: {harmonySearcher.ShouldImprovePitchAdjustingScenario}, iteration {i}.");
             }
 
-            var filePath = Path.Combine(resultPath, $"{harmonySearcher.GetType().Name.TrimEnd('`', '1')}TestResults");
+            var filePath = Path.Combine(resultPath, $"{harmonySearcher.Type.ToString()}_TestResults");
             _exporterService.ExportToExcel(dataTable, solutionsDataTable, filePath);
         }
 
@@ -55,7 +55,6 @@ namespace MPK.Connect.Console
             var graph = _graphBuilder.GetGraph(DateTime.Now);
 
             var resultPath = $"Tests_{DateTime.Now:ddMMyyyy_HHmm}";
-            Directory.CreateDirectory(resultPath);
 
             foreach (var harmonySearchTestSettings in scenarios.Settings)
             {
@@ -73,7 +72,7 @@ namespace MPK.Connect.Console
             dataTable.Rows.Add($"{nameof(DateTime)}", DateTime.Now);
             dataTable.Rows.Add("Source", _source.ToString());
             dataTable.Rows.Add("Destination", _destination.ToString());
-            dataTable.Rows.Add($"{nameof(Type)}", harmonySearcher.GetType().Name.TrimEnd('`', '1'));
+            dataTable.Rows.Add($"{nameof(Type)}", harmonySearcher.Type.ToString());
             dataTable.Rows.Add("ObjectiveFunction", harmonySearcher.GetObjectiveFunctionType().Name.TrimEnd('`', '1'));
             dataTable.Rows.Add($"{nameof(harmonySearcher.HarmonyMemoryConsiderationRatio)}",
                 harmonySearcher.HarmonyMemoryConsiderationRatio);

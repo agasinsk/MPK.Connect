@@ -13,10 +13,10 @@ namespace MPK.Connect.Service.Experiment
 
         public ExporterService()
         {
-            Directory.CreateDirectory("../../../results/");
+            Directory.CreateDirectory(DefaultPath);
         }
 
-        public void ExportToExcel(DataTable data, DataTable solutionDataTable, string fileName)
+        public void ExportToExcel(DataTable data, DataTable solutionDataTable, string filePath)
         {
             using (var excelPackage = new ExcelPackage())
             {
@@ -28,7 +28,13 @@ namespace MPK.Connect.Service.Experiment
 
                 excelWorksheet.Cells.AutoFitColumns();
 
-                var excelFilename = string.IsNullOrEmpty(fileName) ? DefaultFileName : Path.Combine(DefaultPath, fileName);
+                if (!string.IsNullOrEmpty(filePath))
+                {
+                    var providedPath = Path.GetDirectoryName(filePath);
+                    Directory.CreateDirectory(Path.Combine(DefaultPath, providedPath));
+                }
+
+                var excelFilename = string.IsNullOrEmpty(filePath) ? DefaultFileName : Path.Combine(DefaultPath, filePath);
                 excelPackage.SaveAs(new FileInfo($"{excelFilename}_{DateTime.Now:ddMMyyyy_HHmmsss}.xlsx"));
             }
         }
