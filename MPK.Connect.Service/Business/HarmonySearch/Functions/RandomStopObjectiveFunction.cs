@@ -11,7 +11,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {
     public class RandomStopObjectiveFunction : IGeneralObjectiveFunction<StopTimeInfo>
     {
-        private readonly Dictionary<int, int> _distancesToDestinationStop;
         private readonly Graph<int, StopTimeInfo> _graph;
         private readonly StopDto _referentialDestinationStop;
         private readonly List<GraphNode<int, StopTimeInfo>> _sourceNodes;

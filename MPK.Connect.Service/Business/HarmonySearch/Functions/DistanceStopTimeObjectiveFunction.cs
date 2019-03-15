@@ -15,7 +15,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
         private readonly Graph<int, StopTimeInfo> _graph;
         private readonly StopDto _referentialDestinationStop;
         private readonly List<GraphNode<int, StopTimeInfo>> _sourceNodes;
-        private readonly Dictionary<int, int> _stopTimeIdToStopId;
+        private readonly Dictionary<int, List<int>> _stopGraph;
+        private readonly Dictionary<int, List<GraphNode<int, StopTimeInfo>>> _stopIdToStopTimes;
 
         public Location Destination { get; }
         public Location Source { get; }
@@ -31,7 +32,16 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             _referentialDestinationStop = GetReferenceDestinationStop();
             _sourceNodes = GetSourceNodes();
             _distancesToDestinationStop = GetDistancesToDestinationStop();
-            _stopTimeIdToStopId = _graph.Nodes.Values.ToDictionary(k => k.Id, v => v.Data.StopId);
+
+            _stopIdToStopTimes = _graph.Nodes.Values
+                .GroupBy(v => v.Data.StopId)
+                .ToDictionary(k => k.Key, v => v.OrderBy(s => s.Data.DepartureTime).ToList());
+
+            _stopGraph = _graph.Nodes.Values
+                .GroupBy(s => s.Data.StopId)
+                .ToDictionary(s => s.Key, v => v.SelectMany(s => s.Neighbors.Select(n => _graph[n.DestinationId].Data.StopId))
+                    .Distinct()
+                    .ToList());
         }
 
         public double CalculateObjectiveValue(params StopTimeInfo[] arguments)
@@ -138,19 +148,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
             var distanceToDestination = _distancesToDestinationStop[currentNode.Data.StopId];
 
-            var neighborIds = currentNode.Neighbors.Select(n => n.DestinationId);
+            var neighborStopIds = _stopGraph[currentNode.Data.StopId];
 
-            var neighborStopIds = _stopTimeIdToStopId
-                .Where(x => neighborIds.Contains(x.Key))
-                .Select(x => x.Value)
-                .Distinct()
-                .ToList();
-
-            var stopsCloserToDestinationIds = neighborStopIds
+            var neighborStopsCloserToDestinationIds = neighborStopIds
                 .Where(stopId => _distancesToDestinationStop[stopId] < distanceToDestination)
                 .ToList();
 
-            var randomStopId = stopsCloserToDestinationIds.GetRandomElement();
+            var randomStopId = neighborStopsCloserToDestinationIds.GetRandomElement();
 
             if (randomStopId == default(int))
             {
@@ -159,10 +163,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
             var forbiddenStopTimeIds = harmonyArguments.Select(a => a.Id).ToList();
 
-            var firstStopTimeWithStop = _graph.GetNeighborsQueryable(currentNode.Id)
-                .Where(s => s.Data.StopId == randomStopId && !forbiddenStopTimeIds.Contains(s.Data.Id))
-                .OrderBy(s => s.Data.DepartureTime)
-                .FirstOrDefault();
+            var firstStopTimeWithStop = _stopIdToStopTimes[randomStopId]
+                .FirstOrDefault(s => !forbiddenStopTimeIds.Contains(s.Data.Id));
 
             return firstStopTimeWithStop;
         }
