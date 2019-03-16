@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
-using MPK.Connect.Service.Helpers;
+using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
     public class DividedHarmonySearcher<T> : HarmonySearcher<T>
     {
         private List<HarmonyMemory<T>> _subHarmonyMemories;
-        public override HarmonySearchType Type => HarmonySearchType.SubHm;
+        public override HarmonySearchType Type => HarmonySearchType.Divided;
         private long RegroupRate => MaxImprovisationCount / 10;
 
         public DividedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)

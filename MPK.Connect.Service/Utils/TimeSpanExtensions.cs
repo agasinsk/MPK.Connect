@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MPK.Connect.Service.Helpers
+namespace MPK.Connect.Service.Utils
 {
     public static class TimeSpanExtensions
     {

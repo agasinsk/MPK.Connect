@@ -1,22 +1,27 @@
 ﻿using System;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
-using MPK.Connect.Service.Helpers;
+using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     public class GeneralHarmonyGenerator<T> : HarmonyGeneratorBase<T>
     {
-        protected new IGeneralObjectiveFunction<T> Function;
+        protected new IGeneralObjectiveFunction<T> ObjectiveFunction;
+
+        public GeneralHarmonyGenerator(IObjectiveFunction<T> function,
+            HarmonyMemory<T> harmonyMemory) : base(function, harmonyMemory)
+        {
+        }
 
         public GeneralHarmonyGenerator(IGeneralObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
-            Function = function ?? throw new ArgumentNullException(nameof(function));
+            ObjectiveFunction = function ?? throw new ArgumentNullException(nameof(function));
         }
 
         public override Harmony<T> GenerateRandomHarmony()
         {
-            var arguments = Function.GetRandomArguments();
+            var arguments = ObjectiveFunction.GetRandomArguments();
 
             return GetHarmony(arguments);
         }
@@ -55,7 +60,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         {
             var harmonyFromMemory = UseMemoryConsideration();
 
-            var pitchAdjustedHarmony = Function.UsePitchAdjustment(harmonyFromMemory);
+            var pitchAdjustedHarmony = ObjectiveFunction.UsePitchAdjustment(harmonyFromMemory);
 
             return pitchAdjustedHarmony;
         }

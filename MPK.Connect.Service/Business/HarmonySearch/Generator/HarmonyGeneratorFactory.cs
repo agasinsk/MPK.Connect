@@ -6,7 +6,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
     public class HarmonyGeneratorFactory
     {
         public static IHarmonyGenerator<T> GetHarmonyGenerator<T>(IObjectiveFunction<T> function,
-            HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio, bool shouldBeDynamic = false)
+            HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio)
         {
             switch (function)
             {
@@ -17,16 +17,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
                     return new DiscreteArgumentHarmonyGenerator<T>(discreteObjectiveFunction, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
 
                 case IGeneralObjectiveFunction<T> generalObjectiveFunction:
-                    {
-                        if (shouldBeDynamic)
-                        {
-                            return new DynamicHarmonyGenerator<T>(generalObjectiveFunction, harmonyMemory,
-                                harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
-                        }
-
-                        return new GeneralHarmonyGenerator<T>(generalObjectiveFunction, harmonyMemory,
-                        harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
-                    }
+                    return new GeneralHarmonyGenerator<T>(generalObjectiveFunction, harmonyMemory,
+                    harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
 
                 default:
                     return null;

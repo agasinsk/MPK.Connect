@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MPK.Connect.Service.Helpers;
+using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Test.Service
 {

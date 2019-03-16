@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MPK.Connect.Service.Helpers
+namespace MPK.Connect.Service.Utils
 {
     public class DoubleComparer : IComparer<double>, IComparer
     {

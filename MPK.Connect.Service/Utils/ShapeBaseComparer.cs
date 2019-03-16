@@ -1,7 +1,7 @@
-﻿using MPK.Connect.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using MPK.Connect.Model;
 
-namespace MPK.Connect.Service.Helpers
+namespace MPK.Connect.Service.Utils
 {
     public class ShapeBaseComparer : IEqualityComparer<ShapeBase>
     {

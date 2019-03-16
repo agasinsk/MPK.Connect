@@ -11,7 +11,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         private readonly DynamicPitchAdjustmentRatioProvider _dynamicPitchAdjustmentRatioProvider;
         public double MaxPitchAdjustmentRatio { get; set; }
         public double MinPitchAdjustmentRatio { get; set; }
-        public override HarmonySearchType Type => HarmonySearchType.ImprovedPar;
+        public override HarmonySearchType Type => HarmonySearchType.Improved;
 
         public ImprovedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize,
             long maxImprovisationCount, double harmonyMemoryConsiderationRatio, double minPitchAdjustmentRatio,

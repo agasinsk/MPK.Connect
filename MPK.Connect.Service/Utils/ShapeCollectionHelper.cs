@@ -1,8 +1,9 @@
-﻿using MPK.Connect.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using MPK.Connect.Model;
+using MPK.Connect.Service.Helpers;
 
-namespace MPK.Connect.Service.Helpers
+namespace MPK.Connect.Service.Utils
 {
     public class ShapeCollectionHelper : IShapeCollectionHelper
     {

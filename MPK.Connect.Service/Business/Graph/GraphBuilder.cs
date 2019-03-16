@@ -7,6 +7,7 @@ using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Helpers;
+using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.Graph
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace MPK.Connect.Service.Helpers
+namespace MPK.Connect.Service.Utils
 {
     public static class ObjectExtentions
     {

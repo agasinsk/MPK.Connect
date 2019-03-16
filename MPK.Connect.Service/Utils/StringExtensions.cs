@@ -1,4 +1,6 @@
-﻿namespace MPK.Connect.Service.Helpers
+﻿using MPK.Connect.Service.Helpers;
+
+namespace MPK.Connect.Service.Utils
 {
     public static class StringExtensions
     {

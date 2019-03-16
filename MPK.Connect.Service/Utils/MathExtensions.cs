@@ -1,7 +1,7 @@
-﻿using MPK.Connect.Model;
-using System;
+﻿using System;
+using MPK.Connect.Model;
 
-namespace MPK.Connect.Service.Helpers
+namespace MPK.Connect.Service.Utils
 {
     public static class MathExtensions
     {

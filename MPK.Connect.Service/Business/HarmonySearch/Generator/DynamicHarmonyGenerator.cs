@@ -1,6 +1,8 @@
-﻿using MPK.Connect.Service.Business.HarmonySearch.Core;
+﻿using System;
+using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
+using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
@@ -12,17 +14,17 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
     {
         private readonly DynamicParameterProvider _parameterProvider;
 
-        public DynamicHarmonyGenerator(IGeneralObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
+        public DynamicHarmonyGenerator(IGeneralObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory) : base(function, harmonyMemory)
         {
-            _parameterProvider = new DynamicParameterProvider(200);
+            _parameterProvider = new DynamicParameterProvider(DefaultParameterListCapacity);
         }
 
         public override HarmonyGenerationRules EstablishHarmonyGenerationRule(double probability)
         {
-            var parameterSet = _parameterProvider.GetParameterSet();
+            var (considerationRatio, pitchAdjustmentRatio) = _parameterProvider.GetParameterSet();
 
-            HarmonyMemoryConsiderationRatio = parameterSet.Item1;
-            PitchAdjustmentRatio = parameterSet.Item2;
+            HarmonyMemoryConsiderationRatio = considerationRatio;
+            PitchAdjustmentRatio = pitchAdjustmentRatio;
 
             return base.EstablishHarmonyGenerationRule(probability);
         }

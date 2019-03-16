@@ -2,6 +2,7 @@
 using MPK.Connect.Model.Enums;
 using MPK.Connect.Service.Helpers;
 using System;
+using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Builders
 {

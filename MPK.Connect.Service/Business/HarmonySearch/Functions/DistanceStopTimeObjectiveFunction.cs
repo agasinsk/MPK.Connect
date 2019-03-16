@@ -6,6 +6,7 @@ using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Helpers;
+using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {

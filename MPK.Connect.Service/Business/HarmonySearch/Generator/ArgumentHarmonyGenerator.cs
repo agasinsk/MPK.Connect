@@ -6,12 +6,12 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     public abstract class ArgumentHarmonyGenerator<T> : HarmonyGeneratorBase<T>
     {
-        protected new IArgumentObjectiveFunction<T> Function;
-        protected int ArgumentsCount => Function.GetArgumentsCount();
+        protected new IArgumentObjectiveFunction<T> ObjectiveFunction;
+        protected int ArgumentsCount => ObjectiveFunction.GetArgumentsCount();
 
         protected ArgumentHarmonyGenerator(IArgumentObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
-            Function = function ?? throw new ArgumentNullException(nameof(function));
+            ObjectiveFunction = function ?? throw new ArgumentNullException(nameof(function));
         }
 
         public T[] GenerateRandomArguments()
@@ -59,7 +59,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
         public virtual T UseRandomChoosing(int argumentIndex)
         {
-            return Function.GetArgumentValue(argumentIndex);
+            return ObjectiveFunction.GetArgumentValue(argumentIndex);
         }
 
         /// <summary>

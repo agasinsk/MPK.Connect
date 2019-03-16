@@ -3,8 +3,10 @@
     public enum HarmonySearchType
     {
         Standard,
-        ImprovedPar,
-        SubHm,
-        Dynamic
+        Improved,
+        Divided,
+        Dynamic,
+        ImprovedDivided,
+        DynamicDivided
     }
 }

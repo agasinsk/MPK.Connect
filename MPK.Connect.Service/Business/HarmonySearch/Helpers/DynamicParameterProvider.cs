@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.Service.Helpers;
+using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 {

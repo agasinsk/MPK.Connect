@@ -16,6 +16,7 @@ using MPK.Connect.Model.Helpers;
 using MPK.Connect.Service.Builders;
 using MPK.Connect.Service.Helpers;
 using MPK.Connect.Service.Import;
+using MPK.Connect.Service.Utils;
 
 namespace MPK.Console.DataImporter
 {

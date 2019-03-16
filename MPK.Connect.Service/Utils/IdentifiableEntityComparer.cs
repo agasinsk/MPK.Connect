@@ -1,7 +1,7 @@
-﻿using MPK.Connect.Model.Helpers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using MPK.Connect.Model.Helpers;
 
-namespace MPK.Connect.Service.Helpers
+namespace MPK.Connect.Service.Utils
 {
     public class IdentifiableEntityComparer<T> : IEqualityComparer<Identifiable<T>>
     {
