@@ -43,6 +43,26 @@ namespace MPK.Connect.Console
         {
             var objectiveFunction = Activator.CreateInstance(ObjectiveFunctionType, graph, source, destination) as IObjectiveFunction<T>;
 
+            if (HarmonySearcherType == typeof(HarmonySearcher<T>))
+            {
+                return Activator.CreateInstance(HarmonySearcherType, objectiveFunction, HarmonyMemorySize, MaxImprovisationCount, HarmonyMemoryConsiderationRatio, PitchAdjustingRatio) as IHarmonySearcher<T>;
+            }
+
+            if (HarmonySearcherType == typeof(ImprovedHarmonySearcher<T>))
+            {
+                return Activator.CreateInstance(HarmonySearcherType, objectiveFunction, HarmonyMemorySize, MaxImprovisationCount, HarmonyMemoryConsiderationRatio, MinPitchAdjustingRatio, MaxPitchAdjustingRatio) as IHarmonySearcher<T>;
+            }
+
+            if (HarmonySearcherType == typeof(DividedHarmonySearcher<T>))
+            {
+                return Activator.CreateInstance(HarmonySearcherType, objectiveFunction, HarmonyMemorySize, MaxImprovisationCount, HarmonyMemoryConsiderationRatio, PitchAdjustingRatio) as IHarmonySearcher<T>;
+            }
+
+            if (HarmonySearcherType == typeof(DynamicHarmonySearcher<T>))
+            {
+                return Activator.CreateInstance(HarmonySearcherType, objectiveFunction, HarmonyMemorySize, MaxImprovisationCount) as IHarmonySearcher<T>;
+            }
+
             var harmonySearcher =
                 Activator.CreateInstance(HarmonySearcherType, objectiveFunction, HarmonyMemorySize, MaxImprovisationCount, HarmonyMemoryConsiderationRatio, PitchAdjustingRatio, ImprovedPitchAdjustingScenario, MinPitchAdjustingRatio, MaxPitchAdjustingRatio) as IHarmonySearcher<T>;
 

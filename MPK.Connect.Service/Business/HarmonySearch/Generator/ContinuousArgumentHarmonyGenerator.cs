@@ -6,11 +6,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     public class ContinuousArgumentHarmonyGenerator<T> : ArgumentHarmonyGenerator<T>
     {
-        protected new IContinuousObjectiveFunction<T> Function;
+        protected new IContinuousObjectiveFunction<T> ObjectiveFunction;
 
         public ContinuousArgumentHarmonyGenerator(IContinuousObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
-            Function = function ?? throw new ArgumentNullException(nameof(function));
+            ObjectiveFunction = function ?? throw new ArgumentNullException(nameof(function));
         }
 
         public override T UsePitchAdjustment(int argumentIndex)
@@ -20,10 +20,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
             if (randomValue < 0.5)
             {
-                return Function.GetPitchDownAdjustedValue(argumentIndex, existingValue);
+                return ObjectiveFunction.GetPitchDownAdjustedValue(argumentIndex, existingValue);
             }
 
-            return Function.GetPitchUpAdjustedValue(argumentIndex, existingValue);
+            return ObjectiveFunction.GetPitchUpAdjustedValue(argumentIndex, existingValue);
         }
     }
 }

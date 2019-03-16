@@ -1,17 +1,13 @@
 ﻿using MPK.Connect.Service.Business.HarmonySearch.Functions;
-using MPK.Connect.Service.Business.HarmonySearch.Generator;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
     public class DynamicHarmonySearcher<T> : HarmonySearcher<T>
     {
-        private new readonly DynamicHarmonyGenerator<T> HarmonyGenerator;
-
         public override HarmonySearchType Type => HarmonySearchType.Dynamic;
 
         public DynamicHarmonySearcher(IGeneralObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount) : base(function, harmonyMemorySize, maxImprovisationCount)
         {
-            HarmonyGenerator = new DynamicHarmonyGenerator<T>(function, HarmonyMemory);
         }
 
         public override Harmony<T> SearchForHarmony()

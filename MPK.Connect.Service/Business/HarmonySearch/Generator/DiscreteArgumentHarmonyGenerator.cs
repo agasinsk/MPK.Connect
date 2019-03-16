@@ -9,21 +9,21 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
     /// </summary>
     public class DiscreteArgumentHarmonyGenerator<T> : ArgumentHarmonyGenerator<T>
     {
-        protected new IDiscreteObjectiveFunction<T> Function;
+        protected new IDiscreteObjectiveFunction<T> ObjectiveFunction;
 
         public DiscreteArgumentHarmonyGenerator(IDiscreteObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
-            Function = function ?? throw new ArgumentNullException(nameof(function));
+            ObjectiveFunction = function ?? throw new ArgumentNullException(nameof(function));
         }
 
         public override T UseMemoryConsideration(int argumentIndex)
         {
             var argumentFromRandomHarmony = HarmonyMemory.GetArgumentFromRandomHarmony(argumentIndex);
-            while (!Function.IsArgumentValuePossible(argumentFromRandomHarmony))
+            while (!ObjectiveFunction.IsArgumentValuePossible(argumentFromRandomHarmony))
             {
-                argumentFromRandomHarmony = Function.GetArgumentValue(argumentIndex);
+                argumentFromRandomHarmony = ObjectiveFunction.GetArgumentValue(argumentIndex);
             }
-            Function.SaveArgumentValue(argumentIndex, argumentFromRandomHarmony);
+            ObjectiveFunction.SaveArgumentValue(argumentIndex, argumentFromRandomHarmony);
             return argumentFromRandomHarmony;
         }
 
@@ -31,15 +31,15 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         {
             var valueFromHarmonyMemory = HarmonyMemory.GetArgumentFromRandomHarmony(argumentIndex);
 
-            var pitchAdjustedValue = Function.GetNeighborValue(argumentIndex, valueFromHarmonyMemory);
-            Function.SaveArgumentValue(argumentIndex, pitchAdjustedValue);
+            var pitchAdjustedValue = ObjectiveFunction.GetNeighborValue(argumentIndex, valueFromHarmonyMemory);
+            ObjectiveFunction.SaveArgumentValue(argumentIndex, pitchAdjustedValue);
             return pitchAdjustedValue;
         }
 
         public override T UseRandomChoosing(int argumentIndex)
         {
-            var randomArgumentValue = Function.GetArgumentValue(argumentIndex);
-            Function.SaveArgumentValue(argumentIndex, randomArgumentValue);
+            var randomArgumentValue = ObjectiveFunction.GetArgumentValue(argumentIndex);
+            ObjectiveFunction.SaveArgumentValue(argumentIndex, randomArgumentValue);
             return randomArgumentValue;
         }
     }
