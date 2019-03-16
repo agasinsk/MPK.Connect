@@ -11,6 +11,7 @@
         public const int DefaultMaxImprovisationCount = 10000;
         public const double DefaultMaxPitchAdjustmentRatio = 0.95;
         public const double DefaultMinPitchAdjustmentRatio = 0.05;
+        public const int DefaultParameterListCapacity = 200;
         public const double DefaultPitchAdjustmentRatio = 0.35;
     }
 }

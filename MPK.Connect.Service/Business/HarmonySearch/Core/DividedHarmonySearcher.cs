@@ -12,11 +12,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         public override HarmonySearchType Type => HarmonySearchType.SubHm;
         private long RegroupRate => MaxImprovisationCount / 10;
 
-        public DividedHarmonySearcher(IObjectiveFunction<T> function) : base(function)
-        {
-        }
-
-        public DividedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio, bool shouldImprovePitchAdjustingScenario, double minPitchAdjustmentRatio, double maxPitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio, shouldImprovePitchAdjustingScenario, minPitchAdjustmentRatio, maxPitchAdjustmentRatio)
+        public DividedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
         }
 
@@ -59,10 +55,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                     HarmonyGenerator.HarmonyMemory = subHarmonyMemory;
 
                     var worstHarmony = subHarmonyMemory.WorstHarmony;
-                    if (ShouldImprovePitchAdjustingScenario)
-                    {
-                        HarmonyGenerator.PitchAdjustmentRatio = GetCurrentPitchAdjustingRatio(improvisationCount);
-                    }
 
                     var improvisedHarmony = HarmonyGenerator.ImproviseHarmony();
                     if (improvisedHarmony.IsBetterThan(worstHarmony) && !subHarmonyMemory.Contains(improvisedHarmony))

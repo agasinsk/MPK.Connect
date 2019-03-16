@@ -23,44 +23,6 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Core
         }
 
         [TestMethod]
-        public void TestGetCurrentPitchAdjustingRatioWhenImprovedScenarioIsOff()
-        {
-            // Arrange
-            var iterationIndex = 100;
-
-            // Act
-            var result = _harmonySearcher.GetCurrentPitchAdjustingRatio(iterationIndex);
-
-            // Assert
-            Assert.AreEqual(_harmonySearcher.PitchAdjustmentRatio, result);
-            Assert.AreEqual(DefaultPitchAdjustmentRatio, result);
-        }
-
-        [TestMethod]
-        public void TestGetCurrentPitchAdjustingRatioWhenImprovedScenarioIsOn()
-        {
-            // Arrange
-            var iterationIndex = 100;
-            var improvedHarmonySearcher = new HarmonySearcher<double>(_objectiveFunction, 20, 200, 0.9, 0, true, 0.2, 0.95);
-            var expectedResult = 0.95 -
-                                 (0.95 - 0.2) * iterationIndex /
-                                 200;
-
-            // Act
-            var result = improvedHarmonySearcher.GetCurrentPitchAdjustingRatio(iterationIndex);
-
-            // Assert
-            Assert.IsNotNull(improvedHarmonySearcher.PitchAdjustmentRatio);
-            Assert.IsTrue(improvedHarmonySearcher.ShouldImprovePitchAdjustingScenario);
-            Assert.AreEqual(0.2, improvedHarmonySearcher.MinPitchAdjustmentRatio);
-            Assert.AreEqual(DefaultMaxPitchAdjustmentRatio, improvedHarmonySearcher.MaxPitchAdjustmentRatio);
-            Assert.AreEqual(DefaultMaxPitchAdjustmentRatio, improvedHarmonySearcher.PitchAdjustmentRatio);
-            Assert.AreEqual(DefaultHarmonyMemoryConsiderationRatio, improvedHarmonySearcher.HarmonyMemoryConsiderationRatio);
-
-            Assert.AreEqual(expectedResult, result);
-        }
-
-        [TestMethod]
         public void TestInitializeHarmonyMemory()
         {
             //Arrange

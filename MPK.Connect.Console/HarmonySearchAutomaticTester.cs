@@ -40,7 +40,7 @@ namespace MPK.Connect.Console
 
                 solutionsDataTable.Rows.Add(i, bestHarmony.ObjectiveValue,
                     string.Concat(bestHarmony.Arguments.Select(a => $" {a.ToString()} |")), elapsed);
-                System.Console.WriteLine($"Finished testing {harmonySearcher.Type.ToString()}, with {harmonySearcher.GetObjectiveFunctionType().Name}, improved PAR: {harmonySearcher.ShouldImprovePitchAdjustingScenario}, iteration {i}.");
+                System.Console.WriteLine($"Finished testing {harmonySearcher.Type.ToString()}, with {harmonySearcher.GetObjectiveFunctionType().Name}, iteration {i}.");
             }
 
             var filePath = Path.Combine(resultPath, $"{harmonySearcher.Type.ToString()}_TestResults");
@@ -79,13 +79,7 @@ namespace MPK.Connect.Console
             dataTable.Rows.Add($"{nameof(harmonySearcher.MaxImprovisationCount)}", harmonySearcher.MaxImprovisationCount);
             dataTable.Rows.Add($"{nameof(harmonySearcher.HarmonyMemory.MaxCapacity)}",
                 harmonySearcher.HarmonyMemory.MaxCapacity);
-            dataTable.Rows.Add($"{nameof(harmonySearcher.ShouldImprovePitchAdjustingScenario)}",
-                harmonySearcher.ShouldImprovePitchAdjustingScenario.ToString());
             dataTable.Rows.Add($"{nameof(harmonySearcher.PitchAdjustmentRatio)}", harmonySearcher.PitchAdjustmentRatio);
-            dataTable.Rows.Add($"{nameof(harmonySearcher.MinPitchAdjustmentRatio)}",
-                harmonySearcher.MinPitchAdjustmentRatio);
-            dataTable.Rows.Add($"{nameof(harmonySearcher.MaxPitchAdjustmentRatio)}",
-                harmonySearcher.MaxPitchAdjustmentRatio);
 
             return dataTable;
         }
