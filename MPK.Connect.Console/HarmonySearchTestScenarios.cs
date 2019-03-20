@@ -28,9 +28,9 @@ namespace MPK.Connect.Console
 
             Settings = new List<HarmonySearchTestSettings<T>>();
 
-            foreach (var harmonySearcherType in harmonySearcherTypes)
+            foreach (var functionType in functionTypes)
             {
-                foreach (var functionType in functionTypes)
+                foreach (var harmonySearcherType in harmonySearcherTypes)
                 {
                     var testSettings = new HarmonySearchTestSettings<T>
                     {

@@ -10,6 +10,8 @@ namespace MPK.Connect.Test.Service.HarmonySearch
         private readonly List<ArgumentLimit> _argumentLimits;
         private readonly IBoundedRandom _random;
 
+        public ObjectiveFunctionType Type => ObjectiveFunctionType.Continuous;
+
         public DoubleArgumentObjectiveFunction()
         {
             _random = RandomFactory.GetInstance();

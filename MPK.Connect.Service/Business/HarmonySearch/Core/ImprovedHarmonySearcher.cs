@@ -43,6 +43,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                 }
                 ImprovisationCount++;
             }
+
             return HarmonyMemory.BestHarmony;
         }
     }

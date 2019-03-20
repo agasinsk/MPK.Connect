@@ -1,8 +1,8 @@
 ﻿using System.Data;
 
-namespace MPK.Connect.Service.Experiment
+namespace MPK.Connect.Service.Helpers
 {
-    public interface IExporterService
+    public interface IExcelExporterService
     {
         void ExportToExcel(DataTable data, DataTable solutionDataTable, string filePath = null);
     }

@@ -11,8 +11,7 @@ using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
 using MPK.Connect.Service.Business.Graph;
-using MPK.Connect.Service.Experiment;
-using MPK.Connect.Service.Export;
+using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Console
 {
@@ -63,7 +62,7 @@ namespace MPK.Connect.Console
             containerBuilder.Populate(services);
             containerBuilder.RegisterType(typeof(SimpleMpkContext)).As<IMpkContext>();
             containerBuilder.RegisterType<ActionTimer>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<ExporterService>().AsImplementedInterfaces();
+            containerBuilder.RegisterType<ExcelExcelExporterService>().AsImplementedInterfaces();
             containerBuilder.RegisterGeneric(typeof(HarmonySearchAutomaticTester<>)).AsSelf();
 
             Container = containerBuilder.Build();
@@ -80,8 +79,8 @@ namespace MPK.Connect.Console
                 var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopTimeInfo>>();
 
                 var scenarios = new HarmonySearchTestScenarios<StopTimeInfo>();
-                var source = new Location("Kwiska");
-                var destination = new Location("Świdnicka");
+                var source = new Location("Biskupin");
+                var destination = new Location("Port Lotniczy");
 
                 automaticTester.RunTestsWithScenarios(scenarios, source, destination);
             }

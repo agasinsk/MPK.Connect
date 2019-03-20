@@ -23,6 +23,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                 if (improvisedHarmony.IsBetterThan(worstHarmony) && !HarmonyMemory.Contains(improvisedHarmony))
                 {
                     HarmonyMemory.SwapWithWorstHarmony(improvisedHarmony);
+
                     HarmonyGenerator.MarkCurrentParametersAsWinning();
                 }
             }

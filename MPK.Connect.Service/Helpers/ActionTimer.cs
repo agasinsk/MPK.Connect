@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace MPK.Connect.Service.Export
+namespace MPK.Connect.Service.Helpers
 {
     public class ActionTimer : IActionTimer
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MPK.Connect.Service.Export
+namespace MPK.Connect.Service.Helpers
 {
     public interface IActionTimer
     {

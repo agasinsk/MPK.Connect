@@ -5,7 +5,6 @@ using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
-using MPK.Connect.Service.Helpers;
 using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Functions
@@ -18,6 +17,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
         public Location Destination { get; }
         public Location Source { get; }
+
+        public ObjectiveFunctionType Type => ObjectiveFunctionType.RandomStopTime;
 
         public RandomStopTimeObjectiveFunction(Graph<int, StopTimeInfo> graph, Location source, Location destination)
         {

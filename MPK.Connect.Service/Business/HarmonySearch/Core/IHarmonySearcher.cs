@@ -1,4 +1,4 @@
-﻿using System;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Functions;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
@@ -7,13 +7,12 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         HarmonyMemory<T> HarmonyMemory { get; }
         double HarmonyMemoryConsiderationRatio { get; }
         long MaxImprovisationCount { get; }
+        ObjectiveFunctionType ObjectiveFunctionType { get; }
         double PitchAdjustmentRatio { get; set; }
         HarmonySearchType Type { get; }
 
-        Type GetObjectiveFunctionType();
-
         /// <summary>
-        /// Looks for optimal solution of a function
+        /// Looks for optimal solution of a problem
         /// </summary>
         Harmony<T> SearchForHarmony();
     }

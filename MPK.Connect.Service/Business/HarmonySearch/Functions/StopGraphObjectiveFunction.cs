@@ -5,7 +5,6 @@ using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
-using MPK.Connect.Service.Helpers;
 using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Functions
@@ -17,6 +16,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
         private readonly List<GraphNode<int, StopDto>> _sourceNodes;
         public Location Destination { get; }
         public Location Source { get; }
+
+        public ObjectiveFunctionType Type => ObjectiveFunctionType.PureRandomStop;
 
         public StopGraphObjectiveFunction(Graph<int, StopDto> graph, Location source, Location destination)
         {

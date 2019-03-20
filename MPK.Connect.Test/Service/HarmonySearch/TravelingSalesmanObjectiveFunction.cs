@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MPK.Connect.Service.Business.HarmonySearch;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 using TspLibNet;
@@ -19,6 +18,8 @@ namespace MPK.Connect.Test.Service.HarmonySearch
         private readonly IRandom _random;
         private List<INode> _unusedNodes;
         public TspLib95Item ProblemItem { get; }
+
+        public ObjectiveFunctionType Type => ObjectiveFunctionType.Discrete;
 
         public TravelingSalesmanObjectiveFunction(string problemName = null)
         {

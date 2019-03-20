@@ -3,15 +3,15 @@ using System.Data;
 using System.IO;
 using OfficeOpenXml;
 
-namespace MPK.Connect.Service.Experiment
+namespace MPK.Connect.Service.Helpers
 {
-    public class ExporterService : IExporterService
+    public class ExcelExcelExporterService : IExcelExporterService
     {
         private const string DefaultFileName = "../../../results/HarmonySearchTestResults";
         private const string DefaultPath = "../../../results/";
         private const string HarmonySearchSheetName = "Harmony search";
 
-        public ExporterService()
+        public ExcelExcelExporterService()
         {
             Directory.CreateDirectory(DefaultPath);
         }
