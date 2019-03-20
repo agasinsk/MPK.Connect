@@ -12,7 +12,6 @@ namespace MPK.Connect.Service.Helpers
             dataTable.Columns.Add("Property", typeof(string));
             dataTable.Columns.Add("Value", typeof(string));
 
-            dataTable.Rows.Add($"{nameof(DateTime)}", DateTime.Now);
             dataTable.Rows.Add($"{nameof(Type)}", harmonySearcher.Type.ToString());
             dataTable.Rows.Add("ObjectiveFunction", harmonySearcher.ObjectiveFunctionType);
             dataTable.Rows.Add($"{nameof(harmonySearcher.HarmonyMemoryConsiderationRatio)}",

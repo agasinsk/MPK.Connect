@@ -62,7 +62,7 @@ namespace MPK.Connect.Console
             containerBuilder.Populate(services);
             containerBuilder.RegisterType(typeof(SimpleMpkContext)).As<IMpkContext>();
             containerBuilder.RegisterType<ActionTimer>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<ExcelExcelExporterService>().AsImplementedInterfaces();
+            containerBuilder.RegisterType<ExcelExporterService>().AsImplementedInterfaces();
             containerBuilder.RegisterGeneric(typeof(HarmonySearchAutomaticTester<>)).AsSelf();
 
             Container = containerBuilder.Build();
@@ -79,8 +79,8 @@ namespace MPK.Connect.Console
                 var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopTimeInfo>>();
 
                 var scenarios = new HarmonySearchTestScenarios<StopTimeInfo>();
-                var source = new Location("Biskupin");
-                var destination = new Location("Port Lotniczy");
+                var source = new Location("Kwiska");
+                var destination = new Location("Świdnicka");
 
                 automaticTester.RunTestsWithScenarios(scenarios, source, destination);
             }
