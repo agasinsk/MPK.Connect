@@ -24,7 +24,7 @@ namespace MPK.Connect.Console
             _graphBuilder = graphBuilder ?? throw new ArgumentNullException(nameof(graphBuilder));
         }
 
-        public void RunTestsWithScenarios(HarmonySearchTestScenarios<T> scenarios, Location source, Location destination)
+        public void RunTestsWithScenarios(HarmonySearchTestScenario<T> scenario, Location source, Location destination)
         {
             var graph = _graphBuilder.GetGraph(DateTime.Now);
 
@@ -34,7 +34,7 @@ namespace MPK.Connect.Console
 
             var averageResults = new Dictionary<ObjectiveFunctionType, List<TestResult>>();
 
-            foreach (var harmonySearchTestSettings in scenarios.Settings)
+            foreach (var harmonySearchTestSettings in scenario.Settings)
             {
                 var harmonySearcher = harmonySearchTestSettings.GetHarmonySearcher(graph, source, destination);
                 var testResult = RunTests(harmonySearcher, infoDataTable, resultDirectory);
