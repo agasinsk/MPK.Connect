@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using OfficeOpenXml.Table;
 
 namespace MPK.Connect.Service.Helpers
@@ -54,9 +55,7 @@ namespace MPK.Connect.Service.Helpers
 
                 foreach (var dataTable in dataTables)
                 {
-                    range = excelWorksheet.Cells[range.End.Row + 2, 1].LoadFromText(dataTable.TableName);
-                    excelWorksheet.Cells[range.Address].Style.Font.Bold = true;
-                    excelWorksheet.Cells[range.Address].Style.Font.Size = 12;
+                    range = WriteTableName(excelWorksheet, range, dataTable);
 
                     range = excelWorksheet.Cells[range.End.Row + 1, 1].LoadFromDataTable(dataTable, true, TableStyles.Light1);
                 }
@@ -72,6 +71,19 @@ namespace MPK.Connect.Service.Helpers
                 var excelFilename = string.IsNullOrEmpty(filePath) ? DefaultFileName : Path.Combine(DefaultPath, filePath);
                 excelPackage.SaveAs(new FileInfo($"{excelFilename}_{DateTime.Now:ddMMyyyy_HHmmsss}.xlsx"));
             }
+        }
+
+        private ExcelRangeBase WriteTableName(ExcelWorksheet excelWorksheet, ExcelRangeBase range, DataTable dataTable)
+        {
+            var row = range.End.Row + 2;
+
+            range = excelWorksheet.Cells[row, 1, row, dataTable.Columns.Count].LoadFromText(dataTable.TableName);
+            excelWorksheet.Cells[row, 1, row, dataTable.Columns.Count].Merge = true;
+            excelWorksheet.Cells[range.Address].Style.Font.Bold = true;
+            excelWorksheet.Cells[range.Address].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            excelWorksheet.Cells[range.Address].Style.Font.Size = 12;
+
+            return range;
         }
     }
 }

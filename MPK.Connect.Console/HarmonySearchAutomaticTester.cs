@@ -129,7 +129,7 @@ namespace MPK.Connect.Console
 
                 solutionsDataTable.Rows.Add(i, bestHarmony.ObjectiveValue,
                     string.Concat(bestHarmony.Arguments.Select(a => $" {a.ToString()} |")), elapsed.TotalSeconds);
-                System.Console.WriteLine($"Finished testing {harmonySearcher.Type.ToString()}, with {harmonySearcher.ObjectiveFunctionType}, iteration {i}.");
+                System.Console.WriteLine($"Finished testing {harmonySearcher.Type.ToString()} HS, with function {harmonySearcher.ObjectiveFunctionType}, iteration {i}.");
             }
 
             var filePath = Path.Combine(resultPath, $"{harmonySearcher.Type}_{harmonySearcher.ObjectiveFunctionType}_TestResults");

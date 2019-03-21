@@ -79,8 +79,8 @@ namespace MPK.Connect.Console
                 var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopTimeInfo>>();
 
                 var scenarios = new HarmonySearchTestScenarios<StopTimeInfo>();
-                var source = new Location("Kliniki");
-                var destination = new Location("Pl. Bema");
+                var source = new Location("Kwiska");
+                var destination = new Location("FAT");
 
                 automaticTester.RunTestsWithScenarios(scenarios, source, destination);
             }
