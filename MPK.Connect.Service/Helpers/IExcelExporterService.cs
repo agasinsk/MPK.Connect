@@ -7,6 +7,6 @@ namespace MPK.Connect.Service.Helpers
     {
         void ExportToExcel(DataTable infoDataTable, DataTable parameterDataTable, DataTable solutionDataTable, string filePath = null);
 
-        void ExportToExcel(List<DataTable> dataTables, string filePath = null);
+        void ExportToExcel(DataTable infoDataTable, List<DataTable> dataTables, string filePath = null);
     }
 }

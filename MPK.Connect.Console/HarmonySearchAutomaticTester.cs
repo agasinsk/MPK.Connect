@@ -30,12 +30,14 @@ namespace MPK.Connect.Console
 
             var resultDirectory = $"Tests_{DateTime.Now:ddMMyyyy_HHmm}";
 
+            var infoDataTable = GetInfoDataTable(source, destination);
+
             var averageResults = new Dictionary<ObjectiveFunctionType, List<TestResult>>();
 
             foreach (var harmonySearchTestSettings in scenarios.Settings)
             {
                 var harmonySearcher = harmonySearchTestSettings.GetHarmonySearcher(graph, source, destination);
-                var testResult = RunTests(harmonySearcher, source, destination, resultDirectory);
+                var testResult = RunTests(harmonySearcher, infoDataTable, resultDirectory);
 
                 if (!averageResults.ContainsKey(harmonySearcher.ObjectiveFunctionType))
                 {
@@ -45,30 +47,26 @@ namespace MPK.Connect.Console
                 averageResults[harmonySearcher.ObjectiveFunctionType].Add(testResult);
             }
 
-            ExportResults(averageResults, resultDirectory);
+            ExportResults(averageResults, infoDataTable, resultDirectory);
         }
 
-        private void ExportResults(Dictionary<ObjectiveFunctionType, List<TestResult>> results, string resultDirectory)
+        private void ExportResults(Dictionary<ObjectiveFunctionType, List<TestResult>> results, DataTable infoDataTable, string resultDirectory)
         {
             var dataTables = new List<DataTable>();
-            foreach (var resultGroup in results)
+            foreach (var (functionType, testResults) in results)
             {
-                var objectiveFunctionDataTable = new DataTable(resultGroup.Key.ToString());
+                var resultsDataTable = GetResultsDataTable(functionType.ToString());
 
-                objectiveFunctionDataTable.Columns.Add(nameof(TestResult.HarmonySearchType), typeof(string));
-                objectiveFunctionDataTable.Columns.Add("Best harmony", typeof(double));
-                objectiveFunctionDataTable.Columns.Add("Time [ms]", typeof(double));
-
-                foreach (var testResult in resultGroup.Value)
+                foreach (var testResult in testResults)
                 {
-                    objectiveFunctionDataTable.Rows.Add(testResult.GetDataRowParamsWithoutFunctionType());
+                    resultsDataTable.Rows.Add(testResult.GetDataRowParamsWithoutFunctionType());
                 }
 
-                dataTables.Add(objectiveFunctionDataTable);
+                dataTables.Add(resultsDataTable);
             }
 
             var filePath = Path.Combine(resultDirectory, "AverageTestResults");
-            _excelExporterService.ExportToExcel(dataTables, filePath);
+            _excelExporterService.ExportToExcel(infoDataTable, dataTables, filePath);
         }
 
         private DataTable GetInfoDataTable(Location source, Location destination)
@@ -85,6 +83,19 @@ namespace MPK.Connect.Console
             return infoDataTable;
         }
 
+        private DataTable GetResultsDataTable(string tableName)
+        {
+            var objectiveFunctionDataTable = new DataTable(tableName);
+
+            objectiveFunctionDataTable.Columns.Add(nameof(TestResult.HarmonySearchType), typeof(string));
+            objectiveFunctionDataTable.Columns.Add(nameof(TestResult.SolutionsCount), typeof(int));
+            objectiveFunctionDataTable.Columns.Add(nameof(TestResult.NonFeasibleCount), typeof(int));
+            objectiveFunctionDataTable.Columns.Add("Best harmony", typeof(double));
+            objectiveFunctionDataTable.Columns.Add("Time [ms]", typeof(double));
+
+            return objectiveFunctionDataTable;
+        }
+
         private DataTable GetSolutionsDataTable()
         {
             var solutionsDataTable = new DataTable();
@@ -92,14 +103,13 @@ namespace MPK.Connect.Console
             solutionsDataTable.Columns.Add("Id", typeof(int));
             solutionsDataTable.Columns.Add("Best harmony", typeof(double));
             solutionsDataTable.Columns.Add("Arguments", typeof(string));
-            solutionsDataTable.Columns.Add("Time [ms]", typeof(double));
+            solutionsDataTable.Columns.Add("Time [s]", typeof(double));
 
             return solutionsDataTable;
         }
 
-        private TestResult RunTests(IHarmonySearcher<T> harmonySearcher, Location source, Location destination, string resultPath)
+        private TestResult RunTests(IHarmonySearcher<T> harmonySearcher, DataTable infoDataTable, string resultPath)
         {
-            var infoDataTable = GetInfoDataTable(source, destination);
             var dataTable = harmonySearcher.ToDataTable();
             var solutionsDataTable = GetSolutionsDataTable();
 
@@ -118,7 +128,7 @@ namespace MPK.Connect.Console
                 objectiveFunctionValues.Add(bestHarmony.ObjectiveValue);
 
                 solutionsDataTable.Rows.Add(i, bestHarmony.ObjectiveValue,
-                    string.Concat(bestHarmony.Arguments.Select(a => $" {a.ToString()} |")), elapsed.TotalMilliseconds);
+                    string.Concat(bestHarmony.Arguments.Select(a => $" {a.ToString()} |")), elapsed.TotalSeconds);
                 System.Console.WriteLine($"Finished testing {harmonySearcher.Type.ToString()}, with {harmonySearcher.ObjectiveFunctionType}, iteration {i}.");
             }
 
@@ -129,8 +139,10 @@ namespace MPK.Connect.Console
             {
                 HarmonySearchType = harmonySearcher.Type,
                 ObjectiveFunctionType = harmonySearcher.ObjectiveFunctionType,
-                ObjectiveFunctionValue = objectiveFunctionValues.Average(),
-                Time = elapsedTimes.Select(t => t.TotalMilliseconds).Average()
+                ObjectiveFunctionValue = objectiveFunctionValues.All(double.IsPositiveInfinity) ? double.PositiveInfinity : objectiveFunctionValues.Where(d => !double.IsPositiveInfinity(d)).Average(),
+                Time = elapsedTimes.Select(t => t.TotalSeconds).Average(),
+                NonFeasibleCount = objectiveFunctionValues.Count(double.IsPositiveInfinity),
+                SolutionsCount = objectiveFunctionValues.Count
             };
         }
     }

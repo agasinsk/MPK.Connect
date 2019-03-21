@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using OfficeOpenXml;
+using OfficeOpenXml.Table;
 
 namespace MPK.Connect.Service.Helpers
 {
@@ -24,11 +25,11 @@ namespace MPK.Connect.Service.Helpers
             {
                 var excelWorksheet = excelPackage.Workbook.Worksheets.Add(HarmonySearchSheetName);
 
-                var range = excelWorksheet.Cells.LoadFromDataTable(infoDataTable, false);
+                var range = excelWorksheet.Cells.LoadFromDataTable(infoDataTable, false, TableStyles.Light1);
 
                 range = excelWorksheet.Cells[range.End.Row + 2, 1].LoadFromDataTable(parameterDataTable, false);
 
-                excelWorksheet.Cells[1, range.End.Column + 2].LoadFromDataTable(solutionDataTable, true);
+                excelWorksheet.Cells[range.Start.Row, range.End.Column + 2].LoadFromDataTable(solutionDataTable, true, TableStyles.Light1);
 
                 excelWorksheet.Cells.AutoFitColumns();
 
@@ -43,18 +44,21 @@ namespace MPK.Connect.Service.Helpers
             }
         }
 
-        public void ExportToExcel(List<DataTable> dataTables, string filePath = null)
+        public void ExportToExcel(DataTable infoDataTable, List<DataTable> dataTables, string filePath = null)
         {
             using (var excelPackage = new ExcelPackage())
             {
                 var excelWorksheet = excelPackage.Workbook.Worksheets.Add(HarmonySearchSheetName);
 
-                var range = new ExcelAddress(1, 1, 1, 1);
+                var range = excelWorksheet.Cells.LoadFromDataTable(infoDataTable, false, TableStyles.Light18);
+
                 foreach (var dataTable in dataTables)
                 {
-                    excelWorksheet.Cells[range.End.Row + 2, 1].LoadFromText(dataTable.TableName);
+                    range = excelWorksheet.Cells[range.End.Row + 2, 1].LoadFromText(dataTable.TableName);
+                    excelWorksheet.Cells[range.Address].Style.Font.Bold = true;
+                    excelWorksheet.Cells[range.Address].Style.Font.Size = 12;
 
-                    range = excelWorksheet.Cells[range.End.Row + 3, 1].LoadFromDataTable(dataTable, true);
+                    range = excelWorksheet.Cells[range.End.Row + 1, 1].LoadFromDataTable(dataTable, true, TableStyles.Light1);
                 }
 
                 excelWorksheet.Cells.AutoFitColumns();
