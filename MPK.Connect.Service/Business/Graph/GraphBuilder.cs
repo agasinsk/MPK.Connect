@@ -6,7 +6,6 @@ using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Graph;
-using MPK.Connect.Service.Helpers;
 using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.Graph
@@ -58,6 +57,8 @@ namespace MPK.Connect.Service.Business.Graph
 
             // Add edges corresponding to switching buses (trips)
             CreateDirectedEdgesForSwitchingTrips(dbStopTimes, graph);
+
+            // TODO: Add edges between last and first stop of the same route but different direction
 
             return graph;
         }

@@ -11,9 +11,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {
     public abstract class BaseStopTimeObjectiveFunction : IGeneralObjectiveFunction<StopTimeInfo>
     {
-        private readonly Graph<int, StopTimeInfo> _graph;
-        private readonly StopDto _referentialDestinationStop;
-        private readonly List<GraphNode<int, StopTimeInfo>> _sourceNodes;
+        protected readonly Graph<int, StopTimeInfo> Graph;
+        protected readonly StopDto ReferentialDestinationStop;
+        protected readonly List<GraphNode<int, StopTimeInfo>> SourceNodes;
 
         public Location Destination { get; }
         public Location Source { get; }
@@ -25,109 +25,30 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Destination = destination ?? throw new ArgumentNullException(nameof(destination));
 
-            _graph = graph ?? throw new ArgumentNullException(nameof(graph));
+            Graph = graph ?? throw new ArgumentNullException(nameof(graph));
 
             // Set up source and destination nodes
-            _referentialDestinationStop = GetReferenceDestinationStop();
-            _sourceNodes = GetSourceNodes();
+            ReferentialDestinationStop = GetReferenceDestinationStop();
+            SourceNodes = GetSourceNodes();
         }
 
-        public virtual double CalculateObjectiveValue(params StopTimeInfo[] arguments)
+        public abstract double CalculateObjectiveValue(params StopTimeInfo[] arguments);
+
+        public abstract StopTimeInfo[] GetRandomArguments();
+
+        public abstract Harmony<StopTimeInfo> UsePitchAdjustment(Harmony<StopTimeInfo> harmony);
+
+        protected StopDto GetReferenceDestinationStop()
         {
-            if (arguments.Last().StopDto.Name.TrimToLower() != Destination.Name.TrimToLower())
-            {
-                return double.PositiveInfinity;
-            }
-
-            var travelTime = (arguments.Last().DepartureTime - arguments.First().DepartureTime).TotalMinutes;
-            var transferCount = arguments.Select(s => s.Route).Distinct().Count() - 1;
-
-            return travelTime + transferCount;
+            return Graph.Nodes.Values
+                .First(s => s.Data.StopDto.Name.TrimToLower() == Destination.Name.TrimToLower())
+                .Data.StopDto;
         }
 
-        public StopTimeInfo[] GetRandomArguments()
-        {
-            var sourceNode = GetRandomSourceNode();
-            var randomPath = new List<StopTimeInfo>
-            {
-                sourceNode.Data
-            };
-            var currentNode = sourceNode;
-
-            while (currentNode.Data.StopDto.Name.TrimToLower() != Destination.Name.TrimToLower())
-            {
-                var randomNeighborNode = GetRandomNeighborNodeExceptExisting(currentNode, randomPath.ToArray());
-                if (randomNeighborNode == null)
-                {
-                    break;
-                }
-
-                randomPath.Add(randomNeighborNode.Data);
-                currentNode = randomNeighborNode;
-            }
-
-            return randomPath.ToArray();
-        }
-
-        public Harmony<StopTimeInfo> UsePitchAdjustment(Harmony<StopTimeInfo> harmony)
-        {
-            if (harmony.Arguments.Last().StopDto.Name.TrimToLower() == Destination.Name.TrimToLower())
-            {
-                return harmony;
-            }
-
-            var randomIndex = harmony.Arguments.GetRandomIndexMinimum(1);
-
-            var predecessorStopTimeId = harmony.Arguments[randomIndex - 1].Id;
-            var predecessorNode = _graph[predecessorStopTimeId];
-
-            var pitchAdjustedSuccessor = GetRandomNeighborNodeExceptExisting(predecessorNode, harmony.Arguments);
-            if (pitchAdjustedSuccessor != null)
-            {
-                harmony.Arguments[randomIndex] = pitchAdjustedSuccessor.Data;
-            }
-
-            harmony.ObjectiveValue = CalculateObjectiveValue(harmony.Arguments);
-
-            return harmony;
-        }
-
-        private GraphNode<int, StopTimeInfo> GetRandomNeighborNodeExceptExisting(GraphNode<int, StopTimeInfo> currentNode, StopTimeInfo[] harmonyArguments)
-        {
-            var neighbors = currentNode.Neighbors;
-
-            if (!neighbors.Any())
-            {
-                return null;
-            }
-
-            var forbiddenIds = harmonyArguments.Select(a => a.Id);
-            var possibleNeighborIds = neighbors.Select(n => n.DestinationId).Except(forbiddenIds).ToArray();
-
-            if (!possibleNeighborIds.Any())
-            {
-                return null;
-            }
-
-            var randomNeighborId = possibleNeighborIds.GetRandomElement();
-
-            return _graph[randomNeighborId];
-        }
-
-        private GraphNode<int, StopTimeInfo> GetRandomSourceNode()
-        {
-            return _sourceNodes.GetRandomElement();
-        }
-
-        private StopDto GetReferenceDestinationStop()
-        {
-            return _graph.Nodes.Values.First(s => s.Data.StopDto.Name.TrimToLower() == Destination.Name.TrimToLower()).Data.StopDto;
-        }
-
-        private List<GraphNode<int, StopTimeInfo>> GetSourceNodes()
+        protected List<GraphNode<int, StopTimeInfo>> GetSourceNodes()
         {
             // Get source stops that have the same name
-            var sourceStopTimesGroupedByStop = _graph.Nodes.Values
+            var sourceStopTimesGroupedByStop = Graph.Nodes.Values
                 .Where(s => s.Data.StopDto.Name.TrimToLower() == Source.Name.TrimToLower())
                 .GroupBy(s => s.Data.StopDto)
                 .ToDictionary(k => k.Key, v => v.GroupBy(st => st.Data.Route)
@@ -138,14 +59,14 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
             // Calculate straight-line distance to destination
             var distanceToDestination = sourceStopTimesGroupedByStop.Keys
-                .Select(s => s.GetDistanceTo(_referentialDestinationStop)).Max();
+                .Select(s => s.GetDistanceTo(ReferentialDestinationStop)).Max();
 
             var stopsWithRightDirectionIds = new List<int>();
             foreach (var stopWithTimes in sourceStopTimesGroupedByStop)
             {
                 // Get neighbor stops
                 var neighborStops = stopWithTimes.Value
-                    .SelectMany(stopTimeInfoId => _graph.GetNeighborsQueryable(stopTimeInfoId)
+                    .SelectMany(stopTimeInfoId => Graph.GetNeighborsQueryable(stopTimeInfoId)
                         .Select(n => n.Data.StopDto)
                         .Where(s => s.Name.TrimToLower() != Source.Name.TrimToLower()))
                     .Distinct()
@@ -154,7 +75,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
                 if (neighborStops.Any())
                 {
                     var minimumDistanceToNeighbor = neighborStops
-                        .Select(s => s.GetDistanceTo(_referentialDestinationStop))
+                        .Select(s => s.GetDistanceTo(ReferentialDestinationStop))
                         .Min();
 
                     // Take only those stops which have neighbors closer to the destination
@@ -166,7 +87,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             }
 
             // Get matching graph nodes (get only one node per route id and stop id)
-            var filteredSourceNodes = _graph.Nodes.Values
+            var filteredSourceNodes = Graph.Nodes.Values
                 .Where(s => stopsWithRightDirectionIds.Contains(s.Data.StopId))
                 .GroupBy(s => s.Data.StopId)
                 .SelectMany(g => g.GroupBy(st => st.Data.Route)

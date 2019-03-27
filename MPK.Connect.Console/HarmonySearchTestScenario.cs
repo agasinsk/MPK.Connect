@@ -22,8 +22,8 @@ namespace MPK.Connect.Console
             {
                 typeof(HarmonySearcher<T>),
                 typeof(ImprovedHarmonySearcher<T>),
-                typeof(DividedHarmonySearcher<T>),
                 typeof(DynamicHarmonySearcher<T>),
+                typeof(DividedHarmonySearcher<T>)
             };
 
             Settings = new List<HarmonySearchTestSettings<T>>();
