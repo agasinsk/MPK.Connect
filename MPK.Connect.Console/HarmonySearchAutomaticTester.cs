@@ -134,6 +134,7 @@ namespace MPK.Connect.Console
 
             var filePath = Path.Combine(resultPath, $"{harmonySearcher.Type}_{harmonySearcher.ObjectiveFunctionType}_TestResults");
             _excelExporterService.ExportToExcel(infoDataTable, dataTable, solutionsDataTable, filePath);
+            System.Console.WriteLine($"Saved file under path: {filePath}");
 
             return new TestResult
             {

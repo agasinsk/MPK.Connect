@@ -92,16 +92,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             return harmony;
         }
 
-        private Dictionary<int, int> GetDistancesToDestinationStop()
-        {
-            var distances = _graph.Nodes
-                .Select(n => n.Value.Data.StopDto)
-                .Distinct()
-                .ToDictionary(k => k.Id, k => k.GetDistanceTo(_referentialDestinationStop));
-
-            return distances;
-        }
-
         private GraphNode<int, StopTimeInfo> GetRandomNeighborNodeExceptExisting(GraphNode<int, StopTimeInfo> currentNode, StopTimeInfo[] harmonyArguments)
         {
             var neighbors = currentNode.Neighbors;

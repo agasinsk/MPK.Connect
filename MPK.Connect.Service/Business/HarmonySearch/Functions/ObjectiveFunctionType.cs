@@ -4,7 +4,7 @@
     {
         General,
         RandomStopTime,
-        RandomStop,
+        EnhancedRandomStop,
         RandomDirectedStop,
         PureRandomStop,
         Continuous,

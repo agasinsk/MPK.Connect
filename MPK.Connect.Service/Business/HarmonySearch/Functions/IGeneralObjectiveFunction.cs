@@ -5,11 +5,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
     public interface IGeneralObjectiveFunction<T> : IObjectiveFunction<T>
     {
         /// <summary>
-        /// Gets the function type
-        /// </summary>
-        ObjectiveFunctionType Type { get; }
-
-        /// <summary>
         /// Gets a collection of random arguments
         /// </summary>
         /// <remarks>Note. This method does not rely on constant argument count (or their indexes)</remarks>
