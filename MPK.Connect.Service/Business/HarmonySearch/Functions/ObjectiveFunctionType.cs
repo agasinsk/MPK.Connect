@@ -8,6 +8,7 @@
         RandomDirectedStop,
         PureRandomStop,
         Continuous,
-        Discrete
+        Discrete,
+        RandomStop
     }
 }

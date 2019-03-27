@@ -11,7 +11,6 @@ using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
 using MPK.Connect.Service.Business.Graph;
-using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Console
@@ -79,9 +78,9 @@ namespace MPK.Connect.Console
             {
                 var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopTimeInfo>>();
 
-                var scenarios = new HarmonySearchTestScenario<StopTimeInfo>(null, typeof(EnhancedRandomStopObjectiveFunction));
-                var source = new Location("Pilczyce");
-                var destination = new Location("FAT");
+                var scenarios = new HarmonySearchTestScenario<StopTimeInfo>();
+                var source = new Location("Port Lotniczy");
+                var destination = new Location("Biskupin");
 
                 automaticTester.RunTestsWithScenarios(scenarios, source, destination);
             }

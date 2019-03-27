@@ -14,7 +14,7 @@ namespace MPK.Connect.Console
             var functionTypes = new List<Type>
             {
                 typeof(RandomStopTimeObjectiveFunction),
-                typeof(EnhancedRandomStopObjectiveFunction),
+                typeof(RandomStopObjectiveFunction),
                 typeof(DistanceStopTimeObjectiveFunction)
             };
 

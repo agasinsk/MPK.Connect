@@ -1,7 +1,7 @@
-﻿using MPK.Connect.Model.Enums;
+﻿using System;
+using MPK.Connect.Model.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
 
 namespace MPK.Connect.Model.Business
 {
@@ -13,6 +13,11 @@ namespace MPK.Connect.Model.Business
         [JsonConverter(typeof(DailyTimeSpanConverter))]
         public TimeSpan DepartureTime { get; set; }
 
+        public string Direction { get; set; }
+
+        [JsonIgnore]
+        public int? DirectionId { get; set; }
+
         [JsonIgnore]
         public override int Id { get; set; }
 
@@ -20,11 +25,6 @@ namespace MPK.Connect.Model.Business
 
         [JsonConverter(typeof(StringEnumConverter))]
         public RouteTypes RouteType { get; set; }
-
-        [JsonIgnore]
-        public int? DirectionId { get; set; }
-
-        public string Direction { get; set; }
 
         [JsonProperty("stopInfo")]
         public StopDto StopDto { get; set; }

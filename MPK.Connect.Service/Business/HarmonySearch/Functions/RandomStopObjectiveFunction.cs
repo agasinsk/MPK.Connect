@@ -9,18 +9,19 @@ using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {
-    public class RandomStopTimeObjectiveFunction : IGeneralObjectiveFunction<StopTimeInfo>
+    public class RandomStopObjectiveFunction : IGeneralObjectiveFunction<StopTimeInfo>
     {
         private readonly Graph<int, StopTimeInfo> _graph;
         private readonly StopDto _referentialDestinationStop;
         private readonly List<GraphNode<int, StopTimeInfo>> _sourceNodes;
-
+        private readonly Dictionary<int, List<int>> _stopGraph;
+        private readonly Dictionary<int, List<GraphNode<int, StopTimeInfo>>> _stopIdToStopTimes;
         public Location Destination { get; }
         public Location Source { get; }
 
-        public ObjectiveFunctionType Type => ObjectiveFunctionType.RandomStopTime;
+        public ObjectiveFunctionType Type => ObjectiveFunctionType.RandomStop;
 
-        public RandomStopTimeObjectiveFunction(Graph<int, StopTimeInfo> graph, Location source, Location destination)
+        public RandomStopObjectiveFunction(Graph<int, StopTimeInfo> graph, Location source, Location destination)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Destination = destination ?? throw new ArgumentNullException(nameof(destination));
@@ -30,6 +31,15 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             // Set up source and destination nodes
             _referentialDestinationStop = GetReferenceDestinationStop();
             _sourceNodes = GetSourceNodes();
+            _stopIdToStopTimes = _graph.Nodes.Values
+                .GroupBy(v => v.Data.StopId)
+                .ToDictionary(k => k.Key, v => v.OrderBy(s => s.Data.DepartureTime).ToList());
+
+            _stopGraph = _graph.Nodes.Values
+                .GroupBy(s => s.Data.StopId)
+                .ToDictionary(s => s.Key, v => v.SelectMany(s => s.Neighbors.Select(n => _graph[n.DestinationId].Data.StopId))
+                    .Distinct()
+                    .ToList());
         }
 
         public double CalculateObjectiveValue(params StopTimeInfo[] arguments)
@@ -94,24 +104,22 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
         private GraphNode<int, StopTimeInfo> GetRandomNeighborNodeExceptExisting(GraphNode<int, StopTimeInfo> currentNode, StopTimeInfo[] harmonyArguments)
         {
-            var neighbors = currentNode.Neighbors;
+            var neighborStopIds = _stopGraph[currentNode.Data.StopId];
 
-            if (!neighbors.Any())
+            var randomStopId = neighborStopIds.GetRandomElement();
+
+            if (randomStopId == default(int))
             {
                 return null;
             }
 
-            var forbiddenIds = harmonyArguments.Select(a => a.Id);
-            var possibleNeighborIds = neighbors.Select(n => n.DestinationId).Except(forbiddenIds).ToArray();
+            var forbiddenStopTimeIds = harmonyArguments.Select(a => a.Id).ToList();
 
-            if (!possibleNeighborIds.Any())
-            {
-                return null;
-            }
+            var firstStopTimeWithStop = _stopIdToStopTimes[randomStopId]
+                .FirstOrDefault(s => !forbiddenStopTimeIds.Contains(s.Data.Id)
+                                     && s.Data.DepartureTime > currentNode.Data.DepartureTime);
 
-            var randomNeighborId = possibleNeighborIds.GetRandomElement();
-
-            return _graph[randomNeighborId];
+            return firstStopTimeWithStop;
         }
 
         private GraphNode<int, StopTimeInfo> GetRandomSourceNode()

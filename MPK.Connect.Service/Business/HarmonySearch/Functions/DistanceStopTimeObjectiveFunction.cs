@@ -210,8 +210,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             var sourceStopTimesGroupedByStop = _graph.Nodes.Values
                 .Where(s => s.Data.StopDto.Name.TrimToLower() == Source.Name.TrimToLower())
                 .GroupBy(s => s.Data.StopDto)
-                .ToDictionary(k => k.Key, g => g.GroupBy(st => st.Data.Route)
-                    .Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First().Id).ToList());
+                .ToDictionary(k => k.Key, v => v.GroupBy(st => st.Data.Route)
+                    .SelectMany(gr => gr.GroupBy(st => st.Data.DirectionId)
+                        .Select(g => g.OrderBy(st => st.Data.DepartureTime)
+                            .First().Id))
+                    .ToList());
 
             // Calculate straight-line distance to destination
             var distanceToDestination = sourceStopTimesGroupedByStop.Keys
@@ -247,7 +250,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
                 .Where(s => stopsWithRightDirectionIds.Contains(s.Data.StopId))
                 .GroupBy(s => s.Data.StopId)
                 .SelectMany(g => g.GroupBy(st => st.Data.Route)
-                    .Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First()))
+                    .SelectMany(gr => gr.GroupBy(st => st.Data.DirectionId)
+                        .Select(dg => dg.OrderBy(st => st.Data.DepartureTime).First())))
                 .ToList();
 
             return filteredSourceNodes;

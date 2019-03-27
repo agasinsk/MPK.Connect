@@ -28,7 +28,7 @@ namespace MPK.Connect.Console
         {
             var graph = _graphBuilder.GetGraph(DateTime.Now);
 
-            var resultDirectory = $"Tests_{DateTime.Now:ddMMyyyy_HHmm}";
+            var resultDirectory = $"Tests_{DateTime.Now:ddMMyyyy_HHmm}_{source.Name.Trim()}_{destination.Name.Trim()}";
 
             var infoDataTable = GetInfoDataTable(source, destination);
 

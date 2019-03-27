@@ -9,7 +9,7 @@ using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {
-    public class RandomStopTimeObjectiveFunction : IGeneralObjectiveFunction<StopTimeInfo>
+    public abstract class BaseStopTimeObjectiveFunction : IGeneralObjectiveFunction<StopTimeInfo>
     {
         private readonly Graph<int, StopTimeInfo> _graph;
         private readonly StopDto _referentialDestinationStop;
@@ -18,9 +18,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
         public Location Destination { get; }
         public Location Source { get; }
 
-        public ObjectiveFunctionType Type => ObjectiveFunctionType.RandomStopTime;
+        public abstract ObjectiveFunctionType Type { get; }
 
-        public RandomStopTimeObjectiveFunction(Graph<int, StopTimeInfo> graph, Location source, Location destination)
+        protected BaseStopTimeObjectiveFunction(Graph<int, StopTimeInfo> graph, Location source, Location destination)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Destination = destination ?? throw new ArgumentNullException(nameof(destination));
@@ -32,7 +32,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
             _sourceNodes = GetSourceNodes();
         }
 
-        public double CalculateObjectiveValue(params StopTimeInfo[] arguments)
+        public virtual double CalculateObjectiveValue(params StopTimeInfo[] arguments)
         {
             if (arguments.Last().StopDto.Name.TrimToLower() != Destination.Name.TrimToLower())
             {
