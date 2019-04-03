@@ -4,7 +4,6 @@ namespace MPK.Connect.Service.Business.AntColony
 {
     public class Ant
     {
-        public int CurrentNodeId { get; set; }
         public int Id { get; set; }
         public double PathCost { get; set; }
         public int Run { get; }

@@ -39,7 +39,10 @@ namespace MPK.Connect.Model.Graph
         public void AddDirectedEdge(T source, T destination, double edgeCost = 0)
         {
             var sourceNode = Nodes[source.Id];
-            sourceNode?.Neighbors.Add(new GraphEdge<TId>(destination.Id, edgeCost));
+            if (sourceNode != null && sourceNode.Neighbors.All(n => !n.DestinationId.Equals(destination.Id)))
+            {
+                sourceNode.Neighbors.Add(new GraphEdge<TId>(destination.Id, edgeCost));
+            }
         }
 
         public void AddEdge(T source, T destination, double edgeCost = 0)

@@ -12,7 +12,6 @@ namespace MPK.Connect.Service.Business.AntColony
     public class AntColonyPathSearcher
     {
         private readonly List<Ant> _ants;
-        private readonly Path<StopTimeInfo> _bestPath;
         private readonly Graph<int, StopTimeInfo> _graph;
         private readonly IBoundedRandom _random;
         private readonly StopDto _referentialDestinationStop;
@@ -39,6 +38,15 @@ namespace MPK.Connect.Service.Business.AntColony
 
         public AntColonyPathSearcher(Graph<int, StopTimeInfo> graph, Location source, Location destination)
         {
+            PheromoneInfluence = 0.2;
+            EdgeCostInfluence = 1 - PheromoneInfluence;
+            MaxIterationCount = 10000;
+            InitialPheromoneAmount = 1;
+            PheromoneAmountPerAnt = InitialPheromoneAmount;
+            MinPheromoneAmount = InitialPheromoneAmount;
+            PheromoneEvaporationSpeed = 0.5;
+            AntCount = graph.Select(s => s.StopDto).Distinct().Count();
+
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Destination = destination ?? throw new ArgumentNullException(nameof(destination));
 
@@ -50,28 +58,28 @@ namespace MPK.Connect.Service.Business.AntColony
             _referentialDestinationStop = GetReferenceDestinationStop();
             _sourceNodes = GetSourceNodes();
 
-            // Initialize visited nodes
-            _visitedNodes = _graph.Nodes.Values
-                .ToDictionary(k => k.Id, k => false);
+            //// Initialize visited nodes
+            //_visitedNodes = _graph.Nodes.Values
+            //    .ToDictionary(k => k.Id, k => false);
 
-            // Initialize visited edges
-            _visitedEdges = _graph.Nodes.Values
-                .ToDictionary(k => k.Id, k => k.Neighbors.ToDictionary(v => v.DestinationId, v => false));
+            //// Initialize visited edges
+            //_visitedEdges = _graph.Nodes.Values
+            //    .ToDictionary(k => k.Id, k => k.Neighbors.ToDictionary(v => v.DestinationId, v => false));
 
             // Initialize pheromone amount lookup
             _pheromoneAmounts = _graph.Nodes.Values
                 .ToDictionary(k => k.Id, k => k.Neighbors.ToDictionary(v => v.DestinationId, v => InitialPheromoneAmount));
 
             // Initialize ants
-            _ants = Enumerable.Range(0, AntCount)
+            _ants = Enumerable.Range(1, AntCount)
                 .Select(i => new Ant(i))
                 .ToList();
 
             // Set source node for each ant
             foreach (var ant in _ants)
             {
-                var sourceNodeId = _sourceNodes.First().Id;
-                ant.CurrentNodeId = sourceNodeId;
+                var sourceNodeId = _sourceNodes.GetRandomElement().Id;
+
                 ant.VisitNode(sourceNodeId);
             }
         }
@@ -83,6 +91,7 @@ namespace MPK.Connect.Service.Business.AntColony
             {
                 MoveAnts();
                 UpdatePheromoneTrails();
+                iterationCount++;
             }
 
             return GetBestPath();
@@ -123,6 +132,10 @@ namespace MPK.Connect.Service.Business.AntColony
 
         private Path<StopTimeInfo> GetBestPath()
         {
+            var feasibleAnts = _ants.Where(a =>
+                    _graph[a.VisitedNodeIds.Last()].Data.StopDto.Name.TrimToLower() == Destination.Name.TrimToLower())
+                .ToList();
+
             var antWithBestPath = _ants.OrderBy(a => a.PathCost).First();
 
             var antVisitedNodesIds = antWithBestPath.VisitedNodeIds;
@@ -135,17 +148,12 @@ namespace MPK.Connect.Service.Business.AntColony
             return new Path<StopTimeInfo>(graphNodes, antWithBestPath.PathCost);
         }
 
-        private double GetEdgeCoefficient(int nodeId, GraphEdge<int> edge, Ant ant)
+        private double GetEdgeCoefficient(int nodeId, GraphEdge<int> edge)
         {
             var pheromoneAmount = _pheromoneAmounts[nodeId][edge.DestinationId];
             if (pheromoneAmount.AlmostEquals(0))
             {
                 return Math.Pow(1 / GetEdgeImportance(edge, pheromoneAmount), PheromoneInfluence);
-            }
-
-            if (ant.Run < 3)
-            {
-                return 0;
             }
 
             return GetEdgeImportance(edge, pheromoneAmount);
@@ -238,33 +246,13 @@ namespace MPK.Connect.Service.Business.AntColony
                 return null;
             }
 
-            var bestEdgeCoefficient = -1d;
-            GraphEdge<int> bestNeighbor = null;
-            foreach (var neighbor in currentNode.Neighbors)
-            {
-                // Check if node been visited by ant
-                if (ant.VisitedNodeIds.Contains(neighbor.DestinationId))
-                {
-                    // Calculate the edge coefficient for ant
-                    var neighborCoefficient = GetEdgeCoefficient(currentNode.Id, neighbor, ant);
-                    if (neighborCoefficient > bestEdgeCoefficient)
-                    {
-                        bestEdgeCoefficient = neighborCoefficient;
-                        bestNeighbor = neighbor;
-                    }
-                    // If coefficients are equal, chose randomly
-                    if (Math.Abs(neighborCoefficient - bestEdgeCoefficient) < 0.0001)
-                    {
-                        var randomValue = _random.NextDouble();
-                        if (randomValue > 0.5)
-                        {
-                            bestNeighbor = neighbor;
-                        }
-                    }
-                }
-            }
+            var edgeWithCoefficients = currentNode.Neighbors
+                .Where(n => !ant.VisitedNodeIds.Contains(n.DestinationId))
+                .ToDictionary(n => n, n => GetEdgeCoefficient(currentNode.Id, n));
 
-            return bestNeighbor;
+            var bestEdge = edgeWithCoefficients.OrderBy(n => n.Value).First().Key;
+
+            return bestEdge;
         }
 
         private void UpdatePheromoneTrails()

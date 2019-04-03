@@ -185,7 +185,7 @@ namespace MPK.Connect.Service.Business.Graph
                     {
                         var cost = destination.DepartureTime - sourceStopTime.DepartureTime + _minimumSwitchingTime;
 
-                        graph[sourceStopTime.Id].Neighbors.Add(new GraphEdge<int>(destination.Id, cost.TotalMinutes));
+                        graph.AddDirectedEdge(sourceStopTime, destination, cost.TotalMinutes);
                     }
                 }
             }
@@ -213,7 +213,7 @@ namespace MPK.Connect.Service.Business.Graph
                     {
                         var cost = destination.DepartureTime - source.DepartureTime + _minimumSwitchingTime;
 
-                        graph[source.Id].Neighbors.Add(new GraphEdge<int>(destination.Id, cost.TotalMinutes));
+                        graph.AddDirectedEdge(source, destination, cost.TotalMinutes);
                     }
                 }
             }
