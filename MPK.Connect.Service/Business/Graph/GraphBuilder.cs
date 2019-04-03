@@ -50,15 +50,14 @@ namespace MPK.Connect.Service.Business.Graph
             // Create a directed edge for every bus route segment
             CreateDirectedEdgesWithinEachTrip(dbStopTimes, graph);
 
-            // TODO: Add edges corresponding to "staying on the bus at a stop" (if any)
-
             // Add edges corresponding to switching stops of the same name
             CreateDirectedEdgesForSwitchingStopsWithSameName(dbStopTimes, graph);
 
             // Add edges corresponding to switching buses (trips)
             CreateDirectedEdgesForSwitchingTrips(dbStopTimes, graph);
 
-            // TODO: Add edges between last and first stop of the same route but different direction
+            // Add edges between last and first stop of the same route but different direction
+            CreatedDirectedEdgesForSwitchingTripDirection(dbStopTimes, graph);
 
             return graph;
         }
@@ -80,6 +79,41 @@ namespace MPK.Connect.Service.Business.Graph
             //CreateDirectedEdgesForStopsWithTheSameName(dbStops, graph);
 
             return graph;
+        }
+
+        private void CreatedDirectedEdgesForSwitchingTripDirection(Dictionary<int, StopTimeInfo> dbStopTimes, Graph<int, StopTimeInfo> graph)
+        {
+            var firstStopTimesOfTrips = dbStopTimes.Values
+                .GroupBy(st => st.TripId)
+                .ToDictionary(k => k.Key, v => v.OrderBy(s => s.StopSequence).FirstOrDefault());
+
+            var lastStopTimeOfTrips = dbStopTimes.Values
+                .GroupBy(st => st.TripId)
+                .ToDictionary(k => k.Key, v => v.OrderBy(s => s.StopSequence).LastOrDefault());
+
+            var firstAndLastStopTimes = firstStopTimesOfTrips.Values
+                .Concat(lastStopTimeOfTrips.Values)
+                .GroupBy(s => s.Route)
+                .ToDictionary(k => k.Key, v => v.GroupBy(s => s.StopDto.Name)
+                    .Where(g => g.Count() > 1)
+                    .ToDictionary(x => x.Key, g => g.OrderBy(s => s.DepartureTime).ToList()));
+
+            foreach (var firstAndLastStopTimeOfRoute in firstAndLastStopTimes)
+            {
+                foreach (var firstAndLastStopTimeOfStop in firstAndLastStopTimeOfRoute.Value)
+                {
+                    for (var index = 0; index < firstAndLastStopTimeOfStop.Value.Count - 1; index++)
+                    {
+                        var sourceStopTime = firstAndLastStopTimeOfStop.Value[index];
+                        var nextStopTime = firstAndLastStopTimeOfStop.Value[index + 1];
+                        if (sourceStopTime.DirectionId != nextStopTime.DirectionId)
+                        {
+                            var transferTime = nextStopTime.DepartureTime - sourceStopTime.DepartureTime;
+                            graph.AddDirectedEdge(sourceStopTime, nextStopTime, transferTime.TotalMinutes);
+                        }
+                    }
+                }
+            }
         }
 
         private void CreateDirectedEdgesForStops(Dictionary<int, StopTimeInfo> dbStopTimes, Graph<int, StopDto> graph)
