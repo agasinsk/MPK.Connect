@@ -16,6 +16,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         {
         }
 
+        public DividedHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, int harmonyMemorySize) : base(harmonyGenerator, harmonyMemorySize)
+        {
+        }
+
         /// <inheritdoc/>
         /// <summary>
         /// Initializes a collection of sub-harmony memories with random solutions
@@ -23,6 +27,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         public override void InitializeHarmonyMemory()
         {
             _subHarmonyMemories = new List<HarmonyMemory<T>>(4);
+
             var subHarmonyMemoriesCount = (int)Math.Ceiling((decimal)HarmonyMemory.MaxCapacity / 4);
             for (var i = 0; i < _subHarmonyMemories.Capacity; i++)
             {

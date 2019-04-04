@@ -15,6 +15,19 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
         public ImprovedHarmonySearcher(IHarmonyGenerator<T> function, long maxImprovisationCount, double minPitchAdjustmentRatio, double maxPitchAdjustmentRatio) : base(function)
         {
+            MaxPitchAdjustmentRatio = maxPitchAdjustmentRatio;
+            MinPitchAdjustmentRatio = minPitchAdjustmentRatio;
+            MaxImprovisationCount = maxImprovisationCount;
+
+            _dynamicPitchAdjustmentRatioProvider = new DynamicPitchAdjustmentRatioProvider(maxPitchAdjustmentRatio, minPitchAdjustmentRatio, maxImprovisationCount);
+        }
+
+        public ImprovedHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, int harmonyMemorySize, long maxImprovisationCount, double minPitchAdjustmentRatio, double maxPitchAdjustmentRatio) : base(harmonyGenerator, harmonyMemorySize)
+        {
+            MaxPitchAdjustmentRatio = maxPitchAdjustmentRatio;
+            MinPitchAdjustmentRatio = minPitchAdjustmentRatio;
+            MaxImprovisationCount = maxImprovisationCount;
+
             _dynamicPitchAdjustmentRatioProvider = new DynamicPitchAdjustmentRatioProvider(maxPitchAdjustmentRatio, minPitchAdjustmentRatio, maxImprovisationCount);
         }
 

@@ -82,8 +82,8 @@ namespace MPK.Connect.Console
                 var source = new Location("Krzyki");
                 var destination = new Location("Galeria Dominikańska");
 
-                automaticTester.RunAntColonyTest(source, destination);
-                //automaticTester.RunTestsWithScenarios(scenarios, source, destination);
+                //automaticTester.RunAntColonyTest(source, destination);
+                automaticTester.RunTestsWithScenarios(scenarios, source, destination);
             }
         }
     }

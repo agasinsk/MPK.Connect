@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MPK.Connect.Service.Helpers;
 using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
@@ -61,6 +60,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
         {
             var harmonyMemoryConsiderationRatio = _random.NextValue(0.9, 1);
             var pitchAdjustmentRatio = _random.NextDouble();
+
             var parameterSet = new Tuple<double, double>(harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
 
             return parameterSet;
@@ -68,7 +68,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 
         private void ResetParameterSets()
         {
-            _currentParameterSetIndex = 0;
+            _currentParameterSetIndex = -1;
 
             if (!WinningParameterSets.Any())
             {

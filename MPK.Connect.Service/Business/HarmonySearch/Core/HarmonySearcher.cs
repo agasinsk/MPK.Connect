@@ -13,7 +13,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         public HarmonyGeneratorType HarmonyGeneratorType => HarmonyGenerator.Type;
         public HarmonyMemory<T> HarmonyMemory { get; }
         public int ImprovisationCount { get; set; }
-        public long MaxImprovisationCount { get; }
+        public long MaxImprovisationCount { get; set; }
         public double PitchAdjustmentRatio { get; set; }
 
         public virtual HarmonySearchType Type => HarmonySearchType.Standard;
@@ -39,12 +39,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// </summary>
         /// <param name="harmonyGenerator">Harmony generator</param>
         /// <param name="harmonyMemorySize">Harmony memory size</param>
-        public HarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, int harmonyMemorySize)
+        public HarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, int harmonyMemorySize) : this(harmonyGenerator)
         {
-            PitchAdjustmentRatio = DefaultPitchAdjustmentRatio;
-            MaxImprovisationCount = DefaultMaxImprovisationCount;
-            HarmonyGenerator = harmonyGenerator;
-
             HarmonyMemory = new HarmonyMemory<T>(harmonyMemorySize);
             HarmonyGenerator.HarmonyMemory = HarmonyMemory;
         }

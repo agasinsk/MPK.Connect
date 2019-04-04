@@ -4,10 +4,10 @@ using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
-using MPK.Connect.Service.Business.HarmonySearch.Generator;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Utils;
 
-namespace MPK.Connect.Service.Business.HarmonySearch.Functions
+namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     /// <summary>
     /// Objective function that randomly selects stop time from available neighbors

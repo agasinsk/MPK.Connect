@@ -19,6 +19,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             _parameterProvider = new DynamicParameterProvider(HarmonySearchConstants.DefaultParameterListCapacity);
         }
 
+        public DynamicHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, int harmonyMemorySize) : base(harmonyGenerator, harmonyMemorySize)
+        {
+            _parameterProvider = new DynamicParameterProvider(HarmonySearchConstants.DefaultParameterListCapacity);
+        }
+
         public override Harmony<T> SearchForHarmony()
         {
             InitializeHarmonyMemory();
