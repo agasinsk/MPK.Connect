@@ -4,10 +4,10 @@ using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
-using MPK.Connect.Service.Business.HarmonySearch.Generator;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Utils;
 
-namespace MPK.Connect.Service.Business.HarmonySearch.Functions
+namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     /// <summary>
     /// Objective function that randomly selects a stop from available neighbors
@@ -19,21 +19,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
         public override HarmonyGeneratorType Type => HarmonyGeneratorType.RandomStop;
 
-        public RandomStopHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, HarmonyMemory<StopTimeInfo> harmonyMemory, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, harmonyMemory, graph, destination, source)
-        {
-            // Set up side graphs
-            _stopIdToStopTimes = Graph.Nodes.Values
-                .GroupBy(v => v.Data.StopId)
-                .ToDictionary(k => k.Key, v => v.OrderBy(s => s.Data.DepartureTime).ToList());
-
-            _stopGraph = Graph.Nodes.Values
-                .GroupBy(s => s.Data.StopId)
-                .ToDictionary(s => s.Key, v => v.SelectMany(s => s.Neighbors.Select(n => Graph[n.DestinationId].Data.StopId))
-                    .Distinct()
-                    .ToList());
-        }
-
-        public RandomStopHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, HarmonyMemory<StopTimeInfo> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio, graph, destination, source)
+        public RandomStopHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, graph, destination, source)
         {
             // Set up side graphs
             _stopIdToStopTimes = Graph.Nodes.Values

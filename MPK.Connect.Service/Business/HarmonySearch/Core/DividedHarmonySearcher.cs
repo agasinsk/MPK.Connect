@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
@@ -12,7 +12,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         public override HarmonySearchType Type => HarmonySearchType.Divided;
         private long RegroupRate => MaxImprovisationCount / 10;
 
-        public DividedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
+        public DividedHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator) : base(harmonyGenerator)
         {
         }
 

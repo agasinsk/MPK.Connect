@@ -1,4 +1,4 @@
-﻿using MPK.Connect.Service.Business.HarmonySearch.Functions;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
@@ -13,10 +13,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         public double MinPitchAdjustmentRatio { get; set; }
         public override HarmonySearchType Type => HarmonySearchType.Improved;
 
-        public ImprovedHarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize,
-            long maxImprovisationCount, double harmonyMemoryConsiderationRatio, double minPitchAdjustmentRatio,
-            double maxPitchAdjustmentRatio) : base(function, harmonyMemorySize, maxImprovisationCount,
-            harmonyMemoryConsiderationRatio)
+        public ImprovedHarmonySearcher(IHarmonyGenerator<T> function, long maxImprovisationCount, double minPitchAdjustmentRatio, double maxPitchAdjustmentRatio) : base(function)
         {
             _dynamicPitchAdjustmentRatioProvider = new DynamicPitchAdjustmentRatioProvider(maxPitchAdjustmentRatio, minPitchAdjustmentRatio, maxImprovisationCount);
         }

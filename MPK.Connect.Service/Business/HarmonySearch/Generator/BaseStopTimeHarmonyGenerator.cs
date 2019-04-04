@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
-using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Utils;
 
@@ -20,23 +18,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
         public Location Source { get; }
 
-        public abstract HarmonyGeneratorType Type { get; }
-
-        protected BaseStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, HarmonyMemory<StopTimeInfo> harmonyMemory, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, harmonyMemory)
+        protected BaseStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function)
         {
-            Graph = graph ?? throw new ArgumentNullException(nameof(graph));
-            Destination = destination ?? throw new ArgumentNullException(nameof(destination));
-            Source = source ?? throw new ArgumentNullException(nameof(source));
-        }
-
-        protected BaseStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function,
-            HarmonyMemory<StopTimeInfo> harmonyMemory, double harmonyMemoryConsiderationRatio,
-            double pitchAdjustmentRatio, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(
-            function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
-        {
-            Graph = graph ?? throw new ArgumentNullException(nameof(graph));
-            Destination = destination ?? throw new ArgumentNullException(nameof(destination));
-            Source = source ?? throw new ArgumentNullException(nameof(source));
+            Graph = graph;
+            Destination = destination;
+            Source = source;
 
             // Set up source and destination nodes
             ReferentialDestinationStop = GetReferenceDestinationStop();

@@ -4,15 +4,15 @@ using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
-using MPK.Connect.Service.Business.HarmonySearch.Generator;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Utils;
 
-namespace MPK.Connect.Service.Business.HarmonySearch.Functions
+namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     /// <summary>
-    /// Objective function that takes the stop direction into account
+    /// Harmony generator that takes the stop direction into account
     /// </summary>
-    public class DistanceStopTimeHarmonyGenerator : BaseStopTimeHarmonyGenerator
+    public class DirectedStopTimeHarmonyGenerator : BaseStopTimeHarmonyGenerator
     {
         private readonly Dictionary<int, int> _distancesToDestinationStop;
         private readonly Dictionary<int, List<int>> _stopGraph;
@@ -20,7 +20,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
         public override HarmonyGeneratorType Type => HarmonyGeneratorType.RandomDirectedStop;
 
-        public DistanceStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, HarmonyMemory<StopTimeInfo> harmonyMemory, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, harmonyMemory, graph, destination, source)
+        public DirectedStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, graph, destination, source)
         {
             // Set up side graphs and lookup tables
             _distancesToDestinationStop = GetDistancesToDestinationStop();
@@ -34,10 +34,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
                 .ToDictionary(s => s.Key, v => v.SelectMany(s => s.Neighbors.Select(n => Graph[n.DestinationId].Data.StopId))
                     .Distinct()
                     .ToList());
-        }
-
-        public DistanceStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, HarmonyMemory<StopTimeInfo> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio, graph, destination, source)
-        {
         }
 
         public override StopTimeInfo[] GetRandomArguments()

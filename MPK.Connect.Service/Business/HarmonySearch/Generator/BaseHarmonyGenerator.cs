@@ -14,21 +14,12 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         public IObjectiveFunction<T> ObjectiveFunction { get; }
         public double PitchAdjustmentRatio { get; set; }
 
-        protected BaseHarmonyGenerator(IObjectiveFunction<T> function,
-            HarmonyMemory<T> harmonyMemory)
+        public abstract HarmonyGeneratorType Type { get; }
+
+        protected BaseHarmonyGenerator(IObjectiveFunction<T> function)
         {
             Random = RandomFactory.GetInstance();
             ObjectiveFunction = function ?? throw new ArgumentNullException(nameof(function));
-            HarmonyMemory = harmonyMemory ?? throw new ArgumentNullException(nameof(harmonyMemory));
-        }
-
-        protected BaseHarmonyGenerator(IObjectiveFunction<T> function,
-            HarmonyMemory<T> harmonyMemory,
-            double harmonyMemoryConsiderationRatio,
-            double pitchAdjustmentRatio) : this(function, harmonyMemory)
-        {
-            HarmonyMemoryConsiderationRatio = harmonyMemoryConsiderationRatio;
-            PitchAdjustmentRatio = pitchAdjustmentRatio;
         }
 
         public virtual HarmonyGenerationRules EstablishHarmonyGenerationRule(double probability)

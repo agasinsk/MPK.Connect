@@ -5,11 +5,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     public abstract class GeneralHarmonyGenerator<T> : BaseHarmonyGenerator<T>, IGeneralHarmonyGenerator<T>
     {
-        protected GeneralHarmonyGenerator(IObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory) : base(function, harmonyMemory)
-        {
-        }
-
-        protected GeneralHarmonyGenerator(IObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
+        protected GeneralHarmonyGenerator(IObjectiveFunction<T> function) : base(function)
         {
         }
 

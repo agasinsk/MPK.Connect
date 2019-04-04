@@ -23,64 +23,30 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// <summary>
         /// The constructor
         /// </summary>
-        /// <param name="function">Function to optimize</param>
-        public HarmonySearcher(IObjectiveFunction<T> function)
+        /// <param name="harmonyGenerator">Harmony generator</param>
+        public HarmonySearcher(IHarmonyGenerator<T> harmonyGenerator)
         {
             PitchAdjustmentRatio = DefaultPitchAdjustmentRatio;
             MaxImprovisationCount = DefaultMaxImprovisationCount;
+            HarmonyGenerator = harmonyGenerator;
+
             HarmonyMemory = new HarmonyMemory<T>(DefaultHarmonyMemorySize);
-
-            HarmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory,
-                DefaultHarmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
+            HarmonyGenerator.HarmonyMemory = HarmonyMemory;
         }
 
         /// <summary>
         /// The constructor
         /// </summary>
-        /// <param name="function">Function to optimize</param>
+        /// <param name="harmonyGenerator">Harmony generator</param>
         /// <param name="harmonyMemorySize">Harmony memory size</param>
-        /// <param name="maxImprovisationCount">Maximum improvisation count</param>
-        public HarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount)
+        public HarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, int harmonyMemorySize)
         {
             PitchAdjustmentRatio = DefaultPitchAdjustmentRatio;
-            MaxImprovisationCount = maxImprovisationCount;
+            MaxImprovisationCount = DefaultMaxImprovisationCount;
+            HarmonyGenerator = harmonyGenerator;
+
             HarmonyMemory = new HarmonyMemory<T>(harmonyMemorySize);
-
-            HarmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory,
-                DefaultHarmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
-        }
-
-        /// <summary>
-        /// The constructor
-        /// </summary>
-        /// <param name="function">Function to optimize</param>
-        /// <param name="harmonyMemorySize">Harmony memory size</param>
-        /// <param name="maxImprovisationCount">Maximum improvisation count</param>
-        /// <param name="harmonyMemoryConsiderationRatio">Harmony Memory Consideration Ratio</param>
-        public HarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount, double harmonyMemoryConsiderationRatio)
-        {
-            MaxImprovisationCount = maxImprovisationCount;
-            PitchAdjustmentRatio = DefaultPitchAdjustmentRatio;
-            HarmonyMemory = new HarmonyMemory<T>(harmonyMemorySize);
-
-            HarmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory, harmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
-        }
-
-        /// <summary>
-        /// The constructor
-        /// </summary>
-        /// <param name="function">Function to optimize</param>
-        /// <param name="harmonyMemorySize">Harmony memory size</param>
-        /// <param name="maxImprovisationCount">Maximum improvisation count</param>
-        /// <param name="harmonyMemoryConsiderationRatio">Harmony Memory Consideration Ratio</param>
-        /// <param name="pitchAdjustmentRatio">Pitch Adjustment Ratio</param>
-        public HarmonySearcher(IObjectiveFunction<T> function, int harmonyMemorySize, long maxImprovisationCount, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio)
-        {
-            MaxImprovisationCount = maxImprovisationCount;
-            PitchAdjustmentRatio = pitchAdjustmentRatio;
-            HarmonyMemory = new HarmonyMemory<T>(harmonyMemorySize);
-
-            HarmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory, harmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
+            HarmonyGenerator.HarmonyMemory = HarmonyMemory;
         }
 
         /// <summary>

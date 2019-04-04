@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using MPK.Connect.Service.Business.HarmonySearch.Generator;
 
 namespace MPK.Connect.Console
 {
@@ -13,9 +14,14 @@ namespace MPK.Connect.Console
         {
             var functionTypes = new List<Type>
             {
-                typeof(RandomStopTimeObjectiveFunction),
-                typeof(RandomStopObjectiveFunction),
-                typeof(DistanceStopTimeObjectiveFunction)
+                typeof(TravelTimeObjectiveFunction)
+            };
+
+            var harmonyGeneratorTypes = new List<Type>
+            {
+                typeof(RandomStopTimeHarmonyGenerator),
+                typeof(RandomStopHarmonyGenerator),
+                typeof(DirectedStopTimeHarmonyGenerator)
             };
 
             var harmonySearcherTypes = new List<Type>
@@ -30,7 +36,7 @@ namespace MPK.Connect.Console
 
             if (harmonySearcherType != null && objectiveFunctionType == null)
             {
-                CreateSettingsForSingleHarmonySearcherType(harmonySearcherType, functionTypes);
+                CreateSettingsForSingleHarmonySearcherType(harmonySearcherType, harmonyGeneratorTypes);
             }
             if (objectiveFunctionType != null && harmonySearcherType == null)
             {
@@ -42,7 +48,7 @@ namespace MPK.Connect.Console
             }
             if (harmonySearcherType == null && objectiveFunctionType == null)
             {
-                CreateDefaultSettings(functionTypes, harmonySearcherTypes);
+                CreateDefaultSettings(harmonyGeneratorTypes, harmonySearcherTypes);
             }
         }
 
