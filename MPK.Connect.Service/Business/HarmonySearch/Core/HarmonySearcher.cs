@@ -1,5 +1,4 @@
-﻿using System;
-using MPK.Connect.Service.Business.HarmonySearch.Functions;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
@@ -84,11 +83,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             HarmonyGenerator = HarmonyGeneratorFactory.GetHarmonyGenerator(function, HarmonyMemory, harmonyMemoryConsiderationRatio, PitchAdjustmentRatio);
         }
 
-        public Type GetObjectiveFunctionType()
-        {
-            return HarmonyGenerator.ObjectiveFunction.GetType();
-        }
-
         /// <summary>
         /// Initializes harmony memory with random solutions
         /// </summary>
@@ -122,6 +116,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                 }
                 ImprovisationCount++;
             }
+
             return HarmonyMemory.BestHarmony;
         }
 

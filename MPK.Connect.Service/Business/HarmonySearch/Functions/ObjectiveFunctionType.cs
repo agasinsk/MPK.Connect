@@ -9,6 +9,7 @@
         PureRandomStop,
         Continuous,
         Discrete,
-        RandomStop
+        RandomStop,
+        AntColony
     }
 }

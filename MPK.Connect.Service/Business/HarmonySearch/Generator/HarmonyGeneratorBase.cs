@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
@@ -49,6 +50,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         }
 
         public abstract Harmony<T> GenerateRandomHarmony();
+
+        public abstract IEnumerable<Harmony<T>> GetAntSolutions();
 
         public Harmony<T> GetHarmony(params T[] arguments)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 
@@ -11,6 +12,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         public ContinuousArgumentHarmonyGenerator(IContinuousObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
             ObjectiveFunction = function ?? throw new ArgumentNullException(nameof(function));
+        }
+
+        public override IEnumerable<Harmony<T>> GetAntSolutions()
+        {
+            throw new NotImplementedException();
         }
 
         public override T UsePitchAdjustment(int argumentIndex)

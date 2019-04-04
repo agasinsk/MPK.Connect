@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Utils;
@@ -26,6 +27,12 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
             return GetHarmony(arguments);
         }
 
+        // TODO: to be removed after refactor
+        public override IEnumerable<Harmony<T>> GetAntSolutions()
+        {
+            throw new NotImplementedException();
+        }
+
         public override Harmony<T> ImproviseHarmony()
         {
             var randomValue = Random.NextDouble();
@@ -47,6 +54,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
             }
         }
 
+        // TODO: to be removed after refactor
         public override void MarkCurrentParametersAsWinning()
         {
         }
