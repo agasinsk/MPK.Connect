@@ -1,6 +1,6 @@
-﻿namespace MPK.Connect.Service.Business.HarmonySearch.Functions
+﻿namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
-    public interface IDiscreteObjectiveFunction<T> : IArgumentObjectiveFunction<T>
+    public interface IDiscreteHarmonyGenerator<T> : IArgumentHarmonyGenerator<T>
     {
         int GetIndexOfDiscreteValue(int argumentIndex, T argumentValue);
 

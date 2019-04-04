@@ -1,6 +1,6 @@
 ﻿namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {
-    public enum ObjectiveFunctionType
+    public enum HarmonyGeneratorType
     {
         General,
         RandomStopTime,

@@ -10,10 +10,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
     public class HarmonySearcher<T> : IHarmonySearcher<T>
     {
         protected readonly IHarmonyGenerator<T> HarmonyGenerator;
+        public HarmonyGeneratorType HarmonyGeneratorType => HarmonyGenerator.Type;
         public HarmonyMemory<T> HarmonyMemory { get; }
         public int ImprovisationCount { get; set; }
         public long MaxImprovisationCount { get; }
-        public ObjectiveFunctionType ObjectiveFunctionType => HarmonyGenerator.ObjectiveFunction.Type;
         public double PitchAdjustmentRatio { get; set; }
 
         public virtual HarmonySearchType Type => HarmonySearchType.Standard;

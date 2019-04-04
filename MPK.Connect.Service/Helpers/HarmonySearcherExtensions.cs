@@ -13,7 +13,7 @@ namespace MPK.Connect.Service.Helpers
             dataTable.Columns.Add("Value", typeof(string));
 
             dataTable.Rows.Add($"{nameof(Type)}", harmonySearcher.Type.ToString());
-            dataTable.Rows.Add("ObjectiveFunction", harmonySearcher.ObjectiveFunctionType);
+            dataTable.Rows.Add("ObjectiveFunction", harmonySearcher.HarmonyGeneratorType);
             dataTable.Rows.Add($"{nameof(harmonySearcher.HarmonyMemoryConsiderationRatio)}",
                 harmonySearcher.HarmonyMemoryConsiderationRatio);
             dataTable.Rows.Add($"HarmonyMemorySize", harmonySearcher.MaxImprovisationCount);

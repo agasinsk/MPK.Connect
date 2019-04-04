@@ -4,6 +4,7 @@ using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
+using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Functions
@@ -11,14 +12,14 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
     /// <summary>
     /// Objective function that randomly selects a stop from available neighbors
     /// </summary>
-    public class RandomStopObjectiveFunction : BaseStopTimeObjectiveFunction
+    public class RandomStopHarmonyGenerator : BaseStopTimeHarmonyGenerator
     {
         private readonly Dictionary<int, List<int>> _stopGraph;
         private readonly Dictionary<int, List<GraphNode<int, StopTimeInfo>>> _stopIdToStopTimes;
 
-        public override ObjectiveFunctionType Type => ObjectiveFunctionType.RandomStop;
+        public override HarmonyGeneratorType Type => HarmonyGeneratorType.RandomStop;
 
-        public RandomStopObjectiveFunction(Graph<int, StopTimeInfo> graph, Location source, Location destination) : base(graph, source, destination)
+        public RandomStopHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, HarmonyMemory<StopTimeInfo> harmonyMemory, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, harmonyMemory, graph, destination, source)
         {
             // Set up side graphs
             _stopIdToStopTimes = Graph.Nodes.Values
@@ -32,17 +33,18 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
                     .ToList());
         }
 
-        public override double CalculateObjectiveValue(params StopTimeInfo[] arguments)
+        public RandomStopHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, HarmonyMemory<StopTimeInfo> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio, graph, destination, source)
         {
-            if (arguments.Last().StopDto.Name.TrimToLower() != Destination.Name.TrimToLower())
-            {
-                return double.PositiveInfinity;
-            }
+            // Set up side graphs
+            _stopIdToStopTimes = Graph.Nodes.Values
+                .GroupBy(v => v.Data.StopId)
+                .ToDictionary(k => k.Key, v => v.OrderBy(s => s.Data.DepartureTime).ToList());
 
-            var travelTime = (arguments.Last().DepartureTime - arguments.First().DepartureTime).TotalMinutes;
-            var transferCount = arguments.Select(s => s.Route).Distinct().Count() - 1;
-
-            return travelTime + transferCount;
+            _stopGraph = Graph.Nodes.Values
+                .GroupBy(s => s.Data.StopId)
+                .ToDictionary(s => s.Key, v => v.SelectMany(s => s.Neighbors.Select(n => Graph[n.DestinationId].Data.StopId))
+                    .Distinct()
+                    .ToList());
         }
 
         public override StopTimeInfo[] GetRandomArguments()
@@ -87,7 +89,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
                 harmony.Arguments[randomIndex] = pitchAdjustedSuccessor.Data;
             }
 
-            harmony.ObjectiveValue = CalculateObjectiveValue(harmony.Arguments);
+            harmony.ObjectiveValue = ObjectiveFunction.CalculateObjectiveValue(harmony.Arguments);
 
             return harmony;
         }

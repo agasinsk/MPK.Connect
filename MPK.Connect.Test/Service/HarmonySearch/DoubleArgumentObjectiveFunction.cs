@@ -10,7 +10,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch
         private readonly List<ArgumentLimit> _argumentLimits;
         private readonly IBoundedRandom _random;
 
-        public ObjectiveFunctionType Type => ObjectiveFunctionType.Continuous;
+        public HarmonyGeneratorType Type => HarmonyGeneratorType.Continuous;
 
         public DoubleArgumentObjectiveFunction()
         {

@@ -5,38 +5,43 @@ using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Utils;
 
-namespace MPK.Connect.Service.Business.HarmonySearch.Functions
+namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
-    public abstract class BaseStopTimeObjectiveFunction : IGeneralObjectiveFunction<StopTimeInfo>
+    public abstract class BaseStopTimeHarmonyGenerator : GeneralHarmonyGenerator<StopTimeInfo>
     {
         protected readonly Graph<int, StopTimeInfo> Graph;
         protected readonly StopDto ReferentialDestinationStop;
         protected readonly List<GraphNode<int, StopTimeInfo>> SourceNodes;
 
         public Location Destination { get; }
+
         public Location Source { get; }
 
-        public abstract ObjectiveFunctionType Type { get; }
+        public abstract HarmonyGeneratorType Type { get; }
 
-        protected BaseStopTimeObjectiveFunction(Graph<int, StopTimeInfo> graph, Location source, Location destination)
+        protected BaseStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, HarmonyMemory<StopTimeInfo> harmonyMemory, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, harmonyMemory)
         {
-            Source = source ?? throw new ArgumentNullException(nameof(source));
-            Destination = destination ?? throw new ArgumentNullException(nameof(destination));
-
             Graph = graph ?? throw new ArgumentNullException(nameof(graph));
+            Destination = destination ?? throw new ArgumentNullException(nameof(destination));
+            Source = source ?? throw new ArgumentNullException(nameof(source));
+        }
+
+        protected BaseStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function,
+            HarmonyMemory<StopTimeInfo> harmonyMemory, double harmonyMemoryConsiderationRatio,
+            double pitchAdjustmentRatio, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(
+            function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
+        {
+            Graph = graph ?? throw new ArgumentNullException(nameof(graph));
+            Destination = destination ?? throw new ArgumentNullException(nameof(destination));
+            Source = source ?? throw new ArgumentNullException(nameof(source));
 
             // Set up source and destination nodes
             ReferentialDestinationStop = GetReferenceDestinationStop();
             SourceNodes = GetSourceNodes();
         }
-
-        public abstract double CalculateObjectiveValue(params StopTimeInfo[] arguments);
-
-        public abstract StopTimeInfo[] GetRandomArguments();
-
-        public abstract Harmony<StopTimeInfo> UsePitchAdjustment(Harmony<StopTimeInfo> harmony);
 
         protected StopDto GetReferenceDestinationStop()
         {

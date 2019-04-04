@@ -7,7 +7,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         HarmonyMemory<T> HarmonyMemory { get; }
         double HarmonyMemoryConsiderationRatio { get; }
         long MaxImprovisationCount { get; }
-        ObjectiveFunctionType ObjectiveFunctionType { get; }
+        HarmonyGeneratorType HarmonyGeneratorType { get; }
         double PitchAdjustmentRatio { get; set; }
         HarmonySearchType Type { get; }
 

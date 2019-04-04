@@ -42,25 +42,25 @@ namespace MPK.Connect.Console
 
             var infoDataTable = GetInfoDataTable(source, destination);
 
-            var averageResults = new Dictionary<ObjectiveFunctionType, List<TestResult>>();
+            var averageResults = new Dictionary<HarmonyGeneratorType, List<TestResult>>();
 
             foreach (var harmonySearchTestSettings in scenario.Settings)
             {
                 var harmonySearcher = harmonySearchTestSettings.GetHarmonySearcher(graph, source, destination);
                 var testResult = RunTests(harmonySearcher, infoDataTable, resultDirectory);
 
-                if (!averageResults.ContainsKey(harmonySearcher.ObjectiveFunctionType))
+                if (!averageResults.ContainsKey(harmonySearcher.HarmonyGeneratorType))
                 {
-                    averageResults.Add(harmonySearcher.ObjectiveFunctionType, new List<TestResult>());
+                    averageResults.Add(harmonySearcher.HarmonyGeneratorType, new List<TestResult>());
                 }
 
-                averageResults[harmonySearcher.ObjectiveFunctionType].Add(testResult);
+                averageResults[harmonySearcher.HarmonyGeneratorType].Add(testResult);
             }
 
             ExportResults(averageResults, infoDataTable, resultDirectory);
         }
 
-        private void ExportResults(Dictionary<ObjectiveFunctionType, List<TestResult>> results, DataTable infoDataTable, string resultDirectory)
+        private void ExportResults(Dictionary<HarmonyGeneratorType, List<TestResult>> results, DataTable infoDataTable, string resultDirectory)
         {
             var dataTables = new List<DataTable>();
             foreach (var (functionType, testResults) in results)
@@ -139,17 +139,17 @@ namespace MPK.Connect.Console
 
                 solutionsDataTable.Rows.Add(i, bestHarmony.ObjectiveValue,
                     string.Concat(bestHarmony.Arguments.Select(a => $" {a.ToString()} |")), elapsed.TotalSeconds);
-                System.Console.WriteLine($"Finished testing {harmonySearcher.Type.ToString()} HS, with function {harmonySearcher.ObjectiveFunctionType}, iteration {i}.");
+                System.Console.WriteLine($"Finished testing {harmonySearcher.Type.ToString()} HS, with function {harmonySearcher.HarmonyGeneratorType}, iteration {i}.");
             }
 
-            var filePath = Path.Combine(resultPath, $"{harmonySearcher.Type}_{harmonySearcher.ObjectiveFunctionType}_TestResults");
+            var filePath = Path.Combine(resultPath, $"{harmonySearcher.Type}_{harmonySearcher.HarmonyGeneratorType}_TestResults");
             _excelExporterService.ExportToExcel(infoDataTable, dataTable, solutionsDataTable, filePath);
             System.Console.WriteLine($"Saved file under path: {filePath}");
 
             return new TestResult
             {
                 HarmonySearchType = harmonySearcher.Type,
-                ObjectiveFunctionType = harmonySearcher.ObjectiveFunctionType,
+                HarmonyGeneratorType = harmonySearcher.HarmonyGeneratorType,
                 ObjectiveFunctionValue = objectiveFunctionValues.All(double.IsPositiveInfinity) ? double.PositiveInfinity : objectiveFunctionValues.Where(d => !double.IsPositiveInfinity(d)).Average(),
                 Time = elapsedTimes.Select(t => t.TotalSeconds).Average(),
                 NonFeasibleCount = objectiveFunctionValues.Count(double.IsPositiveInfinity),

@@ -1,6 +1,6 @@
-﻿namespace MPK.Connect.Service.Business.HarmonySearch.Functions
+﻿namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
-    public interface IContinuousObjectiveFunction<T> : IArgumentObjectiveFunction<T>
+    public interface IContinuousHarmonyGenerator<T> : IArgumentHarmonyGenerator<T>
     {
         T GetLowerBound(int argumentIndex);
 

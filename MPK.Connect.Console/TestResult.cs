@@ -8,7 +8,7 @@ namespace MPK.Connect.Console
         public HarmonySearchType HarmonySearchType { get; set; }
 
         public int NonFeasibleCount { get; set; }
-        public ObjectiveFunctionType ObjectiveFunctionType { get; set; }
+        public HarmonyGeneratorType HarmonyGeneratorType { get; set; }
         public double ObjectiveFunctionValue { get; set; }
         public int SolutionsCount { get; set; }
         public double Time { get; set; }
@@ -18,7 +18,7 @@ namespace MPK.Connect.Console
             return new object[]
             {
                 HarmonySearchType.ToString(),
-                ObjectiveFunctionType.ToString(),
+                HarmonyGeneratorType.ToString(),
                 SolutionsCount,
                 NonFeasibleCount,
                 ObjectiveFunctionValue,
@@ -42,7 +42,7 @@ namespace MPK.Connect.Console
         {
             return new object[]
             {
-                ObjectiveFunctionType.ToString(),
+                HarmonyGeneratorType.ToString(),
                 SolutionsCount,
                 NonFeasibleCount,
                 ObjectiveFunctionValue,

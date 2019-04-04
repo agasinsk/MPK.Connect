@@ -1,37 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using MPK.Connect.Service.Business.HarmonySearch.Core;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
-using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
-    public class GeneralHarmonyGenerator<T> : HarmonyGeneratorBase<T>
+    public abstract class GeneralHarmonyGenerator<T> : BaseHarmonyGenerator<T>, IGeneralHarmonyGenerator<T>
     {
-        protected new IGeneralObjectiveFunction<T> ObjectiveFunction;
-
-        public GeneralHarmonyGenerator(IObjectiveFunction<T> function,
-            HarmonyMemory<T> harmonyMemory) : base(function, harmonyMemory)
+        protected GeneralHarmonyGenerator(IObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory) : base(function, harmonyMemory)
         {
         }
 
-        public GeneralHarmonyGenerator(IGeneralObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
+        protected GeneralHarmonyGenerator(IObjectiveFunction<T> function, HarmonyMemory<T> harmonyMemory, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio) : base(function, harmonyMemory, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio)
         {
-            ObjectiveFunction = function ?? throw new ArgumentNullException(nameof(function));
         }
 
         public override Harmony<T> GenerateRandomHarmony()
         {
-            var arguments = ObjectiveFunction.GetRandomArguments();
+            var arguments = GetRandomArguments();
 
             return GetHarmony(arguments);
         }
 
-        // TODO: to be removed after refactor
-        public override IEnumerable<Harmony<T>> GetAntSolutions()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract T[] GetRandomArguments();
 
         public override Harmony<T> ImproviseHarmony()
         {
@@ -54,26 +43,18 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
             }
         }
 
-        // TODO: to be removed after refactor
-        public override void MarkCurrentParametersAsWinning()
-        {
-        }
+        public abstract Harmony<T> UsePitchAdjustment(Harmony<T> harmony);
 
-        public Harmony<T> UseMemoryConsideration()
-        {
-            return HarmonyMemory.GetRandomElement();
-        }
-
-        private Harmony<T> UsePitchAdjustment()
+        public Harmony<T> UsePitchAdjustment()
         {
             var harmonyFromMemory = UseMemoryConsideration();
 
-            var pitchAdjustedHarmony = ObjectiveFunction.UsePitchAdjustment(harmonyFromMemory);
+            var pitchAdjustedHarmony = UsePitchAdjustment(harmonyFromMemory);
 
             return pitchAdjustedHarmony;
         }
 
-        private Harmony<T> UseRandomChoosing()
+        public Harmony<T> UseRandomChoosing()
         {
             return GenerateRandomHarmony();
         }

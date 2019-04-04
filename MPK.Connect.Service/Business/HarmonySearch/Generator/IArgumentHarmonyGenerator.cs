@@ -1,6 +1,6 @@
-﻿namespace MPK.Connect.Service.Business.HarmonySearch.Functions
+﻿namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
-    public interface IArgumentObjectiveFunction<T> : IObjectiveFunction<T>
+    public interface IArgumentHarmonyGenerator<T> : IHarmonyGenerator<T>
     {
         /// <summary>
         /// Returns the number of parameters used by the objective function.

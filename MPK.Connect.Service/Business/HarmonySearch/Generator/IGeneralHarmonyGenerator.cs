@@ -1,8 +1,8 @@
 ﻿using MPK.Connect.Service.Business.HarmonySearch.Core;
 
-namespace MPK.Connect.Service.Business.HarmonySearch.Functions
+namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
-    public interface IGeneralObjectiveFunction<T> : IObjectiveFunction<T>
+    public interface IGeneralHarmonyGenerator<T> : IHarmonyGenerator<T>
     {
         /// <summary>
         /// Gets a collection of random arguments

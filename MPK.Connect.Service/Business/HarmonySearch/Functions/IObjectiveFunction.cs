@@ -3,11 +3,6 @@
     public interface IObjectiveFunction<in T>
     {
         /// <summary>
-        /// Gets objective function type
-        /// </summary>
-        ObjectiveFunctionType Type { get; }
-
-        /// <summary>
         /// Return the objective function value given a solution vector containing each decision
         /// variable. In practice, vector should be a list of parameters.
         /// </summary>
