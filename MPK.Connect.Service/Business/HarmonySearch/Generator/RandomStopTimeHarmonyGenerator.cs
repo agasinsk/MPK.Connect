@@ -16,7 +16,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
     {
         public override HarmonyGeneratorType Type => HarmonyGeneratorType.RandomStopTime;
 
-        public RandomStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, graph, destination, source)
+        public RandomStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location source, Location destination) : base(function, graph, source, destination)
         {
         }
 

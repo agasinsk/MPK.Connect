@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.DataAccess;
-using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
 using MPK.Connect.Service.Business.Graph;
@@ -63,7 +62,7 @@ namespace MPK.Connect.Console
             containerBuilder.RegisterType(typeof(SimpleMpkContext)).As<IMpkContext>();
             containerBuilder.RegisterType<ActionTimer>().AsImplementedInterfaces();
             containerBuilder.RegisterType<ExcelExporterService>().AsImplementedInterfaces();
-            containerBuilder.RegisterGeneric(typeof(HarmonySearchAutomaticTester<>)).AsSelf();
+            containerBuilder.RegisterType(typeof(HarmonySearchStopTimeTester)).AsSelf();
 
             Container = containerBuilder.Build();
         }
@@ -76,9 +75,9 @@ namespace MPK.Connect.Console
 
             using (var scope = Container.BeginLifetimeScope())
             {
-                var automaticTester = scope.Resolve<HarmonySearchAutomaticTester<StopTimeInfo>>();
+                var automaticTester = scope.Resolve<HarmonySearchStopTimeTester>();
 
-                var scenarios = new HarmonySearchTestScenario<StopTimeInfo>();
+                var scenarios = new HarmonySearchTestScenario();
                 var source = new Location("Krzyki");
                 var destination = new Location("Galeria Dominikańska");
 

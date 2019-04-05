@@ -25,13 +25,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch.ParameterProviders
         /// <summary>
         /// Creates a new instance of <see cref="DynamicParameterProvider"/>
         /// </summary>
-        /// <param name="capacity">Parameter set list capacity</param>
-        public DynamicParameterProvider(int capacity)
+        /// <param name="parameterSetListCapacity">Parameter set list capacity</param>
+        public DynamicParameterProvider(int parameterSetListCapacity)
         {
             _random = RandomFactory.GetInstance();
             _currentParameterSetIndex = -1;
 
-            ParameterSets = GenerateRandomParameters(capacity);
+            ParameterSets = GenerateRandomParameters(parameterSetListCapacity);
             WinningParameterSets = new List<Tuple<double, double>>();
         }
 

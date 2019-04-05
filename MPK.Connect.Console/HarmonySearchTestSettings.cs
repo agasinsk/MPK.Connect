@@ -8,7 +8,7 @@ using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchC
 
 namespace MPK.Connect.Console
 {
-    public class HarmonySearchTestSettings<T> where T : class
+    public class HarmonySearchTestSettings
     {
         public HarmonyGeneratorType HarmonyGeneratorType { get; set; }
         public double HarmonyMemoryConsiderationRatio { get; set; }
@@ -16,13 +16,12 @@ namespace MPK.Connect.Console
         public int HarmonyMemorySize { get; set; }
 
         public HarmonySearchType HarmonySearcherType { get; set; }
-        public bool ImprovedPitchAdjustingScenario { get; set; }
 
         public int MaxImprovisationCount { get; set; }
 
-        public double? MaxPitchAdjustingRatio { get; set; }
+        public double MaxPitchAdjustingRatio { get; set; }
 
-        public double? MinPitchAdjustingRatio { get; set; }
+        public double MinPitchAdjustingRatio { get; set; }
 
         public ObjectiveFunctionTypes ObjectiveFunctionType { get; set; }
 
@@ -38,9 +37,19 @@ namespace MPK.Connect.Console
             MaxPitchAdjustingRatio = DefaultMaxPitchAdjustmentRatio;
         }
 
-        public IHarmonySearcher<T> GetHarmonySearcher(Graph<int, StopTimeInfo> graph, Location source,
+        public IHarmonySearcher<StopTimeInfo> GetHarmonySearcher(Graph<int, StopTimeInfo> graph, Location source,
             Location destination)
         {
+            var objectiveFunction = ObjectiveFunctionFactory.GetInstance(ObjectiveFunctionType, destination);
+
+            var harmonyGenerator = HarmonyGeneratorFactory.GetInstance(HarmonyGeneratorType, objectiveFunction, graph, source,
+                    destination);
+
+            var harmonySearcher = HarmonySearcherFactory.GetInstance(HarmonySearcherType, harmonyGenerator,
+                HarmonyMemorySize, MaxImprovisationCount, HarmonyMemoryConsiderationRatio, PitchAdjustingRatio,
+                MinPitchAdjustingRatio, MaxPitchAdjustingRatio);
+
+            return harmonySearcher;
         }
     }
 }

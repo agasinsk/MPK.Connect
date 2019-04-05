@@ -7,12 +7,12 @@ using MPK.Connect.Service.Business.HarmonySearch.Generator;
 
 namespace MPK.Connect.Console
 {
-    public class HarmonySearchTestScenario<T> where T : class
+    public class HarmonySearchTestScenario
     {
         private readonly IEnumerable<HarmonyGeneratorType> _harmonyGeneratorTypes;
         private readonly IEnumerable<HarmonySearchType> _harmonySearchTypes;
         private readonly IEnumerable<ObjectiveFunctionTypes> _objectiveFunctionTypes;
-        public List<HarmonySearchTestSettings<T>> Settings { get; set; }
+        public List<HarmonySearchTestSettings> Settings { get; set; }
 
         public HarmonySearchTestScenario()
         {
@@ -23,9 +23,9 @@ namespace MPK.Connect.Console
             Settings = CreateDefaultSettings();
         }
 
-        private List<HarmonySearchTestSettings<T>> CreateDefaultSettings()
+        private List<HarmonySearchTestSettings> CreateDefaultSettings()
         {
-            var settings = new List<HarmonySearchTestSettings<T>>();
+            var settings = new List<HarmonySearchTestSettings>();
 
             foreach (var harmonyGeneratorType in _harmonyGeneratorTypes)
             {
@@ -33,7 +33,7 @@ namespace MPK.Connect.Console
                 {
                     foreach (var functionType in _objectiveFunctionTypes)
                     {
-                        var testSettings = new HarmonySearchTestSettings<T>
+                        var testSettings = new HarmonySearchTestSettings
                         {
                             HarmonyGeneratorType = harmonyGeneratorType,
                             HarmonySearcherType = harmonySearcherType,

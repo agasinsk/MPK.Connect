@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
@@ -11,20 +12,20 @@ using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Console
 {
-    internal class HarmonySearchAutomaticTester<T> where T : class
+    internal class HarmonySearchStopTimeTester
     {
         private readonly IActionTimer _actionTimer;
         private readonly IExcelExporterService _excelExporterService;
         private readonly IGraphBuilder _graphBuilder;
 
-        public HarmonySearchAutomaticTester(IExcelExporterService excelExporterService, IActionTimer actionTimer, IGraphBuilder graphBuilder)
+        public HarmonySearchStopTimeTester(IExcelExporterService excelExporterService, IActionTimer actionTimer, IGraphBuilder graphBuilder)
         {
             _excelExporterService = excelExporterService ?? throw new ArgumentNullException(nameof(excelExporterService));
             _actionTimer = actionTimer ?? throw new ArgumentNullException(nameof(actionTimer));
             _graphBuilder = graphBuilder ?? throw new ArgumentNullException(nameof(graphBuilder));
         }
 
-        public void RunTestsWithScenarios(HarmonySearchTestScenario<T> scenario, Location source, Location destination)
+        public void RunTestsWithScenarios(HarmonySearchTestScenario scenario, Location source, Location destination)
         {
             var graph = _graphBuilder.GetGraph(DateTime.Now);
 
@@ -108,7 +109,7 @@ namespace MPK.Connect.Console
             return solutionsDataTable;
         }
 
-        private TestResult RunTests(IHarmonySearcher<T> harmonySearcher, DataTable infoDataTable, string resultPath)
+        private TestResult RunTests(IHarmonySearcher<StopTimeInfo> harmonySearcher, DataTable infoDataTable, string resultPath)
         {
             var dataTable = harmonySearcher.ToDataTable();
             var solutionsDataTable = GetSolutionsDataTable();
@@ -118,7 +119,7 @@ namespace MPK.Connect.Console
 
             for (var i = 1; i <= 15; i++)
             {
-                Harmony<T> bestHarmony = null;
+                Harmony<StopTimeInfo> bestHarmony = null;
                 var elapsed = _actionTimer.MeasureTime(() =>
                 {
                     bestHarmony = harmonySearcher.SearchForHarmony();

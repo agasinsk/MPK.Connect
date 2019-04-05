@@ -20,7 +20,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
         public override HarmonyGeneratorType Type => HarmonyGeneratorType.RandomDirectedStop;
 
-        public DirectedStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function, graph, destination, source)
+        public DirectedStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location source, Location destination) : base(function, graph, source, destination)
         {
             // Set up side graphs and lookup tables
             _distancesToDestinationStop = GetDistancesToDestinationStop();

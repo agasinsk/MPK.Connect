@@ -22,7 +22,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
         public Location Source { get; }
 
-        protected BaseStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location destination, Location source) : base(function)
+        protected BaseStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location source, Location destination) : base(function)
         {
             Graph = graph;
             Destination = destination;
