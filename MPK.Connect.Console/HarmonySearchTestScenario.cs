@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
@@ -8,45 +9,29 @@ namespace MPK.Connect.Console
 {
     public class HarmonySearchTestScenario<T> where T : class
     {
-        private readonly List<Type> _functionTypes;
-        private readonly List<Type> _harmonyGeneratorTypes;
-        private readonly List<Type> _harmonySearcherTypes;
+        private readonly IEnumerable<HarmonyGeneratorType> _harmonyGeneratorTypes;
+        private readonly IEnumerable<HarmonySearchType> _harmonySearchTypes;
+        private readonly IEnumerable<ObjectiveFunctionTypes> _objectiveFunctionTypes;
         public List<HarmonySearchTestSettings<T>> Settings { get; set; }
 
         public HarmonySearchTestScenario()
         {
-            _functionTypes = new List<Type>
-            {
-                typeof(TravelTimeObjectiveFunction)
-            };
+            _harmonyGeneratorTypes = Enum.GetValues(typeof(HarmonyGeneratorType)).Cast<HarmonyGeneratorType>().ToList();
+            _objectiveFunctionTypes = Enum.GetValues(typeof(ObjectiveFunctionTypes)).Cast<ObjectiveFunctionTypes>().ToList();
+            _harmonySearchTypes = Enum.GetValues(typeof(HarmonySearchType)).Cast<HarmonySearchType>().ToList();
 
-            _harmonyGeneratorTypes = new List<Type>
-            {
-                typeof(RandomStopTimeHarmonyGenerator),
-                typeof(RandomStopHarmonyGenerator),
-                typeof(DirectedStopTimeHarmonyGenerator)
-            };
-
-            _harmonySearcherTypes = new List<Type>
-            {
-                typeof(HarmonySearcher<T>),
-                typeof(ImprovedHarmonySearcher<T>),
-                typeof(DynamicHarmonySearcher<T>),
-                typeof(DividedHarmonySearcher<T>)
-            };
-
-            Settings = new List<HarmonySearchTestSettings<T>>();
-
-            CreateDefaultSettings();
+            Settings = CreateDefaultSettings();
         }
 
-        private void CreateDefaultSettings()
+        private List<HarmonySearchTestSettings<T>> CreateDefaultSettings()
         {
+            var settings = new List<HarmonySearchTestSettings<T>>();
+
             foreach (var harmonyGeneratorType in _harmonyGeneratorTypes)
             {
-                foreach (var harmonySearcherType in _harmonySearcherTypes)
+                foreach (var harmonySearcherType in _harmonySearchTypes)
                 {
-                    foreach (var functionType in _functionTypes)
+                    foreach (var functionType in _objectiveFunctionTypes)
                     {
                         var testSettings = new HarmonySearchTestSettings<T>
                         {
@@ -54,46 +39,13 @@ namespace MPK.Connect.Console
                             HarmonySearcherType = harmonySearcherType,
                             ObjectiveFunctionType = functionType
                         };
-                        Settings.Add(testSettings);
+
+                        settings.Add(testSettings);
                     }
                 }
             }
-        }
 
-        private void CreateSettingsForSingleHarmonySearcherType(Type harmonySearcherType, List<Type> functionTypes)
-        {
-            foreach (var functionType in functionTypes)
-            {
-                var testSettings = new HarmonySearchTestSettings<T>
-                {
-                    HarmonySearcherType = harmonySearcherType,
-                    ObjectiveFunctionType = functionType
-                };
-                Settings.Add(testSettings);
-            }
-        }
-
-        private void CreateSettingsForSingleObjectiveFunctionType(Type functionType, List<Type> harmonySearcherTypes)
-        {
-            foreach (var harmonySearcherType in harmonySearcherTypes)
-            {
-                var testSettings = new HarmonySearchTestSettings<T>
-                {
-                    HarmonySearcherType = harmonySearcherType,
-                    ObjectiveFunctionType = functionType
-                };
-                Settings.Add(testSettings);
-            }
-        }
-
-        private void CreateSingleSetting(Type harmonySearcherType, Type objectiveFunctionType)
-        {
-            var testSettings = new HarmonySearchTestSettings<T>
-            {
-                HarmonySearcherType = harmonySearcherType,
-                ObjectiveFunctionType = objectiveFunctionType
-            };
-            Settings.Add(testSettings);
+            return settings;
         }
     }
 }

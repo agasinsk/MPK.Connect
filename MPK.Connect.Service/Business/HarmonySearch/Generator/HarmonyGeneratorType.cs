@@ -1,14 +1,12 @@
-﻿namespace MPK.Connect.Service.Business.HarmonySearch.Functions
+﻿namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
+    /// <summary>
+    /// Enumeration for harmony generator
+    /// </summary>
     public enum HarmonyGeneratorType
     {
-        General,
         RandomStopTime,
-        EnhancedRandomStop,
         RandomDirectedStop,
-        PureRandomStop,
-        Continuous,
-        Discrete,
         RandomStop,
         AntColony
     }

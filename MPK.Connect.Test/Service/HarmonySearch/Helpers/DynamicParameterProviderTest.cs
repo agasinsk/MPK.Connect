@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MPK.Connect.Service.Business.HarmonySearch.Helpers;
+using MPK.Connect.Service.Business.HarmonySearch.ParameterProviders;
 
 namespace MPK.Connect.Test.Service.HarmonySearch.Helpers
 {
@@ -25,11 +25,11 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Helpers
 
             for (int i = 0; i < _parameterProvider.ParameterSets.Count - 1; i++)
             {
-                parameters.Add(_parameterProvider.GetParameterSet());
+                parameters.Add(_parameterProvider.GetCurrentParameterSet());
                 _parameterProvider.MarkCurrentParametersAsWinning();
             }
 
-            parameters.Add(_parameterProvider.GetParameterSet());
+            parameters.Add(_parameterProvider.GetCurrentParameterSet());
 
             // Act
             _parameterProvider.MarkCurrentParametersAsWinning();
@@ -45,7 +45,7 @@ namespace MPK.Connect.Test.Service.HarmonySearch.Helpers
             // Arrange
             var countBeforeMarking = _parameterProvider.ParameterSets.Count;
             var winningCountBeforeMarking = _parameterProvider.WinningParameterSets.Count;
-            var parameterSet = _parameterProvider.GetParameterSet();
+            var parameterSet = _parameterProvider.GetCurrentParameterSet();
 
             // Act
             _parameterProvider.MarkCurrentParametersAsWinning();

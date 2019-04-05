@@ -4,10 +4,9 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using MPK.Connect.Model.Business.TravelPlan;
-using MPK.Connect.Service.Business.AntColony;
 using MPK.Connect.Service.Business.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
-using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Helpers;
 
 namespace MPK.Connect.Console
@@ -23,15 +22,6 @@ namespace MPK.Connect.Console
             _excelExporterService = excelExporterService ?? throw new ArgumentNullException(nameof(excelExporterService));
             _actionTimer = actionTimer ?? throw new ArgumentNullException(nameof(actionTimer));
             _graphBuilder = graphBuilder ?? throw new ArgumentNullException(nameof(graphBuilder));
-        }
-
-        public void RunAntColonyTest(Location source, Location destination)
-        {
-            var graph = _graphBuilder.GetGraph(DateTime.Now);
-
-            var antColonyPathSearcher = new AntColonyPathSearcher(graph, source, destination);
-
-            var path = antColonyPathSearcher.SearchForPath();
         }
 
         public void RunTestsWithScenarios(HarmonySearchTestScenario<T> scenario, Location source, Location destination)

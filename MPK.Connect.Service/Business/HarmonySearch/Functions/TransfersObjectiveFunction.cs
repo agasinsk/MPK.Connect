@@ -7,20 +7,20 @@ using MPK.Connect.Service.Utils;
 namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 {
     /// <summary>
-    /// Objective function that includes travel time only
+    /// Objective function that includes transfer count only
     /// </summary>
-    public class TravelTimeObjectiveFunction : IObjectiveFunction<StopTimeInfo>
+    public class TransfersObjectiveFunction : IObjectiveFunction<StopTimeInfo>
     {
         private readonly string _destinationName;
 
-        public ObjectiveFunctionTypes Type => ObjectiveFunctionTypes.TravelTime;
+        public ObjectiveFunctionTypes Type => ObjectiveFunctionTypes.Transfers;
 
-        public TravelTimeObjectiveFunction(string destinationName)
+        public TransfersObjectiveFunction(string destinationName)
         {
             _destinationName = destinationName ?? throw new ArgumentNullException(nameof(destinationName));
         }
 
-        public TravelTimeObjectiveFunction(Location destination)
+        public TransfersObjectiveFunction(Location destination)
         {
             if (destination == null)
             {
@@ -37,7 +37,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
                 return double.PositiveInfinity;
             }
 
-            return (arguments.Last().DepartureTime - arguments.First().DepartureTime).TotalMinutes;
+            return arguments.Select(s => s.Route).Distinct().Count();
         }
     }
 }

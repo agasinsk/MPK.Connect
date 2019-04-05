@@ -1,14 +1,14 @@
 ﻿using MPK.Connect.Service.Business.HarmonySearch.Core;
-using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using MPK.Connect.Service.Business.HarmonySearch.Generator;
 
 namespace MPK.Connect.Console
 {
     public class TestResult
     {
+        public HarmonyGeneratorType HarmonyGeneratorType { get; set; }
         public HarmonySearchType HarmonySearchType { get; set; }
 
         public int NonFeasibleCount { get; set; }
-        public HarmonyGeneratorType HarmonyGeneratorType { get; set; }
         public double ObjectiveFunctionValue { get; set; }
         public int SolutionsCount { get; set; }
         public double Time { get; set; }

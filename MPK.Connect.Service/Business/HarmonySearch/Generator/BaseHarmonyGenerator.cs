@@ -8,27 +8,26 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
     public abstract class BaseHarmonyGenerator<T> : IHarmonyGenerator<T>
     {
+        protected readonly IObjectiveFunction<T> ObjectiveFunction;
         protected readonly IBoundedRandom Random;
         public HarmonyMemory<T> HarmonyMemory { get; set; }
-        public double HarmonyMemoryConsiderationRatio { get; set; }
-        public IObjectiveFunction<T> ObjectiveFunction { get; }
-        public double PitchAdjustmentRatio { get; set; }
 
         public abstract HarmonyGeneratorType Type { get; }
 
         protected BaseHarmonyGenerator(IObjectiveFunction<T> function)
         {
-            Random = RandomFactory.GetInstance();
             ObjectiveFunction = function ?? throw new ArgumentNullException(nameof(function));
+
+            Random = RandomFactory.GetInstance();
         }
 
-        public virtual HarmonyGenerationRules EstablishHarmonyGenerationRule(double probability)
+        public virtual HarmonyGenerationRules EstablishHarmonyGenerationRule(double probability, double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio)
         {
-            if (probability > HarmonyMemoryConsiderationRatio)
+            if (probability > harmonyMemoryConsiderationRatio)
             {
                 return HarmonyGenerationRules.RandomChoosing;
             }
-            if (probability <= HarmonyMemoryConsiderationRatio * PitchAdjustmentRatio)
+            if (probability <= harmonyMemoryConsiderationRatio * pitchAdjustmentRatio)
             {
                 return HarmonyGenerationRules.PitchAdjustment;
             }
@@ -38,18 +37,46 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
         public abstract Harmony<T> GenerateRandomHarmony();
 
-        public Harmony<T> GetHarmony(params T[] arguments)
+        public Harmony<T> ImproviseHarmony(double harmonyMemoryConsiderationRatio, double pitchAdjustmentRatio)
         {
-            var functionValue = ObjectiveFunction.CalculateObjectiveValue(arguments);
+            var randomValue = Random.NextDouble();
+            var generationRule = EstablishHarmonyGenerationRule(randomValue, harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
 
-            return new Harmony<T>(functionValue, arguments);
+            switch (generationRule)
+            {
+                case HarmonyGenerationRules.MemoryConsideration:
+                    return UseMemoryConsideration();
+
+                case HarmonyGenerationRules.PitchAdjustment:
+                    return UsePitchAdjustment();
+
+                case HarmonyGenerationRules.RandomChoosing:
+                    return UseRandomChoosing();
+
+                default:
+                    return new Harmony<T>(double.MaxValue);
+            }
         }
 
-        public abstract Harmony<T> ImproviseHarmony();
+        public abstract Harmony<T> PitchAdjustHarmony(Harmony<T> harmony);
 
         public virtual Harmony<T> UseMemoryConsideration()
         {
             return HarmonyMemory.GetRandomElement();
+        }
+
+        public Harmony<T> UsePitchAdjustment()
+        {
+            var harmonyFromMemory = UseMemoryConsideration();
+
+            var pitchAdjustedHarmony = PitchAdjustHarmony(harmonyFromMemory);
+
+            return pitchAdjustedHarmony;
+        }
+
+        public Harmony<T> UseRandomChoosing()
+        {
+            return GenerateRandomHarmony();
         }
     }
 }

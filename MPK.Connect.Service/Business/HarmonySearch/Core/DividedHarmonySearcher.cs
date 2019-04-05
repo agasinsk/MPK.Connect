@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
+using MPK.Connect.Service.Business.HarmonySearch.ParameterProviders;
 using MPK.Connect.Service.Utils;
+using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
@@ -12,11 +14,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         public override HarmonySearchType Type => HarmonySearchType.Divided;
         private long RegroupRate => MaxImprovisationCount / 10;
 
-        public DividedHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator) : base(harmonyGenerator)
-        {
-        }
-
-        public DividedHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, int harmonyMemorySize) : base(harmonyGenerator, harmonyMemorySize)
+        public DividedHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, IParameterProvider parameterProvider, int harmonyMemorySize = DefaultHarmonyMemorySize, long maxImprovisationCount = DefaultMaxImprovisationCount) : base(harmonyGenerator, parameterProvider, harmonyMemorySize, maxImprovisationCount)
         {
         }
 
@@ -57,11 +55,16 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
                 foreach (var subHarmonyMemory in _subHarmonyMemories)
                 {
+                    // Set the right harmony memory
                     HarmonyGenerator.HarmonyMemory = subHarmonyMemory;
+
+                    var harmonyMemoryConsiderationRatio = ParameterProvider.HarmonyMemoryConsiderationRatio;
+                    var pitchAdjustmentRatio = ParameterProvider.PitchAdjustmentRatio;
+
+                    var improvisedHarmony = HarmonyGenerator.ImproviseHarmony(harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
 
                     var worstHarmony = subHarmonyMemory.WorstHarmony;
 
-                    var improvisedHarmony = HarmonyGenerator.ImproviseHarmony();
                     if (improvisedHarmony.IsBetterThan(worstHarmony) && !subHarmonyMemory.Contains(improvisedHarmony))
                     {
                         subHarmonyMemory.SwapWithWorstHarmony(improvisedHarmony);
@@ -89,8 +92,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             var allSolutions = _subHarmonyMemories.SelectMany(h => h.GetAll()).ToList();
             var solutionIds = Enumerable.Range(0, allSolutions.Count).ToList();
 
-            // TODO: figure out how to handle the same arguments when comparing
-
             foreach (var subHarmonyMemory in _subHarmonyMemories)
             {
                 subHarmonyMemory.Clear();
@@ -108,12 +109,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
             foreach (var subHarmonyMemory in _subHarmonyMemories.Where(hm => hm.Count < hm.MaxCapacity))
             {
-                var triesCount = 0;
                 while (subHarmonyMemory.Count < subHarmonyMemory.MaxCapacity)
                 {
                     var randomHarmony = HarmonyGenerator.GenerateRandomHarmony();
                     subHarmonyMemory.Add(randomHarmony);
-                    triesCount++;
                 }
             }
         }

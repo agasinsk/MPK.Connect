@@ -36,7 +36,30 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
                     .ToList());
         }
 
-        public override StopTimeInfo[] GetRandomArguments()
+        public override Harmony<StopTimeInfo> PitchAdjustHarmony(Harmony<StopTimeInfo> harmony)
+        {
+            if (harmony.Arguments.Last().StopDto.Name.TrimToLower() == Destination.Name.TrimToLower())
+            {
+                return harmony;
+            }
+
+            var randomIndex = harmony.Arguments.GetRandomIndexMinimum(1);
+
+            var predecessorStopTimeId = harmony.Arguments[randomIndex - 1].Id;
+            var predecessorNode = Graph[predecessorStopTimeId];
+
+            var pitchAdjustedSuccessor = GetRandomNeighborNodeExceptExisting(predecessorNode, harmony.Arguments);
+            if (pitchAdjustedSuccessor != null)
+            {
+                harmony.Arguments[randomIndex] = pitchAdjustedSuccessor.Data;
+            }
+
+            harmony.ObjectiveValue = ObjectiveFunction.GetObjectiveValue(harmony.Arguments);
+
+            return harmony;
+        }
+
+        protected override StopTimeInfo[] GetRandomArguments()
         {
             var sourceNode = SourceNodes.GetRandomElement();
             var randomPath = new List<StopTimeInfo>
@@ -58,29 +81,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
             }
 
             return randomPath.ToArray();
-        }
-
-        public override Harmony<StopTimeInfo> UsePitchAdjustment(Harmony<StopTimeInfo> harmony)
-        {
-            if (harmony.Arguments.Last().StopDto.Name.TrimToLower() == Destination.Name.TrimToLower())
-            {
-                return harmony;
-            }
-
-            var randomIndex = harmony.Arguments.GetRandomIndexMinimum(1);
-
-            var predecessorStopTimeId = harmony.Arguments[randomIndex - 1].Id;
-            var predecessorNode = Graph[predecessorStopTimeId];
-
-            var pitchAdjustedSuccessor = GetRandomNeighborNodeExceptExisting(predecessorNode, harmony.Arguments);
-            if (pitchAdjustedSuccessor != null)
-            {
-                harmony.Arguments[randomIndex] = pitchAdjustedSuccessor.Data;
-            }
-
-            harmony.ObjectiveValue = ObjectiveFunction.CalculateObjectiveValue(harmony.Arguments);
-
-            return harmony;
         }
 
         private Dictionary<int, int> GetDistancesToDestinationStop()

@@ -3,12 +3,16 @@ using System.Linq;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
+using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
-    public abstract class BaseStopTimeHarmonyGenerator : GeneralHarmonyGenerator<StopTimeInfo>
+    /// <summary>
+    /// Base stop time harmony generator
+    /// </summary>
+    public abstract class BaseStopTimeHarmonyGenerator : BaseHarmonyGenerator<StopTimeInfo>
     {
         protected readonly Graph<int, StopTimeInfo> Graph;
         protected readonly StopDto ReferentialDestinationStop;
@@ -28,6 +32,17 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
             ReferentialDestinationStop = GetReferenceDestinationStop();
             SourceNodes = GetSourceNodes();
         }
+
+        public override Harmony<StopTimeInfo> GenerateRandomHarmony()
+        {
+            var randomArguments = GetRandomArguments();
+
+            var objectiveValue = ObjectiveFunction.GetObjectiveValue(randomArguments);
+
+            return new Harmony<StopTimeInfo>(objectiveValue, randomArguments);
+        }
+
+        protected abstract StopTimeInfo[] GetRandomArguments();
 
         protected StopDto GetReferenceDestinationStop()
         {

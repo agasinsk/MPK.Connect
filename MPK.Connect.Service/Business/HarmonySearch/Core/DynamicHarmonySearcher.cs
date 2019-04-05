@@ -1,7 +1,7 @@
 ﻿using System;
 using MPK.Connect.Service.Business.HarmonySearch.Constants;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
-using MPK.Connect.Service.Business.HarmonySearch.Helpers;
+using MPK.Connect.Service.Business.HarmonySearch.ParameterProviders;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
@@ -11,17 +11,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
     /// <typeparam name="T">Type of entities</typeparam>
     public class DynamicHarmonySearcher<T> : HarmonySearcher<T>
     {
-        private readonly DynamicParameterProvider _parameterProvider;
-        public override HarmonySearchType Type => HarmonySearchType.Dynamic;
+        public new IDynamicParameterProvider ParameterProvider { get; }
 
-        public DynamicHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator) : base(harmonyGenerator)
+        public DynamicHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, IDynamicParameterProvider parameterProvider, int harmonyMemorySize = HarmonySearchConstants.DefaultHarmonyMemorySize, long maxImprovisationCount = HarmonySearchConstants.DefaultMaxImprovisationCount) : base(harmonyGenerator, parameterProvider, harmonyMemorySize, maxImprovisationCount)
         {
-            _parameterProvider = new DynamicParameterProvider(HarmonySearchConstants.DefaultParameterListCapacity);
-        }
-
-        public DynamicHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, int harmonyMemorySize) : base(harmonyGenerator, harmonyMemorySize)
-        {
-            _parameterProvider = new DynamicParameterProvider(HarmonySearchConstants.DefaultParameterListCapacity);
+            ParameterProvider = parameterProvider ?? throw new ArgumentNullException(nameof(parameterProvider));
         }
 
         public override Harmony<T> SearchForHarmony()
@@ -33,20 +27,18 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                 var worstHarmony = HarmonyMemory.WorstHarmony;
 
                 // Get dynamic parameters
-                var (considerationRatio, pitchAdjustmentRatio) = _parameterProvider.GetParameterSet();
-
-                HarmonyGenerator.HarmonyMemoryConsiderationRatio = considerationRatio;
-                HarmonyGenerator.PitchAdjustmentRatio = pitchAdjustmentRatio;
+                var harmonyMemoryConsiderationRatio = ParameterProvider.HarmonyMemoryConsiderationRatio;
+                var pitchAdjustmentRatio = ParameterProvider.PitchAdjustmentRatio;
 
                 // Improvise harmony with the new parameters
-                var improvisedHarmony = HarmonyGenerator.ImproviseHarmony();
+                var improvisedHarmony = HarmonyGenerator.ImproviseHarmony(harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
 
                 if (improvisedHarmony.IsBetterThan(worstHarmony) && !HarmonyMemory.Contains(improvisedHarmony))
                 {
                     HarmonyMemory.SwapWithWorstHarmony(improvisedHarmony);
 
-                    // Mark parameter set as winning if if harmony is better
-                    _parameterProvider.MarkCurrentParametersAsWinning();
+                    // Mark parameter set as winning if the harmony was better
+                    ParameterProvider.MarkCurrentParametersAsWinning();
                 }
             }
 
