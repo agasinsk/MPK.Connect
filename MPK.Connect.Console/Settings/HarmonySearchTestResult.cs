@@ -31,33 +31,5 @@ namespace MPK.Connect.TestEnvironment.Settings
                 AverageTime
             };
         }
-
-        public object[] GetDataRowParamsWithoutFunctionType()
-        {
-            return new object[]
-            {
-                HarmonySearchType.ToString(),
-                SolutionsCount,
-                NonFeasibleCount,
-                AverageObjectiveFunctionValue,
-                BestObjectiveFunctionValue,
-                WorstObjectiveFunctionValue,
-                AverageTime
-            };
-        }
-
-        public object[] GetDataRowParamsWithoutSearcherType()
-        {
-            return new object[]
-            {
-                HarmonyGeneratorType.ToString(),
-                SolutionsCount,
-                NonFeasibleCount,
-                AverageObjectiveFunctionValue,
-                BestObjectiveFunctionValue,
-                WorstObjectiveFunctionValue,
-                AverageTime
-            };
-        }
     }
 }

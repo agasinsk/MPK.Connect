@@ -45,17 +45,18 @@ namespace MPK.Connect.TestEnvironment
         {
             var graph = _graphBuilder.GetGraph(DateTime.Now);
 
-            var resultDirectory = $"Tests_{DateTime.Now:ddMMyyyy_HHmm}_{source.Name.Trim()}_{destination.Name.Trim()}";
+            var topResultDirectory = $"Tests_{DateTime.Now:ddMMyyyy_HHmm}_{source.Name.Trim()}_{destination.Name.Trim()}";
 
             var infoDataTable = GetInfoDataTable(source, destination);
 
+            //TODO: divide the result based on dynamic key
             var averageResults = new Dictionary<HarmonyGeneratorType, List<HarmonySearchTestResult>>();
 
             foreach (var harmonySearchTestSettings in scenario.Settings)
             {
                 var harmonySearcher = harmonySearchTestSettings.GetHarmonySearcher(graph, source, destination);
 
-                var testsResult = RunTests(harmonySearcher, infoDataTable, resultDirectory);
+                var testsResult = RunTests(harmonySearcher, infoDataTable, topResultDirectory);
 
                 if (!averageResults.ContainsKey(harmonySearcher.HarmonyGeneratorType))
                 {
@@ -65,10 +66,10 @@ namespace MPK.Connect.TestEnvironment
                 averageResults[harmonySearcher.HarmonyGeneratorType].Add(testsResult);
             }
 
-            ExportResults(averageResults, infoDataTable, resultDirectory);
+            ExportAverageResults(averageResults, infoDataTable, topResultDirectory);
         }
 
-        private void ExportResults(Dictionary<HarmonyGeneratorType, List<HarmonySearchTestResult>> results, DataTable infoDataTable, string resultDirectory)
+        private void ExportAverageResults(Dictionary<HarmonyGeneratorType, List<HarmonySearchTestResult>> results, DataTable infoDataTable, string resultDirectory)
         {
             var dataTables = new List<DataTable>();
             foreach (var (functionType, testResults) in results)
@@ -77,7 +78,7 @@ namespace MPK.Connect.TestEnvironment
 
                 foreach (var testResult in testResults)
                 {
-                    resultsDataTable.Rows.Add(testResult.GetDataRowParamsWithoutFunctionType());
+                    resultsDataTable.Rows.Add(testResult.GetDataRowParams());
                 }
 
                 dataTables.Add(resultsDataTable);
@@ -106,6 +107,8 @@ namespace MPK.Connect.TestEnvironment
             var objectiveFunctionDataTable = new DataTable(tableName);
 
             objectiveFunctionDataTable.Columns.Add(nameof(HarmonySearchTestResult.HarmonySearchType), typeof(string));
+            objectiveFunctionDataTable.Columns.Add(nameof(HarmonySearchTestResult.HarmonyGeneratorType), typeof(string));
+            objectiveFunctionDataTable.Columns.Add(nameof(HarmonySearchTestResult.ObjectiveFunctionType), typeof(string));
             objectiveFunctionDataTable.Columns.Add(nameof(HarmonySearchTestResult.SolutionsCount), typeof(int));
             objectiveFunctionDataTable.Columns.Add(nameof(HarmonySearchTestResult.NonFeasibleCount), typeof(int));
             objectiveFunctionDataTable.Columns.Add("Average harmony", typeof(double));
