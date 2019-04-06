@@ -43,8 +43,7 @@ namespace MPK.Connect.TestEnvironment.Settings
         {
             var objectiveFunction = ObjectiveFunctionFactory.GetInstance(ObjectiveFunctionType, destination);
 
-            var harmonyGenerator = HarmonyGeneratorFactory.GetInstance(HarmonyGeneratorType, objectiveFunction, graph, source,
-                    destination);
+            var harmonyGenerator = HarmonyGeneratorFactory.GetInstance(HarmonyGeneratorType, objectiveFunction, graph, source, destination);
 
             var harmonySearcher = HarmonySearcherFactory.GetInstance(HarmonySearcherType, harmonyGenerator,
                 HarmonyMemorySize, MaxImprovisationCount, HarmonyMemoryConsiderationRatio, PitchAdjustingRatio,

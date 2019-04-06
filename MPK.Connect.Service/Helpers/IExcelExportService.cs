@@ -3,7 +3,7 @@ using System.Data;
 
 namespace MPK.Connect.Service.Helpers
 {
-    public interface IExcelExporterService
+    public interface IExcelExportService
     {
         void ExportToExcel(DataTable infoDataTable, DataTable parameterDataTable, DataTable solutionDataTable, string filePath = null);
 

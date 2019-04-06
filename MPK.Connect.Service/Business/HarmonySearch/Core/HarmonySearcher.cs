@@ -13,10 +13,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
     public class HarmonySearcher<T> : IHarmonySearcher<T>
     {
         protected readonly IHarmonyGenerator<T> HarmonyGenerator;
-        protected readonly IParameterProvider ParameterProvider;
         public HarmonyGeneratorType HarmonyGeneratorType => HarmonyGenerator.Type;
         public HarmonyMemory<T> HarmonyMemory { get; }
         public long MaxImprovisationCount { get; set; }
+        public IParameterProvider ParameterProvider { get; }
         public virtual HarmonySearchType Type => ParameterProvider.HarmonySearchType;
         public ObjectiveFunctionType ObjectiveFunctionType => HarmonyGenerator.ObjectiveFunctionType;
         protected int ImprovisationCount { get; set; }

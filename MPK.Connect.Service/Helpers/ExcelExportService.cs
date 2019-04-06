@@ -8,13 +8,13 @@ using OfficeOpenXml.Table;
 
 namespace MPK.Connect.Service.Helpers
 {
-    public class ExcelExporterService : IExcelExporterService
+    public class ExcelExportService : IExcelExportService
     {
         private const string DefaultFileName = "../../../results/HarmonySearchTestResults";
         private const string DefaultPath = "../../../results/";
         private const string HarmonySearchSheetName = "Harmony search";
 
-        public ExcelExporterService()
+        public ExcelExportService()
         {
             Directory.CreateDirectory(DefaultPath);
         }

@@ -62,7 +62,7 @@ namespace MPK.Connect.TestEnvironment
             containerBuilder.Populate(services);
             containerBuilder.RegisterType(typeof(SimpleMpkContext)).As<IMpkContext>();
             containerBuilder.RegisterType<ActionTimer>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<ExcelExporterService>().AsImplementedInterfaces();
+            containerBuilder.RegisterType<ExcelExportService>().AsImplementedInterfaces();
             containerBuilder.RegisterType(typeof(HarmonySearchStopTimeTester)).AsSelf();
 
             Container = containerBuilder.Build();

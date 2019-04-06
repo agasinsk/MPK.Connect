@@ -9,22 +9,20 @@ namespace MPK.Connect.Service.Business.HarmonySearch.ParameterProviders
     {
         private readonly long _maxImprovisationCount;
 
-        private readonly double _maxPitchAdjustmentRatio;
-
-        private readonly double _minPitchAdjustmentRatio;
         private double _currentIterationCount;
-
         public double HarmonyMemoryConsiderationRatio { get; set; }
-
         public HarmonySearchType HarmonySearchType => HarmonySearchType.Improved;
+        public double MaxPitchAdjustmentRatio { get; }
+
+        public double MinPitchAdjustmentRatio { get; }
         public double PitchAdjustmentRatio => GetPitchAdjustmentRatio();
 
         public DynamicPitchAdjustmentRatioProvider(double harmonyMemoryConsiderationRatio, double maxPitchAdjustmentRatio, double minPitchAdjustmentRatio, long maxImprovisationCount)
         {
             HarmonyMemoryConsiderationRatio = harmonyMemoryConsiderationRatio;
 
-            _maxPitchAdjustmentRatio = maxPitchAdjustmentRatio;
-            _minPitchAdjustmentRatio = minPitchAdjustmentRatio;
+            MaxPitchAdjustmentRatio = maxPitchAdjustmentRatio;
+            MinPitchAdjustmentRatio = minPitchAdjustmentRatio;
             _maxImprovisationCount = maxImprovisationCount;
 
             _currentIterationCount = -1;
@@ -34,7 +32,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.ParameterProviders
         {
             _currentIterationCount++;
 
-            return _maxPitchAdjustmentRatio - (_maxPitchAdjustmentRatio - _minPitchAdjustmentRatio) * _currentIterationCount / _maxImprovisationCount;
+            return MaxPitchAdjustmentRatio - (MaxPitchAdjustmentRatio - MinPitchAdjustmentRatio) * _currentIterationCount / _maxImprovisationCount;
         }
     }
 }

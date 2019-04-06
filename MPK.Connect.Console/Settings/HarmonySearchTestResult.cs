@@ -4,7 +4,7 @@ using MPK.Connect.Service.Business.HarmonySearch.Generator;
 
 namespace MPK.Connect.TestEnvironment.Settings
 {
-    public class AverageTestResult
+    public class HarmonySearchTestResult
     {
         public double AverageObjectiveFunctionValue { get; set; }
         public double AverageTime { get; set; }

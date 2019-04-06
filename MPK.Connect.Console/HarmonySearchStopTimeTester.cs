@@ -13,19 +13,34 @@ using MPK.Connect.TestEnvironment.Settings;
 
 namespace MPK.Connect.TestEnvironment
 {
+    /// <summary>
+    /// Harmony search tester
+    /// </summary>
     internal class HarmonySearchStopTimeTester
     {
         private readonly IActionTimer _actionTimer;
-        private readonly IExcelExporterService _excelExporterService;
+        private readonly IExcelExportService _excelExportService;
         private readonly IGraphBuilder _graphBuilder;
 
-        public HarmonySearchStopTimeTester(IExcelExporterService excelExporterService, IActionTimer actionTimer, IGraphBuilder graphBuilder)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="excelExportService">Excel export service</param>
+        /// <param name="actionTimer">Action timer</param>
+        /// <param name="graphBuilder">Graph builder</param>
+        public HarmonySearchStopTimeTester(IExcelExportService excelExportService, IActionTimer actionTimer, IGraphBuilder graphBuilder)
         {
-            _excelExporterService = excelExporterService ?? throw new ArgumentNullException(nameof(excelExporterService));
+            _excelExportService = excelExportService ?? throw new ArgumentNullException(nameof(excelExportService));
             _actionTimer = actionTimer ?? throw new ArgumentNullException(nameof(actionTimer));
             _graphBuilder = graphBuilder ?? throw new ArgumentNullException(nameof(graphBuilder));
         }
 
+        /// <summary>
+        /// Runs test with scenarios
+        /// </summary>
+        /// <param name="scenario"></param>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
         public void RunTestsWithScenarios(HarmonySearchTestScenario scenario, Location source, Location destination)
         {
             var graph = _graphBuilder.GetGraph(DateTime.Now);
@@ -34,7 +49,7 @@ namespace MPK.Connect.TestEnvironment
 
             var infoDataTable = GetInfoDataTable(source, destination);
 
-            var averageResults = new Dictionary<HarmonyGeneratorType, List<AverageTestResult>>();
+            var averageResults = new Dictionary<HarmonyGeneratorType, List<HarmonySearchTestResult>>();
 
             foreach (var harmonySearchTestSettings in scenario.Settings)
             {
@@ -44,7 +59,7 @@ namespace MPK.Connect.TestEnvironment
 
                 if (!averageResults.ContainsKey(harmonySearcher.HarmonyGeneratorType))
                 {
-                    averageResults.Add(harmonySearcher.HarmonyGeneratorType, new List<AverageTestResult>());
+                    averageResults.Add(harmonySearcher.HarmonyGeneratorType, new List<HarmonySearchTestResult>());
                 }
 
                 averageResults[harmonySearcher.HarmonyGeneratorType].Add(testsResult);
@@ -53,7 +68,7 @@ namespace MPK.Connect.TestEnvironment
             ExportResults(averageResults, infoDataTable, resultDirectory);
         }
 
-        private void ExportResults(Dictionary<HarmonyGeneratorType, List<AverageTestResult>> results, DataTable infoDataTable, string resultDirectory)
+        private void ExportResults(Dictionary<HarmonyGeneratorType, List<HarmonySearchTestResult>> results, DataTable infoDataTable, string resultDirectory)
         {
             var dataTables = new List<DataTable>();
             foreach (var (functionType, testResults) in results)
@@ -69,7 +84,7 @@ namespace MPK.Connect.TestEnvironment
             }
 
             var filePath = Path.Combine(resultDirectory, "AverageTestResults");
-            _excelExporterService.ExportToExcel(infoDataTable, dataTables, filePath);
+            _excelExportService.ExportToExcel(infoDataTable, dataTables, filePath);
         }
 
         private DataTable GetInfoDataTable(Location source, Location destination)
@@ -90,10 +105,12 @@ namespace MPK.Connect.TestEnvironment
         {
             var objectiveFunctionDataTable = new DataTable(tableName);
 
-            objectiveFunctionDataTable.Columns.Add(nameof(AverageTestResult.HarmonySearchType), typeof(string));
-            objectiveFunctionDataTable.Columns.Add(nameof(AverageTestResult.SolutionsCount), typeof(int));
-            objectiveFunctionDataTable.Columns.Add(nameof(AverageTestResult.NonFeasibleCount), typeof(int));
+            objectiveFunctionDataTable.Columns.Add(nameof(HarmonySearchTestResult.HarmonySearchType), typeof(string));
+            objectiveFunctionDataTable.Columns.Add(nameof(HarmonySearchTestResult.SolutionsCount), typeof(int));
+            objectiveFunctionDataTable.Columns.Add(nameof(HarmonySearchTestResult.NonFeasibleCount), typeof(int));
+            objectiveFunctionDataTable.Columns.Add("Average harmony", typeof(double));
             objectiveFunctionDataTable.Columns.Add("Best harmony", typeof(double));
+            objectiveFunctionDataTable.Columns.Add("Worst harmony", typeof(double));
             objectiveFunctionDataTable.Columns.Add("Time [ms]", typeof(double));
 
             return objectiveFunctionDataTable;
@@ -111,7 +128,7 @@ namespace MPK.Connect.TestEnvironment
             return solutionsDataTable;
         }
 
-        private AverageTestResult RunTests(IHarmonySearcher<StopTimeInfo> harmonySearcher, DataTable infoDataTable, string resultPath)
+        private HarmonySearchTestResult RunTests(IHarmonySearcher<StopTimeInfo> harmonySearcher, DataTable infoDataTable, string resultPath)
         {
             var dataTable = harmonySearcher.ToDataTable();
             var solutionsDataTable = GetSolutionsDataTable();
@@ -138,11 +155,11 @@ namespace MPK.Connect.TestEnvironment
 
             var filePath = Path.Combine(resultPath, $"{harmonySearcher.Type}_{harmonySearcher.HarmonyGeneratorType}{harmonySearcher.ObjectiveFunctionType}_TestResults");
 
-            _excelExporterService.ExportToExcel(infoDataTable, dataTable, solutionsDataTable, filePath);
+            _excelExportService.ExportToExcel(infoDataTable, dataTable, solutionsDataTable, filePath);
 
             Console.WriteLine($"Saved file under path: {filePath}");
 
-            return new AverageTestResult
+            return new HarmonySearchTestResult
             {
                 HarmonySearchType = harmonySearcher.Type,
                 HarmonyGeneratorType = harmonySearcher.HarmonyGeneratorType,
