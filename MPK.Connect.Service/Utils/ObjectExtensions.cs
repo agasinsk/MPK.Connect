@@ -3,15 +3,18 @@ using System.Reflection;
 
 namespace MPK.Connect.Service.Utils
 {
-    public static class ObjectExtentions
+    public static class ObjectExtensions
     {
         public static T GetPropValue<T>(this Object obj, string name)
         {
-            Object retval = GetPropValue(obj, name);
-            if (retval == null) { return default(T); }
+            var propValue = GetPropValue(obj, name);
+            if (propValue == null)
+            {
+                return default;
+            }
 
             // throws InvalidCastException if types are incompatible
-            return (T)retval;
+            return (T)propValue;
         }
 
         public static Object GetPropValue(this Object obj, string name)

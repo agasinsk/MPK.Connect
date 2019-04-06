@@ -1,17 +1,20 @@
 ﻿using MPK.Connect.Service.Business.HarmonySearch.Core;
+using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
 
-namespace MPK.Connect.Console
+namespace MPK.Connect.TestEnvironment.Settings
 {
-    public class TestResult
+    public class AverageTestResult
     {
+        public double AverageObjectiveFunctionValue { get; set; }
+        public double AverageTime { get; set; }
+        public double BestObjectiveFunctionValue { get; set; }
         public HarmonyGeneratorType HarmonyGeneratorType { get; set; }
         public HarmonySearchType HarmonySearchType { get; set; }
-
         public int NonFeasibleCount { get; set; }
-        public double ObjectiveFunctionValue { get; set; }
+        public ObjectiveFunctionType ObjectiveFunctionType { get; set; }
         public int SolutionsCount { get; set; }
-        public double Time { get; set; }
+        public double WorstObjectiveFunctionValue { get; set; }
 
         public object[] GetDataRowParams()
         {
@@ -19,10 +22,13 @@ namespace MPK.Connect.Console
             {
                 HarmonySearchType.ToString(),
                 HarmonyGeneratorType.ToString(),
+                ObjectiveFunctionType.ToString(),
                 SolutionsCount,
                 NonFeasibleCount,
-                ObjectiveFunctionValue,
-                Time
+                AverageObjectiveFunctionValue,
+                BestObjectiveFunctionValue,
+                WorstObjectiveFunctionValue,
+                AverageTime
             };
         }
 
@@ -33,8 +39,10 @@ namespace MPK.Connect.Console
                 HarmonySearchType.ToString(),
                 SolutionsCount,
                 NonFeasibleCount,
-                ObjectiveFunctionValue,
-                Time
+                AverageObjectiveFunctionValue,
+                BestObjectiveFunctionValue,
+                WorstObjectiveFunctionValue,
+                AverageTime
             };
         }
 
@@ -45,8 +53,10 @@ namespace MPK.Connect.Console
                 HarmonyGeneratorType.ToString(),
                 SolutionsCount,
                 NonFeasibleCount,
-                ObjectiveFunctionValue,
-                Time
+                AverageObjectiveFunctionValue,
+                BestObjectiveFunctionValue,
+                WorstObjectiveFunctionValue,
+                AverageTime
             };
         }
     }

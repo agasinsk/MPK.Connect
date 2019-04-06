@@ -18,6 +18,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         public HarmonyMemory<T> HarmonyMemory { get; }
         public long MaxImprovisationCount { get; set; }
         public virtual HarmonySearchType Type => ParameterProvider.HarmonySearchType;
+        public ObjectiveFunctionType ObjectiveFunctionType => HarmonyGenerator.ObjectiveFunctionType;
         protected int ImprovisationCount { get; set; }
 
         /// <summary>

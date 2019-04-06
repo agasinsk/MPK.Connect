@@ -1,12 +1,13 @@
 ﻿using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
+using MPK.Connect.Service.Business.HarmonySearch.Constants;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
-using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
+using MPK.Connect.TestEnvironment.Factories;
 
-namespace MPK.Connect.Console
+namespace MPK.Connect.TestEnvironment.Settings
 {
     public class HarmonySearchTestSettings
     {
@@ -23,18 +24,18 @@ namespace MPK.Connect.Console
 
         public double MinPitchAdjustingRatio { get; set; }
 
-        public ObjectiveFunctionTypes ObjectiveFunctionType { get; set; }
+        public ObjectiveFunctionType ObjectiveFunctionType { get; set; }
 
         public double PitchAdjustingRatio { get; set; }
 
         public HarmonySearchTestSettings()
         {
-            MaxImprovisationCount = DefaultMaxImprovisationCount;
-            HarmonyMemorySize = DefaultHarmonyMemorySize;
-            HarmonyMemoryConsiderationRatio = DefaultHarmonyMemoryConsiderationRatio;
-            PitchAdjustingRatio = DefaultPitchAdjustmentRatio;
-            MinPitchAdjustingRatio = DefaultMinPitchAdjustmentRatio;
-            MaxPitchAdjustingRatio = DefaultMaxPitchAdjustmentRatio;
+            MaxImprovisationCount = HarmonySearchConstants.DefaultMaxImprovisationCount;
+            HarmonyMemorySize = HarmonySearchConstants.DefaultHarmonyMemorySize;
+            HarmonyMemoryConsiderationRatio = HarmonySearchConstants.DefaultHarmonyMemoryConsiderationRatio;
+            PitchAdjustingRatio = HarmonySearchConstants.DefaultPitchAdjustmentRatio;
+            MinPitchAdjustingRatio = HarmonySearchConstants.DefaultMinPitchAdjustmentRatio;
+            MaxPitchAdjustingRatio = HarmonySearchConstants.DefaultMaxPitchAdjustmentRatio;
         }
 
         public IHarmonySearcher<StopTimeInfo> GetHarmonySearcher(Graph<int, StopTimeInfo> graph, Location source,

@@ -9,7 +9,7 @@
         /// <summary>
         /// Gets the type of objective function
         /// </summary>
-        ObjectiveFunctionTypes Type { get; }
+        ObjectiveFunctionType Type { get; }
 
         /// <summary>
         /// Return the objective function value given a solution vector containing each decision

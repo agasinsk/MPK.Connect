@@ -13,7 +13,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
     {
         private readonly string _destinationName;
 
-        public ObjectiveFunctionTypes Type => ObjectiveFunctionTypes.TravelTime;
+        public ObjectiveFunctionType Type => ObjectiveFunctionType.TravelTime;
 
         public TravelTimeObjectiveFunction(string destinationName)
         {

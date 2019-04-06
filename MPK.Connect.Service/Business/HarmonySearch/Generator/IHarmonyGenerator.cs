@@ -11,6 +11,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
     {
         HarmonyMemory<T> HarmonyMemory { get; set; }
 
+        ObjectiveFunctionType ObjectiveFunctionType { get; }
         HarmonyGeneratorType Type { get; }
 
         Harmony<T> GenerateRandomHarmony();

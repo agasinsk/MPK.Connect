@@ -9,8 +9,9 @@ using MPK.Connect.Service.Business.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Helpers;
+using MPK.Connect.TestEnvironment.Settings;
 
-namespace MPK.Connect.Console
+namespace MPK.Connect.TestEnvironment
 {
     internal class HarmonySearchStopTimeTester
     {
@@ -33,25 +34,26 @@ namespace MPK.Connect.Console
 
             var infoDataTable = GetInfoDataTable(source, destination);
 
-            var averageResults = new Dictionary<HarmonyGeneratorType, List<TestResult>>();
+            var averageResults = new Dictionary<HarmonyGeneratorType, List<AverageTestResult>>();
 
             foreach (var harmonySearchTestSettings in scenario.Settings)
             {
                 var harmonySearcher = harmonySearchTestSettings.GetHarmonySearcher(graph, source, destination);
-                var testResult = RunTests(harmonySearcher, infoDataTable, resultDirectory);
+
+                var testsResult = RunTests(harmonySearcher, infoDataTable, resultDirectory);
 
                 if (!averageResults.ContainsKey(harmonySearcher.HarmonyGeneratorType))
                 {
-                    averageResults.Add(harmonySearcher.HarmonyGeneratorType, new List<TestResult>());
+                    averageResults.Add(harmonySearcher.HarmonyGeneratorType, new List<AverageTestResult>());
                 }
 
-                averageResults[harmonySearcher.HarmonyGeneratorType].Add(testResult);
+                averageResults[harmonySearcher.HarmonyGeneratorType].Add(testsResult);
             }
 
             ExportResults(averageResults, infoDataTable, resultDirectory);
         }
 
-        private void ExportResults(Dictionary<HarmonyGeneratorType, List<TestResult>> results, DataTable infoDataTable, string resultDirectory)
+        private void ExportResults(Dictionary<HarmonyGeneratorType, List<AverageTestResult>> results, DataTable infoDataTable, string resultDirectory)
         {
             var dataTables = new List<DataTable>();
             foreach (var (functionType, testResults) in results)
@@ -88,9 +90,9 @@ namespace MPK.Connect.Console
         {
             var objectiveFunctionDataTable = new DataTable(tableName);
 
-            objectiveFunctionDataTable.Columns.Add(nameof(TestResult.HarmonySearchType), typeof(string));
-            objectiveFunctionDataTable.Columns.Add(nameof(TestResult.SolutionsCount), typeof(int));
-            objectiveFunctionDataTable.Columns.Add(nameof(TestResult.NonFeasibleCount), typeof(int));
+            objectiveFunctionDataTable.Columns.Add(nameof(AverageTestResult.HarmonySearchType), typeof(string));
+            objectiveFunctionDataTable.Columns.Add(nameof(AverageTestResult.SolutionsCount), typeof(int));
+            objectiveFunctionDataTable.Columns.Add(nameof(AverageTestResult.NonFeasibleCount), typeof(int));
             objectiveFunctionDataTable.Columns.Add("Best harmony", typeof(double));
             objectiveFunctionDataTable.Columns.Add("Time [ms]", typeof(double));
 
@@ -109,7 +111,7 @@ namespace MPK.Connect.Console
             return solutionsDataTable;
         }
 
-        private TestResult RunTests(IHarmonySearcher<StopTimeInfo> harmonySearcher, DataTable infoDataTable, string resultPath)
+        private AverageTestResult RunTests(IHarmonySearcher<StopTimeInfo> harmonySearcher, DataTable infoDataTable, string resultPath)
         {
             var dataTable = harmonySearcher.ToDataTable();
             var solutionsDataTable = GetSolutionsDataTable();
@@ -120,29 +122,34 @@ namespace MPK.Connect.Console
             for (var i = 1; i <= 15; i++)
             {
                 Harmony<StopTimeInfo> bestHarmony = null;
-                var elapsed = _actionTimer.MeasureTime(() =>
+                var elapsedTime = _actionTimer.MeasureTime(() =>
                 {
                     bestHarmony = harmonySearcher.SearchForHarmony();
                 });
 
-                elapsedTimes.Add(elapsed);
+                elapsedTimes.Add(elapsedTime);
                 objectiveFunctionValues.Add(bestHarmony.ObjectiveValue);
 
                 solutionsDataTable.Rows.Add(i, bestHarmony.ObjectiveValue,
-                    string.Concat(bestHarmony.Arguments.Select(a => $" {a.ToString()} |")), elapsed.TotalSeconds);
-                System.Console.WriteLine($"Finished testing {harmonySearcher.Type.ToString()} HS, with function {harmonySearcher.HarmonyGeneratorType}, iteration {i}.");
+                    string.Concat(bestHarmony.Arguments.Select(a => $"{a.ToString()} | ")), elapsedTime.TotalSeconds);
+
+                Console.WriteLine($"Finished testing {harmonySearcher.Type.ToString()} HS, generator {harmonySearcher.HarmonyGeneratorType}, function {harmonySearcher.ObjectiveFunctionType}, iteration {i}.");
             }
 
-            var filePath = Path.Combine(resultPath, $"{harmonySearcher.Type}_{harmonySearcher.HarmonyGeneratorType}_TestResults");
-            _excelExporterService.ExportToExcel(infoDataTable, dataTable, solutionsDataTable, filePath);
-            System.Console.WriteLine($"Saved file under path: {filePath}");
+            var filePath = Path.Combine(resultPath, $"{harmonySearcher.Type}_{harmonySearcher.HarmonyGeneratorType}{harmonySearcher.ObjectiveFunctionType}_TestResults");
 
-            return new TestResult
+            _excelExporterService.ExportToExcel(infoDataTable, dataTable, solutionsDataTable, filePath);
+
+            Console.WriteLine($"Saved file under path: {filePath}");
+
+            return new AverageTestResult
             {
                 HarmonySearchType = harmonySearcher.Type,
                 HarmonyGeneratorType = harmonySearcher.HarmonyGeneratorType,
-                ObjectiveFunctionValue = objectiveFunctionValues.All(double.IsPositiveInfinity) ? double.PositiveInfinity : objectiveFunctionValues.Where(d => !double.IsPositiveInfinity(d)).Average(),
-                Time = elapsedTimes.Select(t => t.TotalSeconds).Average(),
+                BestObjectiveFunctionValue = objectiveFunctionValues.Min(),
+                WorstObjectiveFunctionValue = objectiveFunctionValues.Max(),
+                AverageObjectiveFunctionValue = objectiveFunctionValues.All(double.IsPositiveInfinity) ? double.PositiveInfinity : objectiveFunctionValues.Where(d => !double.IsPositiveInfinity(d)).Average(),
+                AverageTime = elapsedTimes.Select(t => t.TotalSeconds).Average(),
                 NonFeasibleCount = objectiveFunctionValues.Count(double.IsPositiveInfinity),
                 SolutionsCount = objectiveFunctionValues.Count
             };

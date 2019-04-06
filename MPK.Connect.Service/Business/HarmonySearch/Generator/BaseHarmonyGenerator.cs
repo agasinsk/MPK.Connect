@@ -12,6 +12,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         protected readonly IBoundedRandom Random;
         public HarmonyMemory<T> HarmonyMemory { get; set; }
 
+        public ObjectiveFunctionType ObjectiveFunctionType => ObjectiveFunction.Type;
         public abstract HarmonyGeneratorType Type { get; }
 
         protected BaseHarmonyGenerator(IObjectiveFunction<T> function)

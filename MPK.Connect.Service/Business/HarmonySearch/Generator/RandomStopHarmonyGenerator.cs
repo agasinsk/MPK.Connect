@@ -86,7 +86,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
             var randomStopId = neighborStopIds.GetRandomElement();
 
-            if (randomStopId == default(int))
+            if (randomStopId == default)
             {
                 return null;
             }

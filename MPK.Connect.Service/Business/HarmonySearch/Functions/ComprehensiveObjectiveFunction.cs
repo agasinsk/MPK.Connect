@@ -13,7 +13,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
     {
         private readonly string _destinationName;
 
-        public ObjectiveFunctionTypes Type => ObjectiveFunctionTypes.Comprehensive;
+        public ObjectiveFunctionType Type => ObjectiveFunctionType.Comprehensive;
 
         public ComprehensiveObjectiveFunction(string destinationName)
         {

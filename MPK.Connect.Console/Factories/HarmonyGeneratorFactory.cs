@@ -4,7 +4,7 @@ using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
 
-namespace MPK.Connect.Console
+namespace MPK.Connect.TestEnvironment.Factories
 {
     public class HarmonyGeneratorFactory
     {

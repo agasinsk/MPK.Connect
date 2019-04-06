@@ -1,4 +1,5 @@
-﻿using MPK.Connect.Service.Business.HarmonySearch.Generator;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using MPK.Connect.Service.Business.HarmonySearch.Generator;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
@@ -12,6 +13,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         HarmonyMemory<T> HarmonyMemory { get; }
 
         long MaxImprovisationCount { get; }
+        ObjectiveFunctionType ObjectiveFunctionType { get; }
         HarmonySearchType Type { get; }
 
         /// <summary>

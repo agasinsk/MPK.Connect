@@ -94,25 +94,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         }
 
         /// <summary>
-        /// Gets a random neighbor of specified node
-        /// </summary>
-        /// <param name="currentNode">Node with neighbors</param>
-        /// <returns>Random node neighbor</returns>
-        private GraphNode<int, StopTimeInfo> GetRandomNeighborNode(GraphNode<int, StopTimeInfo> currentNode)
-        {
-            var neighbors = currentNode.Neighbors;
-
-            if (!neighbors.Any())
-            {
-                return null;
-            }
-
-            var randomNeighborId = neighbors.GetRandomElement().DestinationId;
-
-            return Graph[randomNeighborId];
-        }
-
-        /// <summary>
         /// Gets a random neighbor of specified node except if it already exists in harmony
         /// </summary>
         /// <param name="currentNode">Node with neighbors</param>
@@ -135,7 +116,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
             var randomStopId = neighborStopsCloserToDestinationIds.GetRandomElement();
 
-            if (randomStopId == default(int))
+            if (randomStopId == default)
             {
                 return null;
             }

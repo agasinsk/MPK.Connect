@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPK.Connect.Test", "MPK.Con
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPK.Connect.WebApp", "MPK.Connect.WebApi\MPK.Connect.WebApp.csproj", "{FD9EB602-FAF9-4802-A0D2-72A79FAF20DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPK.Connect.Console", "MPK.Connect.Console\MPK.Connect.Console.csproj", "{FBDDDA76-07CE-4145-AC26-5885B5CAEB53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MPK.Connect.TestEnvironment", "MPK.Connect.Console\MPK.Connect.TestEnvironment.csproj", "{FBDDDA76-07CE-4145-AC26-5885B5CAEB53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

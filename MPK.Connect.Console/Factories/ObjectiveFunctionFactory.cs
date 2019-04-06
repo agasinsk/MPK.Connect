@@ -2,21 +2,21 @@
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 
-namespace MPK.Connect.Console
+namespace MPK.Connect.TestEnvironment.Factories
 {
     public class ObjectiveFunctionFactory
     {
-        public static IObjectiveFunction<StopTimeInfo> GetInstance(ObjectiveFunctionTypes type, Location destination)
+        public static IObjectiveFunction<StopTimeInfo> GetInstance(ObjectiveFunctionType type, Location destination)
         {
             switch (type)
             {
-                case ObjectiveFunctionTypes.TravelTime:
+                case ObjectiveFunctionType.TravelTime:
                     return new TravelTimeObjectiveFunction(destination);
 
-                case ObjectiveFunctionTypes.Transfers:
+                case ObjectiveFunctionType.Transfers:
                     return new TransfersObjectiveFunction(destination);
 
-                case ObjectiveFunctionTypes.Comprehensive:
+                case ObjectiveFunctionType.Comprehensive:
                     return new ComprehensiveObjectiveFunction(destination);
 
                 default:

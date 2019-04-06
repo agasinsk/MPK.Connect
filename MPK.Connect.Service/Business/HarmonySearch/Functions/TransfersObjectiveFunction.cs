@@ -13,7 +13,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
     {
         private readonly string _destinationName;
 
-        public ObjectiveFunctionTypes Type => ObjectiveFunctionTypes.Transfers;
+        public ObjectiveFunctionType Type => ObjectiveFunctionType.Transfers;
 
         public TransfersObjectiveFunction(string destinationName)
         {

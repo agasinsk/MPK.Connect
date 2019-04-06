@@ -3,7 +3,7 @@
     /// <summary>
     /// Enumeration for objective function type
     /// </summary>
-    public enum ObjectiveFunctionTypes
+    public enum ObjectiveFunctionType
     {
         TravelTime,
         Transfers,
