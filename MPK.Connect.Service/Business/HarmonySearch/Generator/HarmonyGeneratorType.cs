@@ -7,7 +7,6 @@
     {
         RandomStopTime,
         RandomDirectedStop,
-        RandomStop,
-        AntColony
+        RandomStop
     }
 }

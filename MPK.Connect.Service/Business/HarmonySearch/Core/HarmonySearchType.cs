@@ -10,6 +10,7 @@
         Divided,
         Dynamic,
         ImprovedDivided,
-        DynamicDivided
+        DynamicDivided,
+        AntColony
     }
 }
