@@ -37,7 +37,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
                 return double.PositiveInfinity;
             }
 
-            return arguments.Select(s => s.Route).Distinct().Count();
+            return arguments.Select(s => s.Route).Distinct().Count() - 1;
         }
     }
 }

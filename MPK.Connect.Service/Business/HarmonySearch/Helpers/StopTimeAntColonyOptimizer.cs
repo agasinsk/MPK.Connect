@@ -82,14 +82,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
         /// </summary>
         private void EvaporatePheromone()
         {
-            var pheromoneAmounts = _pheromoneAmounts.SelectMany(k => k.Value.Select(v => v.Value)).ToList();
-
-            for (var index = 0; index < pheromoneAmounts.Count; index++)
+            foreach (var nodeId in _pheromoneAmounts.Keys.ToList())
             {
-                var pheromoneAmount = pheromoneAmounts[index];
-                var pheromoneAmountAfterEvaporation = pheromoneAmount * (1 - PheromoneEvaporationSpeed);
-
-                pheromoneAmounts[index] = pheromoneAmountAfterEvaporation;
+                var neighborNodesPheromone = _pheromoneAmounts[nodeId];
+                foreach (var neighborId in neighborNodesPheromone.Keys.ToList())
+                {
+                    neighborNodesPheromone[neighborId] *= 1 - PheromoneEvaporationSpeed;
+                }
             }
         }
 
@@ -103,9 +102,14 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 
             var arguments = new List<StopTimeInfo> { currentNode.Data };
 
-            while (currentNode != null && currentNode.Data.StopDto.Name != _referentialDestinationStop.Name)
+            while (currentNode.Data.StopDto.Name != _referentialDestinationStop.Name)
             {
                 var nextNode = SelectNextNode(currentNode);
+
+                if (nextNode == null)
+                {
+                    break;
+                }
 
                 arguments.Add(nextNode.Data);
 
@@ -131,7 +135,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
         {
             if (double.IsInfinity(bestHarmony.ObjectiveValue))
             {
-                return 0d;
+                return double.NegativeInfinity;
             }
 
             return 1 / bestHarmony.ObjectiveValue;
@@ -139,13 +143,21 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 
         private void ReinforcePheromoneOnBestHarmony(Harmony<StopTimeInfo> bestHarmony)
         {
+            // Get reinforcement coefficient
             var reinforcementCoefficient = GetReinforcementCoefficient(bestHarmony);
+
+            if (double.IsNegativeInfinity(reinforcementCoefficient))
+            {
+                return;
+            }
+
+            // Apply pheromone
             for (var index = 0; index < bestHarmony.Arguments.Length - 1; index++)
             {
                 var firstArgumentId = bestHarmony.Arguments[index].Id;
                 var nextArgumentId = bestHarmony.Arguments[index + 1].Id;
 
-                var reinforcementAmount = _pheromoneAmounts[firstArgumentId][nextArgumentId] + PheromoneEvaporationSpeed * reinforcementCoefficient;
+                var reinforcementAmount = PheromoneEvaporationSpeed * reinforcementCoefficient;
 
                 _pheromoneAmounts[firstArgumentId][nextArgumentId] += reinforcementAmount;
             }

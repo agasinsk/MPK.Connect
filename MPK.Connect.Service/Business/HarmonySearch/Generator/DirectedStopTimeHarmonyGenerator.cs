@@ -38,7 +38,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
         public override Harmony<StopTimeInfo> PitchAdjustHarmony(Harmony<StopTimeInfo> harmony)
         {
-            if (harmony.Arguments.Last().StopDto.Name.TrimToLower() == Destination.Name.TrimToLower())
+            if (harmony.Arguments.Length < 2 || harmony.Arguments.Last().StopDto.Name.TrimToLower() == Destination.Name.TrimToLower())
             {
                 return harmony;
             }

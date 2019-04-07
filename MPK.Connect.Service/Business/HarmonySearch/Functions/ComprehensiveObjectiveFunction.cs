@@ -39,7 +39,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Functions
 
             var travelTime = (arguments.Last().DepartureTime - arguments.First().DepartureTime).TotalMinutes;
 
-            var transfersPenalty = arguments.Select(s => s.Route).Distinct().Count();
+            var transfersPenalty = arguments.Select(s => s.Route).Distinct().Count() - 1;
 
             return travelTime + transfersPenalty * 10;
         }

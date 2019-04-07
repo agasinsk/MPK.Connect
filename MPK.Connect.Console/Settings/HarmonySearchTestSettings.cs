@@ -5,6 +5,7 @@ using MPK.Connect.Service.Business.HarmonySearch.Constants;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
+using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 using MPK.Connect.TestEnvironment.Factories;
 
 namespace MPK.Connect.TestEnvironment.Settings
@@ -45,9 +46,11 @@ namespace MPK.Connect.TestEnvironment.Settings
 
             var harmonyGenerator = HarmonyGeneratorFactory.GetInstance(HarmonyGeneratorType, objectiveFunction, graph, source, destination);
 
+            var antColonyOptimizer = new StopTimeAntColonyOptimizer(objectiveFunction, graph, source, destination);
+
             var harmonySearcher = HarmonySearcherFactory.GetInstance(HarmonySearcherType, harmonyGenerator,
                 HarmonyMemorySize, MaxImprovisationCount, HarmonyMemoryConsiderationRatio, PitchAdjustingRatio,
-                MinPitchAdjustingRatio, MaxPitchAdjustingRatio);
+                MinPitchAdjustingRatio, MaxPitchAdjustingRatio, antColonyOptimizer);
 
             return harmonySearcher;
         }
