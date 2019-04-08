@@ -55,7 +55,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
                     return UseRandomChoosing();
 
                 default:
-                    return new Harmony<T>(double.MaxValue);
+                    return new Harmony<T>(double.PositiveInfinity);
             }
         }
 

@@ -39,8 +39,7 @@ namespace MPK.Connect.TestEnvironment.Settings
             MaxPitchAdjustingRatio = HarmonySearchConstants.DefaultMaxPitchAdjustmentRatio;
         }
 
-        public IHarmonySearcher<StopTimeInfo> GetHarmonySearcher(Graph<int, StopTimeInfo> graph, Location source,
-            Location destination)
+        public IHarmonySearcher<StopTimeInfo> GetHarmonySearcher(Graph<int, StopTimeInfo> graph, Location source, Location destination)
         {
             var objectiveFunction = ObjectiveFunctionFactory.GetInstance(ObjectiveFunctionType, destination);
 
@@ -49,8 +48,7 @@ namespace MPK.Connect.TestEnvironment.Settings
             var antColonyOptimizer = new StopTimeAntColonyOptimizer(objectiveFunction, graph, source, destination);
 
             var harmonySearcher = HarmonySearcherFactory.GetInstance(HarmonySearcherType, harmonyGenerator,
-                HarmonyMemorySize, MaxImprovisationCount, HarmonyMemoryConsiderationRatio, PitchAdjustingRatio,
-                MinPitchAdjustingRatio, MaxPitchAdjustingRatio, antColonyOptimizer);
+                HarmonyMemorySize, MaxImprovisationCount, HarmonyMemoryConsiderationRatio, PitchAdjustingRatio, MinPitchAdjustingRatio, MaxPitchAdjustingRatio, antColonyOptimizer);
 
             return harmonySearcher;
         }

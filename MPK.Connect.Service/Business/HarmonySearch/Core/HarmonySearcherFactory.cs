@@ -34,7 +34,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                     {
                         var parameterProvider = new ConstantParameterProvider(harmonyMemoryConsiderationRatio, pitchAdjustmentRatio);
 
-                        return new AntColonyHarmonySearcher<T>(generator, parameterProvider, antColonyOptimizer, harmonyMemorySize, maxImprovisationCount);
+                        return new AntColonyHarmonySearcher<T>(generator, parameterProvider, antColonyOptimizer, harmonyMemorySize, maxImprovisationCount / 10);
                     }
                 case HarmonySearchType.Divided:
                     {

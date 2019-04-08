@@ -9,7 +9,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
     /// <typeparam name="T">Type of solution elements</typeparam>
     public interface IAntColonyOptimizer<T>
     {
-        IEnumerable<Harmony<T>> GetAntSolutions(int solutionCount);
+        IEnumerable<Harmony<T>> GetAntColontSolutions(int solutionCount);
 
         void UpdateGlobalPheromone(Harmony<T> bestHarmony);
     }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
-using MPK.Connect.Service.Helpers;
 using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
@@ -46,7 +45,17 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// <returns>Result of additions</returns>
         public bool AddRange(params Harmony<T>[] harmonies)
         {
-            return harmonies.All(harmony => _harmonies.Add(harmony));
+            var allWereAdded = true;
+
+            foreach (var harmony in harmonies)
+            {
+                if (!Add(harmony))
+                {
+                    allWereAdded = false;
+                }
+            }
+
+            return allWereAdded;
         }
 
         /// <summary>
@@ -56,7 +65,17 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// <returns>Result of additions</returns>
         public bool AddRange(IEnumerable<Harmony<T>> harmonies)
         {
-            return harmonies.All(harmony => _harmonies.Add(harmony));
+            var allWereAdded = true;
+
+            foreach (var harmony in harmonies)
+            {
+                if (!Add(harmony))
+                {
+                    allWereAdded = false;
+                }
+            }
+
+            return allWereAdded;
         }
 
         /// <summary>

@@ -83,8 +83,8 @@ namespace MPK.Connect.TestEnvironment
 
                 var scenarios = new HarmonySearchTestScenario(HarmonySearchType.AntColony, HarmonyGeneratorType.RandomDirectedStop, ObjectiveFunctionType.Comprehensive);
 
-                var source = new Location("Krzyki");
-                var destination = new Location("Galeria Dominikańska");
+                var source = new Location("Kwiska");
+                var destination = new Location("Gajowa");
 
                 automaticTester.RunTestsWithScenarios(scenarios, source, destination);
             }

@@ -53,7 +53,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
                 .ToDictionary(k => k.Id, k => k.Neighbors.ToDictionary(v => v.DestinationId, v => InitialPheromoneAmount));
         }
 
-        public IEnumerable<Harmony<StopTimeInfo>> GetAntSolutions(int solutionCount)
+        public IEnumerable<Harmony<StopTimeInfo>> GetAntColontSolutions(int solutionCount)
         {
             var antSolutions = new List<Harmony<StopTimeInfo>>(solutionCount);
 

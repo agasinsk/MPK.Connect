@@ -8,7 +8,7 @@ namespace MPK.Connect.TestEnvironment.Factories
 {
     public class HarmonyGeneratorFactory
     {
-        public static IHarmonyGenerator<StopTimeInfo> GetInstance(HarmonyGeneratorType type, IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location destination, Location source)
+        public static IHarmonyGenerator<StopTimeInfo> GetInstance(HarmonyGeneratorType type, IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location source, Location destination)
         {
             switch (type)
             {
