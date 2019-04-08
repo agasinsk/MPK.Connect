@@ -8,6 +8,10 @@ using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchC
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
+    /// <summary>
+    /// Implements Harmony Search with sub-populations
+    /// </summary>
+    /// <typeparam name="T">Type of solution elements</typeparam>
     public class DividedHarmonySearcher<T> : HarmonySearcher<T>
     {
         private List<HarmonyMemory<T>> _subHarmonyMemories;

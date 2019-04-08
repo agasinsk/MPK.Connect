@@ -29,7 +29,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.ParameterProviders
         public DynamicParameterProvider(int parameterSetListCapacity)
         {
             _random = RandomFactory.GetInstance();
-            _currentParameterSetIndex = -1;
+            _currentParameterSetIndex = 0;
 
             ParameterSets = GenerateRandomParameters(parameterSetListCapacity);
             WinningParameterSets = new List<Tuple<double, double>>();
@@ -85,7 +85,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.ParameterProviders
 
         private void ResetParameterSets()
         {
-            _currentParameterSetIndex = -1;
+            _currentParameterSetIndex = 0;
 
             // Use the same parameter set if there are no winning parameters
             if (!WinningParameterSets.Any())

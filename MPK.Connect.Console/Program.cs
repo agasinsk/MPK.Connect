@@ -10,7 +10,6 @@ using MPK.Connect.DataAccess;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
 using MPK.Connect.Service.Business.Graph;
-using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Helpers;
@@ -81,7 +80,7 @@ namespace MPK.Connect.TestEnvironment
             {
                 var automaticTester = scope.Resolve<HarmonySearchStopTimeTester>();
 
-                var scenarios = new HarmonySearchTestScenario(HarmonySearchType.AntColony, HarmonyGeneratorType.RandomDirectedStop, ObjectiveFunctionType.Comprehensive);
+                var scenarios = new HarmonySearchTestScenario(ObjectiveFunctionType.Comprehensive, HarmonyGeneratorType.RandomDirectedStop);
 
                 var source = new Location("Kwiska");
                 var destination = new Location("Gajowa");
