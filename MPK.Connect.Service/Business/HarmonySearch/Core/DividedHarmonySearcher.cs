@@ -27,6 +27,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             _subHarmonyMemories = new List<HarmonyMemory<T>>(4);
 
             var subHarmonyMemoriesCount = (int)Math.Ceiling((decimal)HarmonyMemory.MaxCapacity / 4);
+
             for (var i = 0; i < _subHarmonyMemories.Capacity; i++)
             {
                 _subHarmonyMemories.Add(new HarmonyMemory<T>(subHarmonyMemoriesCount));
@@ -46,9 +47,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         {
             InitializeHarmonyMemory();
 
-            for (var improvisationCount = 0; improvisationCount < MaxImprovisationCount; improvisationCount++)
+            while (SearchingShouldContinue())
             {
-                if (improvisationCount > 0 && improvisationCount % RegroupRate == 0)
+                if (ImprovisationCount > 0 && ImprovisationCount % RegroupRate == 0)
                 {
                     RegroupHarmonyMemories();
                 }
@@ -69,6 +70,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                     {
                         subHarmonyMemory.SwapWithWorstHarmony(improvisedHarmony);
                     }
+
+                    SaveBestHarmony(GetBestHarmony());
+
+                    ImprovisationCount++;
                 }
             }
 
@@ -81,7 +86,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// <returns>Best harmony</returns>
         private Harmony<T> GetBestHarmony()
         {
-            return _subHarmonyMemories.Select(x => x.BestHarmony).OrderBy(h => h.ObjectiveValue).First();
+            return _subHarmonyMemories.Select(x => x.BestHarmony)
+                .OrderBy(h => h.ObjectiveValue)
+                .First();
         }
 
         /// <summary>
@@ -100,6 +107,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                 {
                     var randomIndex = solutionIds.GetRandomElement();
                     var randomSolution = allSolutions.ElementAt(randomIndex);
+
                     if (subHarmonyMemory.Add(new Harmony<T>(randomSolution)))
                     {
                         solutionIds.Remove(randomIndex);

@@ -13,6 +13,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
     public class HarmonySearcher<T> : IHarmonySearcher<T>
     {
         protected readonly IHarmonyGenerator<T> HarmonyGenerator;
+        protected readonly int MaxImprovisationCountWithTheSameBestValue;
+        protected double BestHarmonyObjectiveValue;
+        protected int ImprovisationCountWithTheSameBestValue;
         public HarmonyGeneratorType HarmonyGeneratorType => HarmonyGenerator.Type;
         public HarmonyMemory<T> HarmonyMemory { get; }
         public long MaxImprovisationCount { get; set; }
@@ -37,6 +40,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
             HarmonyMemory = new HarmonyMemory<T>(harmonyMemorySize);
             HarmonyGenerator.HarmonyMemory = HarmonyMemory;
+
+            BestHarmonyObjectiveValue = double.PositiveInfinity;
+            MaxImprovisationCountWithTheSameBestValue = (int)(maxImprovisationCount / 10);
         }
 
         /// <summary>
@@ -61,6 +67,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             InitializeHarmonyMemory();
 
             ImprovisationCount = 0;
+
             while (SearchingShouldContinue())
             {
                 var harmonyMemoryConsiderationRatio = ParameterProvider.HarmonyMemoryConsiderationRatio;
@@ -75,6 +82,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                     HarmonyMemory.SwapWithWorstHarmony(improvisedHarmony);
                 }
 
+                SaveBestHarmony(HarmonyMemory.BestHarmony);
+
                 ImprovisationCount++;
             }
 
@@ -82,11 +91,25 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         }
 
         /// <summary>
+        /// Saves the objective value of the best harmony
+        /// </summary>
+        /// <param name="bestHarmony">Best harmony in current iteration</param>
+        protected virtual void SaveBestHarmony(Harmony<T> bestHarmony)
+        {
+            if (Math.Abs(BestHarmonyObjectiveValue - bestHarmony.ObjectiveValue) < 0.001)
+            {
+                ImprovisationCountWithTheSameBestValue++;
+            }
+
+            BestHarmonyObjectiveValue = bestHarmony.ObjectiveValue;
+        }
+
+        /// <summary>
         /// Checks if algorithm should continue working
         /// </summary>
         protected virtual bool SearchingShouldContinue()
         {
-            return ImprovisationCount < MaxImprovisationCount;
+            return ImprovisationCount < MaxImprovisationCount && ImprovisationCountWithTheSameBestValue < MaxImprovisationCountWithTheSameBestValue;
         }
     }
 }

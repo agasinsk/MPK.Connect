@@ -16,17 +16,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
     {
         private readonly IAntColonyOptimizer<T> _antColonyOptimizer;
 
-        private readonly int _maxImprovisationCountWithTheSameBestValue;
-        private double _bestHarmonyObjectiveValue;
-        private int _improvisationCountWithTheSameBestValue;
         public override HarmonySearchType Type => HarmonySearchType.AntColony;
 
         public AntColonyHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, IParameterProvider parameterProvider, IAntColonyOptimizer<T> antColonyOptimizer, int harmonyMemorySize = HarmonySearchConstants.DefaultHarmonyMemorySize, long maxImprovisationCount = HarmonySearchConstants.DefaultMaxImprovisationCount) : base(harmonyGenerator, parameterProvider, harmonyMemorySize, maxImprovisationCount)
         {
             _antColonyOptimizer = antColonyOptimizer ?? throw new ArgumentNullException(nameof(antColonyOptimizer));
-
-            _bestHarmonyObjectiveValue = double.PositiveInfinity;
-            _maxImprovisationCountWithTheSameBestValue = (int)(maxImprovisationCount / 10);
         }
 
         public override Harmony<T> SearchForHarmony()
@@ -60,18 +54,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
                 // Save best solution
                 SaveBestHarmony(HarmonyMemory.BestHarmony);
+
                 ImprovisationCount++;
             }
 
             return HarmonyMemory.BestHarmony;
-        }
-
-        /// <summary>
-        /// Checks if algorithm should continue working
-        /// </summary>
-        protected override bool SearchingShouldContinue()
-        {
-            return ImprovisationCount < MaxImprovisationCount && _improvisationCountWithTheSameBestValue < _maxImprovisationCountWithTheSameBestValue;
         }
 
         /// <summary>
@@ -88,20 +75,6 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             HarmonyMemory.Clear();
 
             HarmonyMemory.AddRange(allHarmonies);
-        }
-
-        /// <summary>
-        /// Saves the objective value of the best harmony
-        /// </summary>
-        /// <param name="bestHarmony">Best harmony in current iteration</param>
-        private void SaveBestHarmony(Harmony<T> bestHarmony)
-        {
-            if (Math.Abs(_bestHarmonyObjectiveValue - bestHarmony.ObjectiveValue) < 0.001)
-            {
-                _improvisationCountWithTheSameBestValue++;
-            }
-
-            _bestHarmonyObjectiveValue = bestHarmony.ObjectiveValue;
         }
     }
 }
