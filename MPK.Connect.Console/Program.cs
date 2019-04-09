@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -81,10 +82,20 @@ namespace MPK.Connect.TestEnvironment
 
                 var scenarios = new HarmonySearchTestScenario(ObjectiveFunctionType.Comprehensive);
 
+                var testRoutes = new List<Tuple<Location, Location>>
+                {
+                    new Tuple<Location, Location>(new Location("Kwiska"), new Location("Świdnicka")),
+                    new Tuple<Location, Location>(new Location("Biskupin"), new Location("Port Lotniczy")),
+                    new Tuple<Location, Location>(new Location("Pl. Bema"), new Location("Oporów")),
+                    new Tuple<Location, Location>(new Location("Gaj"), new Location("Pl. Grunwaldzki"))
+                };
+
+                automaticTester.RunTestsWithLocations(testRoutes, scenarios);
+
                 var source = new Location("Kwiska");
                 var destination = new Location("Świdnicka");
 
-                automaticTester.RunTestsWithScenarios(scenarios, source, destination);
+                automaticTester.RunTestsWithScenario(scenarios, source, destination);
             }
         }
     }

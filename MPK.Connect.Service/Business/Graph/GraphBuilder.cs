@@ -12,7 +12,6 @@ namespace MPK.Connect.Service.Business.Graph
 {
     public class GraphBuilder : IGraphBuilder
     {
-        private readonly TimeSpan _additionalTransferTime = TimeSpan.FromMinutes(1.5);
         private readonly IGenericRepository<Calendar> _calendarRepository;
         private readonly TimeSpan _maxStopTimeDepartureTime = TimeSpan.FromHours(2);
         private readonly TimeSpan _minimumSwitchingTime = TimeSpan.FromMinutes(1);
