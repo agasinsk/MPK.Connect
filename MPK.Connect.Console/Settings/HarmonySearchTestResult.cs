@@ -11,25 +11,10 @@ namespace MPK.Connect.TestEnvironment.Settings
         public double BestObjectiveFunctionValue { get; set; }
         public HarmonyGeneratorType HarmonyGeneratorType { get; set; }
         public HarmonySearchType HarmonySearchType { get; set; }
+        public int ImprovisationCount { get; set; }
         public int NonFeasibleCount { get; set; }
         public ObjectiveFunctionType ObjectiveFunctionType { get; set; }
         public int SolutionsCount { get; set; }
         public double WorstObjectiveFunctionValue { get; set; }
-
-        public object[] GetDataRowParams()
-        {
-            return new object[]
-            {
-                HarmonySearchType.ToString(),
-                HarmonyGeneratorType.ToString(),
-                ObjectiveFunctionType.ToString(),
-                SolutionsCount,
-                NonFeasibleCount,
-                AverageObjectiveFunctionValue,
-                BestObjectiveFunctionValue,
-                WorstObjectiveFunctionValue,
-                AverageTime
-            };
-        }
     }
 }

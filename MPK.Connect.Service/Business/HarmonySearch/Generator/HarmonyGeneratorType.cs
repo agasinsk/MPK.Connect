@@ -6,7 +6,7 @@
     public enum HarmonyGeneratorType
     {
         RandomStopTime,
-        RandomDirectedStop,
+        RandomStopDirected,
         RandomStop
     }
 }

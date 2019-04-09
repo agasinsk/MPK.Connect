@@ -18,7 +18,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
         private readonly Dictionary<int, List<int>> _stopGraph;
         private readonly Dictionary<int, List<GraphNode<int, StopTimeInfo>>> _stopIdToStopTimes;
 
-        public override HarmonyGeneratorType Type => HarmonyGeneratorType.RandomDirectedStop;
+        public override HarmonyGeneratorType Type => HarmonyGeneratorType.RandomStopDirected;
 
         public DirectedStopTimeHarmonyGenerator(IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location source, Location destination) : base(function, graph, source, destination)
         {

@@ -18,7 +18,7 @@ namespace MPK.Connect.TestEnvironment.Factories
                 case HarmonyGeneratorType.RandomStop:
                     return new RandomStopHarmonyGenerator(function, graph, source, destination);
 
-                case HarmonyGeneratorType.RandomDirectedStop:
+                case HarmonyGeneratorType.RandomStopDirected:
                     return new DirectedStopTimeHarmonyGenerator(function, graph, source, destination);
 
                 default:

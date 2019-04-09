@@ -15,7 +15,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
     public class DividedHarmonySearcher<T> : HarmonySearcher<T>
     {
         private List<HarmonyMemory<T>> _subHarmonyMemories;
-        public override HarmonySearchType Type => HarmonySearchType.Divided;
+        public override HarmonySearchType Type => GetHarmonySearchType();
+
         private long RegroupRate => MaxImprovisationCount / 10;
 
         public DividedHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, IParameterProvider parameterProvider, int harmonyMemorySize = DefaultHarmonyMemorySize, long maxImprovisationCount = DefaultMaxImprovisationCount) : base(harmonyGenerator, parameterProvider, harmonyMemorySize, maxImprovisationCount)
@@ -93,6 +94,25 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             return _subHarmonyMemories.Select(x => x.BestHarmony)
                 .OrderBy(h => h.ObjectiveValue)
                 .First();
+        }
+
+        /// <summary>
+        /// Established harmony search type
+        /// </summary>
+        /// <returns></returns>
+        private HarmonySearchType GetHarmonySearchType()
+        {
+            switch (ParameterProvider)
+            {
+                case DynamicPitchAdjustmentRatioProvider _:
+                    return HarmonySearchType.ImprovedDivided;
+
+                case DynamicParameterProvider _:
+                    return HarmonySearchType.DynamicDivided;
+
+                default:
+                    return HarmonySearchType.Divided;
+            }
         }
 
         /// <summary>

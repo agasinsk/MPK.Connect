@@ -13,6 +13,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         HarmonyGeneratorType HarmonyGeneratorType { get; }
         HarmonyMemory<T> HarmonyMemory { get; }
 
+        int ImprovisationCount { get; }
         long MaxImprovisationCount { get; }
         ObjectiveFunctionType ObjectiveFunctionType { get; }
         IParameterProvider ParameterProvider { get; }

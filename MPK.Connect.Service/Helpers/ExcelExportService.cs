@@ -19,7 +19,7 @@ namespace MPK.Connect.Service.Helpers
             Directory.CreateDirectory(DefaultPath);
         }
 
-        public void ExportToExcel(DataTable infoDataTable, DataTable parameterDataTable, DataTable solutionDataTable,
+        public void ExportToExcel(DataTable infoDataTable, DataTable parameterDataTable, DataTable solutionsDataTable,
             string filePath = null)
         {
             using (var excelPackage = new ExcelPackage())
@@ -30,7 +30,7 @@ namespace MPK.Connect.Service.Helpers
 
                 range = excelWorksheet.Cells[range.End.Row + 2, 1].LoadFromDataTable(parameterDataTable, false);
 
-                excelWorksheet.Cells[range.Start.Row, range.End.Column + 2].LoadFromDataTable(solutionDataTable, true, TableStyles.Light1);
+                excelWorksheet.Cells[1, range.End.Column + 2].LoadFromDataTable(solutionsDataTable, true, TableStyles.Light1);
 
                 excelWorksheet.Cells.AutoFitColumns();
 
@@ -49,28 +49,54 @@ namespace MPK.Connect.Service.Helpers
         {
             using (var excelPackage = new ExcelPackage())
             {
-                var excelWorksheet = excelPackage.Workbook.Worksheets.Add(HarmonySearchSheetName);
+                CreateSheetWithDataTables(excelPackage, HarmonySearchSheetName, infoDataTable, dataTables);
 
-                var range = excelWorksheet.Cells.LoadFromDataTable(infoDataTable, false, TableStyles.Light18);
-
-                foreach (var dataTable in dataTables)
-                {
-                    range = WriteTableName(excelWorksheet, range, dataTable);
-
-                    range = excelWorksheet.Cells[range.End.Row + 1, 1].LoadFromDataTable(dataTable, true, TableStyles.Light1);
-                }
-
-                excelWorksheet.Cells.AutoFitColumns();
-
-                if (!string.IsNullOrEmpty(filePath))
-                {
-                    var providedPath = Path.GetDirectoryName(filePath);
-                    Directory.CreateDirectory(Path.Combine(DefaultPath, providedPath));
-                }
-
-                var excelFilename = string.IsNullOrEmpty(filePath) ? DefaultFileName : Path.Combine(DefaultPath, filePath);
-                excelPackage.SaveAs(new FileInfo($"{excelFilename}_{DateTime.Now:ddMMyyyy_HHmmsss}.xlsx"));
+                SaveFile(filePath, excelPackage);
             }
+        }
+
+        public void ExportToExcel(DataTable infoDataTable, Dictionary<string, List<DataTable>> dataTableForSheets, string filePath)
+        {
+            using (var excelPackage = new ExcelPackage())
+            {
+                foreach (var (worksheetName, dataTables) in dataTableForSheets)
+                {
+                    CreateSheetWithDataTables(excelPackage, worksheetName, infoDataTable, dataTables);
+                }
+
+                SaveFile(filePath, excelPackage);
+            }
+        }
+
+        private static void SaveFile(string filePath, ExcelPackage excelPackage)
+        {
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                var providedPath = Path.GetDirectoryName(filePath);
+                Directory.CreateDirectory(Path.Combine(DefaultPath, providedPath));
+            }
+
+            var excelFilename = string.IsNullOrEmpty(filePath) ?
+                DefaultFileName :
+                Path.Combine(DefaultPath, filePath);
+
+            excelPackage.SaveAs(new FileInfo($"{excelFilename}_{DateTime.Now:ddMMyyyy_HHmmsss}.xlsx"));
+        }
+
+        private void CreateSheetWithDataTables(ExcelPackage excelPackage, string worksheetName, DataTable infoDataTable, List<DataTable> dataTables)
+        {
+            var excelWorksheet = excelPackage.Workbook.Worksheets.Add(worksheetName);
+
+            var range = excelWorksheet.Cells.LoadFromDataTable(infoDataTable, false, TableStyles.Light18);
+
+            foreach (var dataTable in dataTables)
+            {
+                range = WriteTableName(excelWorksheet, range, dataTable);
+
+                range = excelWorksheet.Cells[range.End.Row + 1, 1].LoadFromDataTable(dataTable, true, TableStyles.Light1);
+            }
+
+            excelWorksheet.Cells.AutoFitColumns();
         }
 
         private ExcelRangeBase WriteTableName(ExcelWorksheet excelWorksheet, ExcelRangeBase range, DataTable dataTable)
