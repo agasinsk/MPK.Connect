@@ -62,25 +62,6 @@ namespace MPK.Connect.Service.Business.Graph
             return graph;
         }
 
-        public Graph<int, StopDto> GetStopGraph(DateTime startDate)
-        {
-            // Get stops matching the bounds
-            var dbStops = GetStops();
-
-            // Get calendar matching current day of the week
-            var currentCalendar = GetCalendar(startDate);
-
-            var graph = new Graph<int, StopDto>(dbStops);
-
-            var dbStopTimes = GetStopTimes(dbStops, currentCalendar.ServiceId, startDate);
-
-            CreateDirectedEdgesForStops(dbStopTimes, graph);
-
-            //CreateDirectedEdgesForStopsWithTheSameName(dbStops, graph);
-
-            return graph;
-        }
-
         private void CreatedDirectedEdgesForSwitchingTripDirection(Dictionary<int, StopTimeInfo> dbStopTimes, Graph<int, StopTimeInfo> graph)
         {
             var firstStopTimesOfTrips = dbStopTimes.Values
@@ -178,7 +159,7 @@ namespace MPK.Connect.Service.Business.Graph
                 foreach (var sourceStopTime in stopTimesWithTheSameStopName)
                 {
                     var stopTimesAfterSource = stopTimesWithTheSameStopName
-                        .Where(st => sourceStopTime.DepartureTime + _minimumSwitchingTime < st.DepartureTime
+                        .Where(st => sourceStopTime.DepartureTime + _minimumSwitchingTime <= st.DepartureTime
                                      && st.TripId != sourceStopTime.TripId);
 
                     foreach (var destination in stopTimesAfterSource)
@@ -209,7 +190,7 @@ namespace MPK.Connect.Service.Business.Graph
                 {
                     var source = stopTransferTimes[i];
                     var destination = stopTransferTimes[i + 1];
-                    if (source.TripId != destination.TripId && source.DepartureTime + _minimumSwitchingTime < destination.DepartureTime)
+                    if (source.TripId != destination.TripId && source.DepartureTime + _minimumSwitchingTime <= destination.DepartureTime)
                     {
                         var cost = destination.DepartureTime - source.DepartureTime + _minimumSwitchingTime;
 

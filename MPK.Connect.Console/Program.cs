@@ -82,7 +82,7 @@ namespace MPK.Connect.TestEnvironment
                 var scenarios = new HarmonySearchTestScenario(ObjectiveFunctionType.Comprehensive);
 
                 var source = new Location("Kwiska");
-                var destination = new Location("Gajowa");
+                var destination = new Location("Świdnicka");
 
                 automaticTester.RunTestsWithScenarios(scenarios, source, destination);
             }

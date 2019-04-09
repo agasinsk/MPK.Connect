@@ -225,7 +225,7 @@ namespace MPK.Connect.TestEnvironment
 
             _excelExportService.ExportToExcel(infoDataTable, parameterDataTable, solutionsDataTable, filePath);
 
-            Console.WriteLine($"Saved file under path: {filePath}");
+            Console.WriteLine($"\nSaved file under path: {filePath}\n");
 
             return new HarmonySearchTestResult
             {

@@ -159,7 +159,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 
                 var reinforcementAmount = PheromoneEvaporationSpeed * reinforcementCoefficient;
 
-                _pheromoneAmounts[firstArgumentId][nextArgumentId] += reinforcementAmount;
+                if (_pheromoneAmounts[firstArgumentId].ContainsKey(nextArgumentId))
+                {
+                    _pheromoneAmounts[firstArgumentId][nextArgumentId] += reinforcementAmount;
+                }
             }
         }
 
