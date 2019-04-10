@@ -9,6 +9,7 @@ using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
+using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Helpers;
 using MPK.Connect.TestEnvironment.Helpers;
 using MPK.Connect.TestEnvironment.Settings;
@@ -107,8 +108,15 @@ namespace MPK.Connect.TestEnvironment
                 resultDataTables[typeName] = groupDataTables;
             }
 
+            var comparisonResults = testResults.Where(r =>
+                r.HarmonyGeneratorType == HarmonyGeneratorType.RandomDirectedStop)
+                .Cast<AverageTestResult>()
+                .ToList();
+
+            comparisonResults.Add(aStarTestResults);
+
             // Add A* result data tables
-            var aStarResultDataTable = DataTableUtils.GetTestResultsDataTable("AStar", new List<AverageTestResult> { aStarTestResults });
+            var aStarResultDataTable = DataTableUtils.GetTestResultsDataTable("Comparison", comparisonResults);
             resultDataTables["AStar"] = new List<DataTable> { aStarResultDataTable };
 
             // Export average result to Excel

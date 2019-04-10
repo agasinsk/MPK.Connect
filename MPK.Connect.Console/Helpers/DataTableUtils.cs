@@ -187,6 +187,9 @@ namespace MPK.Connect.TestEnvironment.Helpers
         {
             var resultsDataTable = new DataTable(tableName);
 
+            resultsDataTable.Columns.Add("Algorithm type", typeof(string));
+            resultsDataTable.Columns.Add(nameof(HarmonySearchAverageTestResult.HarmonyGeneratorType), typeof(string));
+            resultsDataTable.Columns.Add(nameof(HarmonySearchAverageTestResult.ObjectiveFunctionType), typeof(string));
             resultsDataTable.Columns.Add("Time [s]", typeof(double));
             resultsDataTable.Columns.Add("Best harmony", typeof(double));
             resultsDataTable.Columns.Add("Average harmony", typeof(double));
@@ -196,6 +199,21 @@ namespace MPK.Connect.TestEnvironment.Helpers
 
             foreach (var testResult in testResults)
             {
+                var typesDataRow = new List<object>(3);
+
+                if (testResult is HarmonySearchAverageTestResult harmonySearchAverageTestResult)
+                {
+                    typesDataRow.Add(harmonySearchAverageTestResult.HarmonySearchType.ToString());
+                    typesDataRow.Add(harmonySearchAverageTestResult.HarmonyGeneratorType.ToString());
+                    typesDataRow.Add(harmonySearchAverageTestResult.ObjectiveFunctionType.ToString());
+                }
+                else
+                {
+                    typesDataRow.Add("A*");
+                    typesDataRow.Add("—");
+                    typesDataRow.Add("—");
+                }
+
                 var testResultDataRow = new List<object>
                 {
                     testResult.AverageTime,
@@ -206,7 +224,7 @@ namespace MPK.Connect.TestEnvironment.Helpers
                     testResult.NonFeasibleCount
                 };
 
-                resultsDataTable.Rows.Add(testResultDataRow.ToArray());
+                resultsDataTable.Rows.Add(typesDataRow.Concat(testResultDataRow).ToArray());
             }
 
             return resultsDataTable;
