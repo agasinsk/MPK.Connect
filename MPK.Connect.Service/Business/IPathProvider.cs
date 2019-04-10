@@ -1,13 +1,20 @@
-﻿using MPK.Connect.Model.Business;
+﻿using System.Collections.Generic;
+using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
-using System.Collections.Generic;
 
 namespace MPK.Connect.Service.Business
 {
     public interface IPathProvider
     {
-        List<Path<StopTimeInfo>> GetAvailablePaths(Graph<int, StopTimeInfo> graph, Location sourceLocation,
-            Location destinationLocation);
+        /// <summary>
+        /// Gets the available paths.
+        /// </summary>
+        /// <param name="graph">The graph.</param>
+        /// <param name="source">The source location.</param>
+        /// <param name="destination">The destination location.</param>
+        /// <returns></returns>
+        List<Path<StopTimeInfo>> GetAvailablePaths(Graph<int, StopTimeInfo> graph, Location source,
+            Location destination);
     }
 }

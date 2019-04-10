@@ -1,20 +1,23 @@
-﻿using MPK.Connect.Model.Business;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.Graph;
-using MPK.Connect.Service.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business
 {
     public class PathProvider : IPathProvider
     {
-        private readonly IStopPathFinder _pathFinder;
+        private readonly IStopTimePathFinder _pathFinder;
 
-        public PathProvider(IStopPathFinder pathFinder)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PathProvider"/> class.
+        /// </summary>
+        /// <param name="pathFinder">The path finder.</param>
+        /// <exception cref="ArgumentNullException">pathFinder</exception>
+        public PathProvider(IStopTimePathFinder pathFinder)
         {
             _pathFinder = pathFinder ?? throw new ArgumentNullException(nameof(pathFinder));
         }
@@ -23,24 +26,20 @@ namespace MPK.Connect.Service.Business
         /// Gets travel plans from source to destination
         /// </summary>
         /// <param name="graph">Graph with stop times</param>
-        /// <param name="sourceLocation">Source</param>
-        /// <param name="destinationLocation">Destination</param>
+        /// <param name="source">Source</param>
+        /// <param name="destination">Destination</param>
         /// <returns>Collection of probable paths from source to destination</returns>
-        public List<Path<StopTimeInfo>> GetAvailablePaths(Graph<int, StopTimeInfo> graph, Location sourceLocation,
-            Location destinationLocation)
+        public List<Path<StopTimeInfo>> GetAvailablePaths(Graph<int, StopTimeInfo> graph, Location source,
+            Location destination)
         {
-            var sources = GetSourceNodes(graph, sourceLocation, destinationLocation);
+            var referentialDestination = graph.GetReferenceDestinationStop(destination.Name);
+            var sources = graph.GetSourceNodes(source.Name, referentialDestination);
 
             // Search for shortest path from subsequent sources to destination
-            var paths = new List<Path<StopTimeInfo>>();
-            foreach (var source in sources)
-            {
-                var path = _pathFinder.FindShortestPath(graph, source.Data, destinationLocation.Name);
-                if (path.Any())
-                {
-                    paths.Add(path);
-                }
-            }
+            var paths = sources
+                .Select(s => _pathFinder.FindShortestPath(graph, s.Data, referentialDestination))
+                .Where(path => path.Any())
+                .ToList();
 
             var filteredPaths = paths
                 .Distinct(new PathComparer())
@@ -49,57 +48,6 @@ namespace MPK.Connect.Service.Business
                 .ToList();
 
             return filteredPaths;
-        }
-
-        private IEnumerable<GraphNode<int, StopTimeInfo>> GetSourceNodes(Graph<int, StopTimeInfo> graph, Location sourceLocation, Location destinationLocation)
-        {
-            // Get source stops that have the same name
-            var sourceStopTimesGroupedByStop = graph.Nodes.Values
-                .Where(s => s.Data.StopDto.Name.TrimToLower() == sourceLocation.Name.TrimToLower())
-                .GroupBy(s => s.Data.StopDto)
-                .ToDictionary(k => k.Key, g => g.Select(s => s.Id).ToList());
-
-            // Get reference to destination location stop
-            var referentialDestinationStop = graph.Nodes.Values.First(s => s.Data.StopDto.Name.TrimToLower() == destinationLocation.Name.TrimToLower()).Data.StopDto;
-
-            // Calculate straight-line distance to destination
-            var distanceFromStopToDestination = sourceStopTimesGroupedByStop
-                .Select(s => s.Key.GetDistanceTo(referentialDestinationStop)).Max();
-
-            var distancesToStops = new Dictionary<int, double>();
-            foreach (var stop in sourceStopTimesGroupedByStop)
-            {
-                // Get neighbor stops
-                var neighborStops = stop.Value
-                    .SelectMany(st => graph.GetNeighbors(st)
-                        .Select(n => n.Data.StopDto)
-                        .Where(n => n.Name.TrimToLower() != sourceLocation.Name.TrimToLower()))
-                    .Distinct()
-                    .ToList();
-
-                if (neighborStops.Any())
-                {
-                    var minimumDistanceToNeighbor =
-                        neighborStops.Select(s => s.GetDistanceTo(referentialDestinationStop)).Min();
-                    distancesToStops[stop.Key.Id] = minimumDistanceToNeighbor;
-                }
-            }
-
-            // Take only those stops which have neighbors closer to the destination
-            var stopsWithRightDirectionIds = distancesToStops
-                .Where(s => s.Value < distanceFromStopToDestination)
-                .OrderBy(s => s.Value)
-                .Select(k => k.Key).ToList();
-
-            // Get matching graph nodes
-            var filteredSourceNodes = graph.Nodes.Values
-                .Where(s => stopsWithRightDirectionIds.Contains(s.Data.StopId))
-                .GroupBy(s => s.Data.StopId)
-                //.Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First())
-                .SelectMany(g => g.GroupBy(st => st.Data.Route).Select(gr => gr.OrderBy(st => st.Data.DepartureTime).First()))
-                .ToList();
-
-            return filteredSourceNodes;
         }
     }
 }

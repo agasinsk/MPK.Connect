@@ -71,6 +71,8 @@ namespace MPK.Connect.TestEnvironment
             var infoDataTable = DataTableUtils.GetCommonInfoDataTable(source, destination);
             var averageTestResults = RunTests(scenario, source, destination, graph, topResultDirectory, infoDataTable);
 
+            var aStarTestResults = RunAStarTest(graph, source, destination, topResultDirectory);
+
             ExportAverageTestResults(averageTestResults, infoDataTable, topResultDirectory);
         }
 
@@ -104,6 +106,11 @@ namespace MPK.Connect.TestEnvironment
             var filePath = Path.Combine(outputDirectory, "AverageTestResults");
 
             _excelExportService.ExportToExcel(commonInfoDataTable, resultDataTables, filePath);
+        }
+
+        private object RunAStarTest(Graph<int, StopTimeInfo> graph, Location source, Location destination, string topResultDirectory)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

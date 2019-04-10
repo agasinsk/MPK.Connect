@@ -4,15 +4,14 @@ using MPK.Connect.DataAccess;
 using MPK.Connect.Model;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
-using MPK.Connect.Service.Helpers;
 using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business
 {
     public class CoordinateLimitsProvider : ICoordinateLimitsProvider
     {
-        private readonly IGenericRepository<Stop> _stopRepository;
         private readonly double _defaultLimitOverhead = 0.1;
+        private readonly IGenericRepository<Stop> _stopRepository;
 
         public CoordinateLimitsProvider(IGenericRepository<Stop> stopRepository)
         {
@@ -29,26 +28,10 @@ namespace MPK.Connect.Service.Business
             return GetLimitsFromStopCoordinates(sourceLocation, destinationLocation);
         }
 
-        private CoordinateLimits GetLimitsFromStopCoordinates(Location sourceLocation, Location destinationLocation)
+        private bool CheckIfCoordinatesAreAvailable(Location sourceLocation, Location destinationLocation)
         {
-            if (string.IsNullOrEmpty(sourceLocation.Name) || string.IsNullOrEmpty(destinationLocation.Name))
-            {
-                return null;
-            }
-
-            var sourceStop = _stopRepository.GetAll()
-                .FirstOrDefault(s => s.Name.TrimToLower() == sourceLocation.Name.TrimToLower());
-
-            var destinationStop = _stopRepository.GetAll()
-                .FirstOrDefault(s => s.Name.TrimToLower() == destinationLocation.Name.TrimToLower());
-
-            if (sourceStop != null && destinationStop != null)
-            {
-                return GetLimitsDirectlyFromCoordinates(sourceStop.Latitude, sourceStop.Longitude,
-                    destinationStop.Latitude, destinationStop.Longitude);
-            }
-
-            return null;
+            return sourceLocation.Latitude.HasValue && sourceLocation.Longitude.HasValue &&
+                            destinationLocation.Latitude.HasValue && destinationLocation.Longitude.HasValue;
         }
 
         private CoordinateLimits GetLimitsDirectlyFromCoordinates(double sourceLocationLatitude, double sourceLocationLongitude, double destinationLocationLatitude, double destinationLocationLongitude)
@@ -83,10 +66,26 @@ namespace MPK.Connect.Service.Business
             return limits;
         }
 
-        private bool CheckIfCoordinatesAreAvailable(Location sourceLocation, Location destinationLocation)
+        private CoordinateLimits GetLimitsFromStopCoordinates(Location sourceLocation, Location destinationLocation)
         {
-            return sourceLocation.Latitude.HasValue && sourceLocation.Longitude.HasValue &&
-                            destinationLocation.Latitude.HasValue && destinationLocation.Longitude.HasValue;
+            if (string.IsNullOrEmpty(sourceLocation.Name) || string.IsNullOrEmpty(destinationLocation.Name))
+            {
+                return null;
+            }
+
+            var sourceStop = _stopRepository.GetAll()
+                .FirstOrDefault(s => s.Name.TrimToLower() == sourceLocation.Name.TrimToLower());
+
+            var destinationStop = _stopRepository.GetAll()
+                .FirstOrDefault(s => s.Name.TrimToLower() == destinationLocation.Name.TrimToLower());
+
+            if (sourceStop != null && destinationStop != null)
+            {
+                return GetLimitsDirectlyFromCoordinates(sourceStop.Latitude, sourceStop.Longitude,
+                    destinationStop.Latitude, destinationStop.Longitude);
+            }
+
+            return null;
         }
     }
 }

@@ -1,31 +1,32 @@
-﻿using MPK.Connect.Model.Business;
-using MPK.Connect.Model.Graph;
-using MPK.Connect.Service.Helpers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using MPK.Connect.Model.Business;
+using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Utils;
 
 namespace MPK.Connect.Service.Business.Graph
 {
-    public class StopPathFinder : IStopPathFinder
+    /// <inheritdoc/>
+    /// <summary>
+    /// The stop path finder
+    /// </summary>
+    /// <seealso cref="T:MPK.Connect.Service.Business.Graph.IStopTimePathFinder"/>
+    public class StopTimePathFinder : IStopTimePathFinder
     {
-        private const double _distanceEnhancementFactor = 10;
+        /// <summary>
+        /// The distance enhancement factor
+        /// </summary>
+        private const double DistanceEnhancementFactor = 10;
 
         /// <summary>
         /// Finds the shortest path using A* algorithm
         /// </summary>
-        /// <param name="graph">Graph to be searched</param>
-        /// <param name="source">Source node</param>
-        /// <param name="destinationName">Name of the destination stop</param>
+        /// <param name="graph">The graph.</param>
+        /// <param name="source">The source.</param>
+        /// <param name="destinationStop">Name of the destination.</param>
         /// <returns>Shortest path between source and destination</returns>
-        public Path<StopTimeInfo> FindShortestPath(Graph<int, StopTimeInfo> graph, StopTimeInfo source, string destinationName)
+        public Path<StopTimeInfo> FindShortestPath(Graph<int, StopTimeInfo> graph, StopTimeInfo source, StopDto destinationStop)
         {
-            var probableDestination = graph.Nodes.Values
-                .Where(n => n.Data.StopDto.Name.TrimToLower() == destinationName.TrimToLower() &&
-                            n.Data.DepartureTime > source.DepartureTime)
-                .OrderByDescending(n => n.Data.DepartureTime)
-                .FirstOrDefault()?.Data;
-
             // Initialize extended list
             var nodesAlreadyExtended = new List<GraphNode<int, StopTimeInfo>>();
             var nodesToExtend = new Dictionary<int, GraphNode<int, StopTimeInfo>>
@@ -42,7 +43,7 @@ namespace MPK.Connect.Service.Business.Graph
             };
             var totalDistanceToDestination = new Dictionary<int, double>(nodeDistances)
             {
-                [source.Id] = source.GetDistanceTo(probableDestination) * _distanceEnhancementFactor
+                [source.Id] = source.StopDto.GetDistanceTo(destinationStop) * DistanceEnhancementFactor
             };
 
             // Look for paths
@@ -52,8 +53,8 @@ namespace MPK.Connect.Service.Business.Graph
                 var currentNodeWithMinimumDistance = nodesToExtend.Aggregate((l, r) => totalDistanceToDestination[l.Key] < totalDistanceToDestination[r.Key] ? l : r).Value;
 
                 // If destination is reached
-                if (currentNodeWithMinimumDistance.Data.StopDto.Name.TrimToLower() == destinationName.TrimToLower() ||
-                    currentNodeWithMinimumDistance.Id.Equals(probableDestination?.Id))
+                if (currentNodeWithMinimumDistance.Data.StopDto.Name.TrimToLower() == destinationStop.Name.TrimToLower() ||
+                    currentNodeWithMinimumDistance.Id.Equals(destinationStop?.Id))
                 {
                     // Reconstruct path
                     return ReconstructPath(currentNodeWithMinimumDistance, graph, cameFrom, source.StopDto.Name);
@@ -88,7 +89,9 @@ namespace MPK.Connect.Service.Business.Graph
                     // This path is the best until now. Record it!
                     cameFrom[neighbor.Id] = currentNodeWithMinimumDistance;
                     distanceFromSource[neighbor.Id] = distanceToNeighbor;
-                    var distanceFromNeighborToDestination = neighbor.Data.GetDistanceTo(probableDestination) * _distanceEnhancementFactor;
+
+                    var distanceFromNeighborToDestination = neighbor.Data.StopDto.GetDistanceTo(destinationStop) * DistanceEnhancementFactor;
+
                     totalDistanceToDestination[neighbor.Id] = distanceFromSource[neighbor.Id] + distanceFromNeighborToDestination;
                 }
             }
@@ -96,7 +99,7 @@ namespace MPK.Connect.Service.Business.Graph
             return new Path<StopTimeInfo>();
         }
 
-        private static Path<StopTimeInfo> ReconstructPath(GraphNode<int, StopTimeInfo> destinationNode,
+        private Path<StopTimeInfo> ReconstructPath(GraphNode<int, StopTimeInfo> destinationNode,
             Graph<int, StopTimeInfo> graph, Dictionary<int, GraphNode<int, StopTimeInfo>> cameFrom, string sourceName)
         {
             var totalPath = new Path<StopTimeInfo>();
@@ -121,6 +124,7 @@ namespace MPK.Connect.Service.Business.Graph
 
             totalPath.Reverse();
             totalPath.Cost = (totalPath.Last().DepartureTime - totalPath.First().DepartureTime).TotalMinutes;
+
             return totalPath;
         }
     }

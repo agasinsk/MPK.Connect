@@ -42,8 +42,7 @@ namespace MPK.Connect.TestEnvironment
             services.AddSingleton(Configuration);
 
             // Add dbContext
-            services
-                .AddDbContext<SimpleMpkContext>(options =>
+            services.AddDbContext<SimpleMpkContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString(nameof(SimpleMpkContext))));
 
             // Add services
@@ -53,7 +52,7 @@ namespace MPK.Connect.TestEnvironment
             services.AddTransient<IStopTimeService, StopTimeService>();
             services.AddTransient<ITravelPlanService, TravelPlanService>();
             services.AddTransient<IGraphBuilder, GraphBuilder>();
-            services.AddTransient<IStopPathFinder, StopPathFinder>();
+            services.AddTransient<IStopTimePathFinder, StopTimePathFinder>();
             services.AddTransient<IPathProvider, PathProvider>();
             services.AddTransient<ICoordinateLimitsProvider, CoordinateLimitsProvider>();
             services.AddTransient(typeof(IGenericRepository<>), typeof(BaseRepository<>));
@@ -62,10 +61,10 @@ namespace MPK.Connect.TestEnvironment
             var containerBuilder = new ContainerBuilder();
 
             containerBuilder.Populate(services);
-            containerBuilder.RegisterType(typeof(SimpleMpkContext)).As<IMpkContext>();
+            containerBuilder.RegisterType<SimpleMpkContext>().As<IMpkContext>();
             containerBuilder.RegisterType<ActionTimer>().AsImplementedInterfaces();
             containerBuilder.RegisterType<ExcelExportService>().AsImplementedInterfaces();
-            containerBuilder.RegisterType(typeof(HarmonySearchStopTimeTester)).AsSelf();
+            containerBuilder.RegisterType<HarmonySearchStopTimeTester>().AsSelf();
 
             Container = containerBuilder.Build();
         }
@@ -82,21 +81,30 @@ namespace MPK.Connect.TestEnvironment
 
                 var scenarios = new HarmonySearchTestScenario(ObjectiveFunctionType.Comprehensive);
 
-                var testRoutes = new List<Tuple<Location, Location>>
-                {
-                    new Tuple<Location, Location>(new Location("Kwiska"), new Location("Świdnicka")),
-                    new Tuple<Location, Location>(new Location("Biskupin"), new Location("Port Lotniczy")),
-                    new Tuple<Location, Location>(new Location("Pl. Bema"), new Location("Oporów")),
-                    new Tuple<Location, Location>(new Location("Gaj"), new Location("Pl. Grunwaldzki"))
-                };
-
-                automaticTester.RunTestsWithLocations(testRoutes, scenarios);
-
-                var source = new Location("Kwiska");
-                var destination = new Location("Świdnicka");
-
-                automaticTester.RunTestsWithScenario(scenarios, source, destination);
+                RunTestWithMultipleRoutes(automaticTester, scenarios);
+                //RunTestWithSingleRoute(automaticTester, scenarios);
             }
+        }
+
+        private static void RunTestWithMultipleRoutes(HarmonySearchStopTimeTester automaticTester, HarmonySearchTestScenario scenarios)
+        {
+            var testRoutes = new List<Tuple<Location, Location>>
+            {
+                new Tuple<Location, Location>(new Location("Kwiska"), new Location("Świdnicka")),
+                new Tuple<Location, Location>(new Location("Biskupin"), new Location("Port Lotniczy")),
+                new Tuple<Location, Location>(new Location("Pl. Bema"), new Location("Oporów")),
+                new Tuple<Location, Location>(new Location("Gaj"), new Location("Pl. Grunwaldzki"))
+            };
+
+            automaticTester.RunTestsWithLocations(testRoutes, scenarios);
+        }
+
+        private static void RunTestWithSingleRoute(HarmonySearchStopTimeTester automaticTester, HarmonySearchTestScenario scenarios)
+        {
+            var source = new Location("Kwiska");
+            var destination = new Location("Świdnicka");
+
+            automaticTester.RunTestsWithScenario(scenarios, source, destination);
         }
     }
 }
