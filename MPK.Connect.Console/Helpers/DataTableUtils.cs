@@ -84,39 +84,13 @@ namespace MPK.Connect.TestEnvironment.Helpers
         }
 
         /// <summary>
-        /// Creates the solutions data table.
-        /// </summary>
-        /// <param name="testResults"></param>
-        /// <returns></returns>
-        internal static DataTable GetSolutionsDataTable(List<HarmonySearchTestResult> testResults)
-        {
-            var solutionsDataTable = new DataTable();
-
-            solutionsDataTable.Columns.Add("Id", typeof(int));
-            solutionsDataTable.Columns.Add("Best harmony", typeof(double));
-            solutionsDataTable.Columns.Add("Arguments", typeof(string));
-            solutionsDataTable.Columns.Add("Time [s]", typeof(double));
-
-            for (var index = 0; index < testResults.Count; index++)
-            {
-                var testResult = testResults[index];
-                solutionsDataTable.Rows.Add(index + 1,
-                    testResult.BestHarmony.ObjectiveValue,
-                    string.Concat(testResult.BestHarmony.Arguments.Select(a => $"{a.ToString()} | ")),
-                    testResult.Time.TotalSeconds);
-            }
-
-            return solutionsDataTable;
-        }
-
-        /// <summary>
         /// Gets the test results data table.
         /// </summary>
         /// <param name="tableName">Name of the table.</param>
         /// <param name="testResults">The test results.</param>
         /// <param name="typeName">Name of the type.</param>
         /// <returns>Data table with test results</returns>
-        internal static DataTable GetTestResultsDataTable(string tableName, List<HarmonySearchAverageTestResult> testResults, string typeName)
+        internal static DataTable GetHarmonySearchTestResultsDataTable(string tableName, List<HarmonySearchAverageTestResult> testResults, string typeName)
         {
             var resultsDataTable = new DataTable(tableName);
 
@@ -172,6 +146,67 @@ namespace MPK.Connect.TestEnvironment.Helpers
                 };
 
                 resultsDataTable.Rows.Add(typesDataRow.Concat(testResultDataRow).ToArray());
+            }
+
+            return resultsDataTable;
+        }
+
+        /// <summary>
+        /// Creates the solutions data table.
+        /// </summary>
+        /// <param name="testResults"></param>
+        /// <returns></returns>
+        internal static DataTable GetSolutionsDataTable(List<TestResult> testResults)
+        {
+            var solutionsDataTable = new DataTable();
+
+            solutionsDataTable.Columns.Add("Id", typeof(int));
+            solutionsDataTable.Columns.Add("Best harmony", typeof(double));
+            solutionsDataTable.Columns.Add("Time [s]", typeof(double));
+            solutionsDataTable.Columns.Add("Arguments", typeof(string));
+
+            for (var index = 0; index < testResults.Count; index++)
+            {
+                var testResult = testResults[index];
+                solutionsDataTable.Rows.Add(index + 1,
+                    testResult.Solution.ObjectiveValue,
+                    testResult.Time.TotalSeconds,
+                    string.Concat(testResult.Solution.Arguments.Select(a => $"{a.ToString()} | ")));
+            }
+
+            return solutionsDataTable;
+        }
+
+        /// <summary>
+        /// Gets the test results data table.
+        /// </summary>
+        /// <param name="tableName">Name of the table.</param>
+        /// <param name="testResults">The test results.</param>
+        /// <returns>Data table with test results</returns>
+        internal static DataTable GetTestResultsDataTable(string tableName, List<AverageTestResult> testResults)
+        {
+            var resultsDataTable = new DataTable(tableName);
+
+            resultsDataTable.Columns.Add("Time [s]", typeof(double));
+            resultsDataTable.Columns.Add("Best harmony", typeof(double));
+            resultsDataTable.Columns.Add("Average harmony", typeof(double));
+            resultsDataTable.Columns.Add("Worst harmony", typeof(double));
+            resultsDataTable.Columns.Add(nameof(AverageTestResult.FeasibleSolutionsCount), typeof(int));
+            resultsDataTable.Columns.Add(nameof(AverageTestResult.NonFeasibleCount), typeof(int));
+
+            foreach (var testResult in testResults)
+            {
+                var testResultDataRow = new List<object>
+                {
+                    testResult.AverageTime,
+                    testResult.BestObjectiveFunctionValue,
+                    testResult.AverageObjectiveFunctionValue,
+                    testResult.WorstObjectiveFunctionValue,
+                    testResult.FeasibleSolutionsCount,
+                    testResult.NonFeasibleCount
+                };
+
+                resultsDataTable.Rows.Add(testResultDataRow.ToArray());
             }
 
             return resultsDataTable;

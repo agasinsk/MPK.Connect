@@ -12,6 +12,7 @@ using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
 using MPK.Connect.Service.Business.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Helpers;
 using MPK.Connect.TestEnvironment.Settings;
 
@@ -79,10 +80,10 @@ namespace MPK.Connect.TestEnvironment
             {
                 var automaticTester = scope.Resolve<HarmonySearchStopTimeTester>();
 
-                var scenarios = new HarmonySearchTestScenario(ObjectiveFunctionType.Comprehensive);
+                var scenarios = new HarmonySearchTestScenario(ObjectiveFunctionType.Comprehensive, HarmonyGeneratorType.RandomDirectedStop);
 
-                RunTestWithMultipleRoutes(automaticTester, scenarios);
-                //RunTestWithSingleRoute(automaticTester, scenarios);
+                //RunTestWithMultipleRoutes(automaticTester, scenarios);
+                RunTestWithSingleRoute(automaticTester, scenarios);
             }
         }
 

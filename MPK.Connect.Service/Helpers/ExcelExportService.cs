@@ -28,7 +28,10 @@ namespace MPK.Connect.Service.Helpers
 
                 var range = excelWorksheet.Cells.LoadFromDataTable(infoDataTable, false, TableStyles.Light1);
 
-                range = excelWorksheet.Cells[range.End.Row + 2, 1].LoadFromDataTable(parameterDataTable, false);
+                if (parameterDataTable != null)
+                {
+                    range = excelWorksheet.Cells[range.End.Row + 2, 1].LoadFromDataTable(parameterDataTable, false);
+                }
 
                 excelWorksheet.Cells[1, range.End.Column + 2].LoadFromDataTable(solutionsDataTable, true, TableStyles.Light1);
 

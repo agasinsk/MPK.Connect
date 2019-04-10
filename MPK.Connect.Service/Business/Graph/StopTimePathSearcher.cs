@@ -42,12 +42,11 @@ namespace MPK.Connect.Service.Business.Graph
             // Search for shortest path from subsequent sources to destination
             var paths = _sourceNodes
                 .Select(s => _pathFinder.FindShortestPath(_graph, s.Data, _referentialDestinationStop))
-                .Where(path => path.Any())
                 .ToList();
 
             return paths
                 .Distinct(new PathComparer())
-                .Select(p => new Harmony<StopTimeInfo>(p.Cost, p.ToArray()))
+                .Select(p => new Harmony<StopTimeInfo>(p.Any() ? p.Cost : double.PositiveInfinity, p.ToArray()))
                 .ToList();
         }
 
@@ -61,7 +60,7 @@ namespace MPK.Connect.Service.Business.Graph
 
             var shortestPath = _pathFinder.FindShortestPath(_graph, sourceNode.Data, _referentialDestinationStop);
 
-            return new Harmony<StopTimeInfo>(shortestPath.Cost, shortestPath.ToArray());
+            return new Harmony<StopTimeInfo>(shortestPath.Any() ? shortestPath.Cost : double.PositiveInfinity, shortestPath.ToArray());
         }
     }
 }

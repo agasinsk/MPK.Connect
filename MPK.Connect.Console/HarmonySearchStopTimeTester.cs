@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
@@ -19,6 +20,7 @@ namespace MPK.Connect.TestEnvironment
     /// </summary>
     internal class HarmonySearchStopTimeTester
     {
+        private const int IterationCount = 15;
         private readonly IActionTimer _actionTimer;
         private readonly IExcelExportService _excelExportService;
         private readonly IGraphBuilder _graphBuilder;
@@ -69,24 +71,27 @@ namespace MPK.Connect.TestEnvironment
             var topResultDirectory = $"Tests_{DateTime.Now:ddMMyyyy_HHmm}_{source.Name.Trim()}_{destination.Name.Trim()}";
 
             var infoDataTable = DataTableUtils.GetCommonInfoDataTable(source, destination);
-            var averageTestResults = RunTests(scenario, source, destination, graph, topResultDirectory, infoDataTable);
+            var harmonySearchAverageTestResults = RunTests(scenario, source, destination, graph, topResultDirectory, infoDataTable);
 
-            var aStarTestResults = RunAStarTest(graph, source, destination, topResultDirectory);
+            var aStarAverageTestResults = RunAStarTests(graph, source, destination, topResultDirectory, infoDataTable);
 
-            ExportAverageTestResults(averageTestResults, infoDataTable, topResultDirectory);
+            ExportAverageTestResults(harmonySearchAverageTestResults, aStarAverageTestResults, infoDataTable, topResultDirectory);
         }
 
         /// <summary>
         /// Exports the average test results.
         /// </summary>
         /// <param name="testResults">The test results.</param>
+        /// <param name="aStarTestResults">The A* test results</param>
         /// <param name="commonInfoDataTable">The common information data table.</param>
         /// <param name="outputDirectory">The output directory.</param>
-        private void ExportAverageTestResults(List<HarmonySearchAverageTestResult> testResults, DataTable commonInfoDataTable, string outputDirectory)
+        private void ExportAverageTestResults(List<HarmonySearchAverageTestResult> testResults,
+            AverageTestResult aStarTestResults, DataTable commonInfoDataTable, string outputDirectory)
         {
-            // Group results by type
+            // Group Harmony Search results by type
             var groupedTestResults = TestResultUtils.GroupTestResults(testResults);
 
+            // Get Harmony Search results data tables
             var resultDataTables = new Dictionary<string, List<DataTable>>();
 
             foreach (var (typeName, groupedResults) in groupedTestResults)
@@ -95,12 +100,16 @@ namespace MPK.Connect.TestEnvironment
 
                 foreach (var (groupKey, groupResults) in groupedResults)
                 {
-                    var dataTable = DataTableUtils.GetTestResultsDataTable(groupKey, groupResults, typeName);
+                    var dataTable = DataTableUtils.GetHarmonySearchTestResultsDataTable(groupKey, groupResults, typeName);
                     groupDataTables.Add(dataTable);
                 }
 
                 resultDataTables[typeName] = groupDataTables;
             }
+
+            // Add A* result data tables
+            var aStarResultDataTable = DataTableUtils.GetTestResultsDataTable("AStar", new List<AverageTestResult> { aStarTestResults });
+            resultDataTables["AStar"] = new List<DataTable> { aStarResultDataTable };
 
             // Export average result to Excel
             var filePath = Path.Combine(outputDirectory, "AverageTestResults");
@@ -108,9 +117,61 @@ namespace MPK.Connect.TestEnvironment
             _excelExportService.ExportToExcel(commonInfoDataTable, resultDataTables, filePath);
         }
 
-        private object RunAStarTest(Graph<int, StopTimeInfo> graph, Location source, Location destination, string topResultDirectory)
+        /// <summary>
+        /// Runs A* tests.
+        /// </summary>
+        /// <param name="graph">The graph.</param>
+        /// <param name="source">The source.</param>
+        /// <param name="destination">The destination.</param>
+        /// <param name="resultPath">The result path.</param>
+        /// <param name="infoDataTable">The information data table.</param>
+        /// <returns>Average results</returns>
+        private AverageTestResult RunAStarTests(Graph<int, StopTimeInfo> graph, Location source, Location destination,
+                    string resultPath, DataTable infoDataTable)
         {
-            throw new NotImplementedException();
+            var testResults = new List<TestResult>(IterationCount);
+
+            var pathSearcher = new StopTimePathSearcher(new StopTimePathFinder(), graph, source, destination);
+
+            for (var iteration = 1; iteration <= IterationCount; iteration++)
+            {
+                var singleIterationTestResult = RunSingleAStarTest(pathSearcher);
+                testResults.Add(singleIterationTestResult);
+
+                _logger.LogInformation($"Finished testing A*, iteration {iteration}.");
+            }
+
+            var solutionsDataTable = DataTableUtils.GetSolutionsDataTable(testResults);
+
+            // Export test results to file
+            var filePath = Path.Combine(resultPath, "details", "AStar_TestResults");
+
+            _excelExportService.ExportToExcel(infoDataTable, null, solutionsDataTable, filePath);
+
+            _logger.LogInformation($"Saved file under path: {filePath}");
+
+            // Return the average results
+            return new AverageTestResult(testResults);
+        }
+
+        /// <summary>
+        /// Runs the single A* test.
+        /// </summary>
+        /// <param name="pathSearcher">The path searcher.</param>
+        /// <returns></returns>
+        private TestResult RunSingleAStarTest(StopTimePathSearcher pathSearcher)
+        {
+            Harmony<StopTimeInfo> shortestPath = null;
+            var elapsedTime = _actionTimer.MeasureTime(() =>
+            {
+                shortestPath = pathSearcher.GetShortestPath();
+            });
+
+            return new TestResult
+            {
+                Solution = shortestPath,
+                Time = elapsedTime
+            };
         }
 
         /// <summary>
@@ -131,7 +192,7 @@ namespace MPK.Connect.TestEnvironment
                 HarmonySearchType = harmonySearcher.Type,
                 ObjectiveFunctionType = harmonySearcher.ObjectiveFunctionType,
                 HarmonyGeneratorType = harmonySearcher.HarmonyGeneratorType,
-                BestHarmony = bestHarmony,
+                Solution = bestHarmony,
                 Time = elapsedTime,
                 ImprovisationCount = harmonySearcher.ImprovisationCount
             };
@@ -172,9 +233,9 @@ namespace MPK.Connect.TestEnvironment
         /// <returns>Tests result</returns>
         private HarmonySearchAverageTestResult RunTests(IHarmonySearcher<StopTimeInfo> harmonySearcher, DataTable infoDataTable, string resultPath)
         {
-            var testResults = new List<HarmonySearchTestResult>(15);
+            var testResults = new List<HarmonySearchTestResult>(IterationCount);
 
-            for (var iteration = 1; iteration <= 15; iteration++)
+            for (var iteration = 1; iteration <= IterationCount; iteration++)
             {
                 var singleIterationTestResult = RunSingleTest(harmonySearcher);
                 testResults.Add(singleIterationTestResult);
@@ -183,7 +244,7 @@ namespace MPK.Connect.TestEnvironment
             }
 
             var parameterDataTable = DataTableUtils.GetParameterDataTable(harmonySearcher);
-            var solutionsDataTable = DataTableUtils.GetSolutionsDataTable(testResults);
+            var solutionsDataTable = DataTableUtils.GetSolutionsDataTable(testResults.Cast<TestResult>().ToList());
 
             // Export test results to file
             var filePath = Path.Combine(resultPath, "details", $"{harmonySearcher.Type}_{harmonySearcher.HarmonyGeneratorType}_{harmonySearcher.ObjectiveFunctionType}_TestResults");
