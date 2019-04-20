@@ -15,11 +15,17 @@ namespace MPK.Connect.DataAccess
 
         public SimpleMpkContext(DbContextOptions<SimpleMpkContext> options) : base(options)
         {
-            //Database.SetCommandTimeout(10);
         }
 
         public SimpleMpkContext()
         {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var connectionString = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json").Build().GetConnectionString(nameof(SimpleMpkContext));
+            optionsBuilder.UseSqlServer(connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,13 +35,6 @@ namespace MPK.Connect.DataAccess
 
             modelBuilder.Entity<Trip>()
                 .Ignore(nameof(Trip.Shape));
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var connectionString = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json").Build().GetConnectionString(nameof(SimpleMpkContext));
-            optionsBuilder.UseSqlServer(connectionString);
         }
     }
 }
