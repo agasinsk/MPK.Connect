@@ -22,10 +22,4 @@
     <ProjectReference Include="..\MPK.Connect.Model\MPK.Connect.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
