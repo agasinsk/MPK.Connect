@@ -15,8 +15,7 @@ namespace MPK.Connect.WebApp.Controllers
             _timeTableService = timeTableService;
         }
 
-        // GET: api/TimeTable/5
-        [HttpGet("{stopId}", Name = "Get")]
+        [HttpGet("{stopId:int}")]
         public TimeTable Get(int stopId)
         {
             return _timeTableService.GetTimeTable(stopId);

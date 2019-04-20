@@ -8,7 +8,7 @@ export const selectView = view => dispatch => {
 };
 
 export const getStops = () => async dispatch => {
-  const response = await mpkConnect.get('Stop/GetAll');
+  const response = await mpkConnect.get('Stops');
 
   dispatch({ type: 'GET_STOPS', payload: response.data })
 };
@@ -137,7 +137,7 @@ export const unselectRoute = () => {
 };
 
 export const updateStopTime = (stopTime) => async dispatch => {
-  await mpkConnect.put('StopTime', stopTime)
+  await mpkConnect.put('StopTimes', stopTime)
     .then(response => {
       dispatch({ type: 'UPDATE_STOP_TIME', payload: response.data });
       dispatch(snackbar.show({
@@ -158,7 +158,7 @@ export const updateStopTime = (stopTime) => async dispatch => {
 };
 
 export const deleteStopTime = (stopTimeId) => async dispatch => {
-  await mpkConnect.delete('StopTime/' + stopTimeId)
+  await mpkConnect.delete('StopTimes/' + stopTimeId)
     .then(response => {
       dispatch({ type: 'DELETE_STOP_TIME', payload: response.data });
       dispatch(snackbar.show({
