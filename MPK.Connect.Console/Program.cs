@@ -12,7 +12,6 @@ using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
 using MPK.Connect.Service.Business.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
-using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Helpers;
 using MPK.Connect.TestEnvironment.Settings;
 
@@ -65,7 +64,7 @@ namespace MPK.Connect.TestEnvironment
             containerBuilder.RegisterType<SimpleMpkContext>().As<IMpkContext>();
             containerBuilder.RegisterType<ActionTimer>().AsImplementedInterfaces();
             containerBuilder.RegisterType<ExcelExportService>().AsImplementedInterfaces();
-            containerBuilder.RegisterType<HarmonySearchStopTimeTester>().AsSelf();
+            containerBuilder.RegisterType<HarmonySearchTester>().AsSelf();
 
             Container = containerBuilder.Build();
         }
@@ -78,16 +77,16 @@ namespace MPK.Connect.TestEnvironment
 
             using (var scope = Container.BeginLifetimeScope())
             {
-                var automaticTester = scope.Resolve<HarmonySearchStopTimeTester>();
+                var tester = scope.Resolve<HarmonySearchTester>();
 
-                var scenarios = new HarmonySearchTestScenario(ObjectiveFunctionType.Comprehensive, HarmonyGeneratorType.RandomDirectedStop);
+                var scenarios = new HarmonySearchTestScenario(ObjectiveFunctionType.Comprehensive);
 
-                //RunTestWithMultipleRoutes(automaticTester, scenarios);
-                RunTestWithSingleRoute(automaticTester, scenarios);
+                RunTestWithMultipleRoutes(tester, scenarios);
+                //RunTestWithSingleRoute(automaticTester, scenarios);
             }
         }
 
-        private static void RunTestWithMultipleRoutes(HarmonySearchStopTimeTester automaticTester, HarmonySearchTestScenario scenarios)
+        private static void RunTestWithMultipleRoutes(HarmonySearchTester tester, HarmonySearchTestScenario scenarios)
         {
             var testRoutes = new List<Tuple<Location, Location>>
             {
@@ -97,15 +96,15 @@ namespace MPK.Connect.TestEnvironment
                 new Tuple<Location, Location>(new Location("Gaj"), new Location("Pl. Grunwaldzki"))
             };
 
-            automaticTester.RunTestsWithLocations(testRoutes, scenarios);
+            tester.RunTestsWithLocations(testRoutes, scenarios);
         }
 
-        private static void RunTestWithSingleRoute(HarmonySearchStopTimeTester automaticTester, HarmonySearchTestScenario scenarios)
+        private static void RunTestWithSingleRoute(HarmonySearchTester tester, HarmonySearchTestScenario scenarios)
         {
             var source = new Location("Kwiska");
             var destination = new Location("Świdnicka");
 
-            automaticTester.RunTestsWithScenario(scenarios, source, destination);
+            tester.RunTestsWithScenario(scenarios, source, destination);
         }
     }
 }

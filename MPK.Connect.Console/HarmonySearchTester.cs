@@ -19,13 +19,13 @@ namespace MPK.Connect.TestEnvironment
     /// <summary>
     /// Harmony search tester
     /// </summary>
-    internal class HarmonySearchStopTimeTester
+    internal class HarmonySearchTester
     {
         private const int IterationCount = 15;
         private readonly IActionTimer _actionTimer;
         private readonly IExcelExportService _excelExportService;
         private readonly IGraphBuilder _graphBuilder;
-        private readonly ILogger<HarmonySearchStopTimeTester> _logger;
+        private readonly ILogger<HarmonySearchTester> _logger;
 
         /// <summary>
         /// Constructor
@@ -34,7 +34,7 @@ namespace MPK.Connect.TestEnvironment
         /// <param name="actionTimer">Action timer</param>
         /// <param name="graphBuilder">Graph builder</param>
         /// <param name="logger">The logger</param>
-        public HarmonySearchStopTimeTester(IExcelExportService excelExportService, IActionTimer actionTimer, IGraphBuilder graphBuilder, ILogger<HarmonySearchStopTimeTester> logger)
+        public HarmonySearchTester(IExcelExportService excelExportService, IActionTimer actionTimer, IGraphBuilder graphBuilder, ILogger<HarmonySearchTester> logger)
         {
             _excelExportService = excelExportService ?? throw new ArgumentNullException(nameof(excelExportService));
             _actionTimer = actionTimer ?? throw new ArgumentNullException(nameof(actionTimer));
