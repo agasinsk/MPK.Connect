@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using MPK.Connect.Model.Business.TravelPlan;
+﻿using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.ParameterProviders;
 using MPK.Connect.TestEnvironment.Settings;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace MPK.Connect.TestEnvironment.Helpers
 {
@@ -94,55 +94,52 @@ namespace MPK.Connect.TestEnvironment.Helpers
         {
             var resultsDataTable = new DataTable(tableName);
 
-            if (typeName != nameof(HarmonySearchAverageTestResult.HarmonySearchType))
+            var differentSearcherTypeExist = testResults.Select(r => r.HarmonySearchType).Distinct().Count() > 1;
+            if (differentSearcherTypeExist)
             {
-                resultsDataTable.Columns.Add(nameof(HarmonySearchAverageTestResult.HarmonySearchType), typeof(string));
+                resultsDataTable.Columns.Add("Algorytm", typeof(string));
             }
 
-            if (typeName != nameof(HarmonySearchAverageTestResult.HarmonyGeneratorType))
+            var differentGeneratorTypeExist = testResults.Select(r => r.HarmonyGeneratorType).Distinct().Count() > 1;
+            if (differentGeneratorTypeExist)
             {
-                resultsDataTable.Columns.Add(nameof(HarmonySearchAverageTestResult.HarmonyGeneratorType), typeof(string));
+                resultsDataTable.Columns.Add("Przeglądanie grafu", typeof(string));
             }
 
-            if (typeName != nameof(HarmonySearchAverageTestResult.ObjectiveFunctionType))
+            var differentObjectiveFunctionTypeExist = testResults.Select(r => r.ObjectiveFunctionType).Distinct().Count() > 1;
+            if (differentObjectiveFunctionTypeExist)
             {
-                resultsDataTable.Columns.Add(nameof(HarmonySearchAverageTestResult.ObjectiveFunctionType), typeof(string));
+                resultsDataTable.Columns.Add("Funkcja celu", typeof(string));
             }
 
-            resultsDataTable.Columns.Add("Time [ms]", typeof(double));
-            resultsDataTable.Columns.Add("Best harmony", typeof(double));
-            resultsDataTable.Columns.Add("Average harmony", typeof(double));
-            resultsDataTable.Columns.Add("Worst harmony", typeof(double));
-            resultsDataTable.Columns.Add(nameof(HarmonySearchAverageTestResult.ImprovisationCount), typeof(int));
-            resultsDataTable.Columns.Add(nameof(HarmonySearchAverageTestResult.FeasibleSolutionsCount), typeof(int));
-            resultsDataTable.Columns.Add(nameof(HarmonySearchAverageTestResult.NonFeasibleCount), typeof(int));
+            resultsDataTable.Columns.Add("Czas [ms]", typeof(double));
+            resultsDataTable.Columns.Add("Rozw. [min.]", typeof(double));
+            resultsDataTable.Columns.Add("Liczba iteracji", typeof(int));
+            resultsDataTable.Columns.Add("Dopuszcz. rozw.", typeof(string));
 
             foreach (var testResult in testResults)
             {
                 var typesDataRow = new List<object>(2);
 
-                if (typeName != nameof(HarmonySearchAverageTestResult.HarmonySearchType))
+                if (differentSearcherTypeExist)
                 {
-                    typesDataRow.Add(testResult.HarmonySearchType.ToString());
+                    typesDataRow.Add(testResult.HarmonySearchType.GetDisplayName());
                 }
-                if (typeName != nameof(HarmonySearchAverageTestResult.HarmonyGeneratorType))
+                if (differentGeneratorTypeExist)
                 {
-                    typesDataRow.Add(testResult.HarmonyGeneratorType.ToString());
+                    typesDataRow.Add(testResult.HarmonyGeneratorType.GetDisplayName());
                 }
-                if (typeName != nameof(HarmonySearchAverageTestResult.ObjectiveFunctionType))
+                if (differentObjectiveFunctionTypeExist)
                 {
-                    typesDataRow.Add(testResult.ObjectiveFunctionType.ToString());
+                    typesDataRow.Add(testResult.ObjectiveFunctionType.GetDisplayName());
                 }
 
                 var testResultDataRow = new List<object>
                 {
                     testResult.AverageTime,
-                    testResult.BestObjectiveFunctionValue,
                     testResult.AverageObjectiveFunctionValue,
-                    testResult.WorstObjectiveFunctionValue,
                     testResult.ImprovisationCount,
-                    testResult.FeasibleSolutionsCount,
-                    testResult.NonFeasibleCount
+                    $"{testResult.FeasibleSolutionsCount}/{testResult.NonFeasibleCount + testResult.FeasibleSolutionsCount}"
                 };
 
                 resultsDataTable.Rows.Add(typesDataRow.Concat(testResultDataRow).ToArray());

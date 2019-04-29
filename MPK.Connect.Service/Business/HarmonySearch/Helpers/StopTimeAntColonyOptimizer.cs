@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MoreLinq;
+﻿using MoreLinq;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
@@ -9,6 +6,9 @@ using MPK.Connect.Service.Business.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 {
@@ -19,10 +19,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
     {
         private readonly Graph<int, StopTimeInfo> _graph;
         private readonly IObjectiveFunction<StopTimeInfo> _objectiveFunction;
-        private readonly Dictionary<int, Dictionary<int, double>> _pheromoneAmounts;
         private readonly StopDto _referentialDestinationStop;
         private readonly List<GraphNode<int, StopTimeInfo>> _sourceNodes;
-
+        private readonly int RouteElementCountLimit = 1000;
+        private Dictionary<int, Dictionary<int, double>> _pheromoneAmounts;
         public double EdgeCostInfluence { get; set; }
         public double InitialPheromoneAmount { get; set; }
         public double PheromoneEvaporationSpeed { get; set; }
@@ -30,6 +30,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
         public Location Source { get; }
         private Location Destination { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StopTimeAntColonyOptimizer"/> class.
+        /// </summary>
+        /// <param name="function">The function.</param>
+        /// <param name="graph">The graph.</param>
+        /// <param name="source">The source.</param>
+        /// <param name="destination">The destination.</param>
         public StopTimeAntColonyOptimizer(IObjectiveFunction<StopTimeInfo> function, Graph<int, StopTimeInfo> graph, Location source, Location destination)
         {
             _objectiveFunction = function ?? throw new ArgumentNullException(nameof(function));
@@ -53,7 +60,12 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
                 .ToDictionary(k => k.Id, k => k.Neighbors.ToDictionary(v => v.DestinationId, v => InitialPheromoneAmount));
         }
 
-        public IEnumerable<Harmony<StopTimeInfo>> GetAntColontSolutions(int solutionCount)
+        /// <summary>
+        /// Gets the ant colony solutions.
+        /// </summary>
+        /// <param name="solutionCount">The solution count.</param>
+        /// <returns></returns>
+        public IEnumerable<Harmony<StopTimeInfo>> GetAntColonySolutions(int solutionCount)
         {
             var antSolutions = new List<Harmony<StopTimeInfo>>(solutionCount);
 
@@ -64,6 +76,15 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
             }
 
             return antSolutions;
+        }
+
+        /// <summary>
+        /// Resets this instance.
+        /// </summary>
+        public void Reset()
+        {
+            _pheromoneAmounts = _graph.Nodes.Values
+                .ToDictionary(k => k.Id, k => k.Neighbors.ToDictionary(v => v.DestinationId, v => InitialPheromoneAmount));
         }
 
         /// <summary>
@@ -102,7 +123,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 
             var arguments = new List<StopTimeInfo> { currentNode.Data };
 
-            while (currentNode.Data.StopDto.Name != _referentialDestinationStop.Name)
+            while (currentNode.Data.StopDto.Name != _referentialDestinationStop.Name && arguments.Count < RouteElementCountLimit)
             {
                 var nextNode = SelectNextNode(currentNode);
 
@@ -123,6 +144,12 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
             return new Harmony<StopTimeInfo>(objectiveValue, arguments.ToArray());
         }
 
+        /// <summary>
+        /// Gets the node importance.
+        /// </summary>
+        /// <param name="currentNodeId">The current node identifier.</param>
+        /// <param name="graphEdge">The graph edge.</param>
+        /// <returns></returns>
         private double GetNodeImportance(int currentNodeId, GraphEdge<int> graphEdge)
         {
             var pheromone = Math.Pow(_pheromoneAmounts[currentNodeId][graphEdge.DestinationId], PheromoneInfluence);
@@ -131,6 +158,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
             return pheromone * edgeCost;
         }
 
+        /// <summary>
+        /// Gets the reinforcement coefficient.
+        /// </summary>
+        /// <param name="bestHarmony">The best harmony.</param>
+        /// <returns></returns>
         private double GetReinforcementCoefficient(Harmony<StopTimeInfo> bestHarmony)
         {
             if (double.IsInfinity(bestHarmony.ObjectiveValue))
@@ -141,6 +173,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
             return 1 / bestHarmony.ObjectiveValue;
         }
 
+        /// <summary>
+        /// Reinforces the pheromone on best harmony.
+        /// </summary>
+        /// <param name="bestHarmony">The best harmony.</param>
         private void ReinforcePheromoneOnBestHarmony(Harmony<StopTimeInfo> bestHarmony)
         {
             // Get reinforcement coefficient
@@ -166,11 +202,21 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
             }
         }
 
+        /// <summary>
+        /// Selects the next node.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        /// <returns></returns>
         private GraphNode<int, StopTimeInfo> SelectNextNode(GraphNode<int, StopTimeInfo> node)
         {
             if (!node.Neighbors.Any())
             {
                 return null;
+            }
+
+            if (node.Neighbors.Count == 1)
+            {
+                return _graph[node.Neighbors.First().DestinationId];
             }
 
             var bestNeighborId = node.Neighbors
@@ -181,6 +227,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
             return _graph[bestNeighborId];
         }
 
+        /// <summary>
+        /// Updates the local pheromone.
+        /// </summary>
+        /// <param name="currentNodeId">The current node identifier.</param>
+        /// <param name="nextNodeId">The next node identifier.</param>
         private void UpdateLocalPheromone(int currentNodeId, int nextNodeId)
         {
             var pheromoneAmount = _pheromoneAmounts[currentNodeId][nextNodeId];

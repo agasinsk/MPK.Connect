@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using MPK.Connect.Service.Business.HarmonySearch.Core;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Core;
+using System.Collections.Generic;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 {
@@ -9,7 +9,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
     /// <typeparam name="T">Type of solution elements</typeparam>
     public interface IAntColonyOptimizer<T>
     {
-        IEnumerable<Harmony<T>> GetAntColontSolutions(int solutionCount);
+        IEnumerable<Harmony<T>> GetAntColonySolutions(int solutionCount);
+
+        void Reset();
 
         void UpdateGlobalPheromone(Harmony<T> bestHarmony);
     }

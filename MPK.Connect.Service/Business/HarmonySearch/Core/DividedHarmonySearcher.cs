@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MPK.Connect.Service.Business.HarmonySearch.Generator;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Business.HarmonySearch.ParameterProviders;
 using MPK.Connect.Service.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
@@ -40,10 +40,12 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
             foreach (var subHarmonyMemory in _subHarmonyMemories)
             {
-                while (subHarmonyMemory.Count < subHarmonyMemory.MaxCapacity)
+                var triesCount = 0;
+                while (subHarmonyMemory.Count < subHarmonyMemory.MaxCapacity && triesCount < subHarmonyMemory.MaxCapacity * 3)
                 {
                     var randomHarmony = HarmonyGenerator.GenerateRandomHarmony();
                     subHarmonyMemory.Add(randomHarmony);
+                    triesCount++;
                 }
             }
         }

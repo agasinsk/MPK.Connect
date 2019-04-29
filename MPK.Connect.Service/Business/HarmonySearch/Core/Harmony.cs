@@ -1,6 +1,5 @@
-﻿using System;
-using MPK.Connect.Service.Helpers;
-using MPK.Connect.Service.Utils;
+﻿using MPK.Connect.Service.Utils;
+using System;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
@@ -48,8 +47,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
         public override bool Equals(object obj)
         {
-            return obj is Harmony<T> harmony && Arguments.Length == harmony.Arguments.Length &&
-                   ObjectiveValue.AlmostEquals(harmony.ObjectiveValue);
+            return obj is Harmony<T> harmony && ObjectiveValue.AlmostEquals(harmony.ObjectiveValue) &&
+                   Arguments.Length == harmony.Arguments.Length;
         }
 
         public override int GetHashCode()

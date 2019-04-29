@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MPK.Connect.Service.Business.HarmonySearch.Constants;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Constants;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Business.HarmonySearch.Helpers;
 using MPK.Connect.Service.Business.HarmonySearch.ParameterProviders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
@@ -18,9 +18,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
         public override HarmonySearchType Type => HarmonySearchType.AntColony;
 
-        public AntColonyHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, IParameterProvider parameterProvider, IAntColonyOptimizer<T> antColonyOptimizer, int harmonyMemorySize = HarmonySearchConstants.DefaultHarmonyMemorySize, long maxImprovisationCount = HarmonySearchConstants.DefaultMaxImprovisationCount) : base(harmonyGenerator, parameterProvider, harmonyMemorySize, maxImprovisationCount)
+        public AntColonyHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, IParameterProvider parameterProvider, IAntColonyOptimizer<T> antColonyOptimizer, int harmonyMemorySize = HarmonySearchConstants.DefaultHarmonyMemorySize, long maxImprovisationCount = HarmonySearchConstants.DefaultMaxImprovisationCount) : base(harmonyGenerator, parameterProvider, harmonyMemorySize, maxImprovisationCount) => _antColonyOptimizer = antColonyOptimizer ?? throw new ArgumentNullException(nameof(antColonyOptimizer));
+
+        public override void InitializeHarmonyMemory()
         {
-            _antColonyOptimizer = antColonyOptimizer ?? throw new ArgumentNullException(nameof(antColonyOptimizer));
+            base.InitializeHarmonyMemory();
+
+            _antColonyOptimizer.Reset();
         }
 
         public override Harmony<T> SearchForHarmony()
@@ -47,7 +51,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
                 _antColonyOptimizer.UpdateGlobalPheromone(HarmonyMemory.BestHarmony);
 
                 // Get ant solutions
-                var antSolutions = _antColonyOptimizer.GetAntColontSolutions(HarmonyMemory.MaxCapacity);
+                var antSolutions = _antColonyOptimizer.GetAntColonySolutions(HarmonyMemory.MaxCapacity);
 
                 // Merge ant solutions with improvised ones
                 MergeHarmonyMemoryWithAntSolutions(antSolutions);

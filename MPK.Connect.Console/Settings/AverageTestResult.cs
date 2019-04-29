@@ -26,7 +26,7 @@ namespace MPK.Connect.TestEnvironment.Settings
                     ? double.PositiveInfinity
                     : testResults.Select(r => r.Solution.ObjectiveValue)
                         .Where(d => !double.IsPositiveInfinity(d)).Average();
-            AverageTime = testResults.Average(r => r.Time.TotalSeconds);
+            AverageTime = testResults.Average(r => r.Time.TotalMilliseconds);
             NonFeasibleCount = testResults.Count(r => double.IsPositiveInfinity(r.Solution.ObjectiveValue));
             FeasibleSolutionsCount = testResults.Count(r => !double.IsPositiveInfinity(r.Solution.ObjectiveValue));
         }

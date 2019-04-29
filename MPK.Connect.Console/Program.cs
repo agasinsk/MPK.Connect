@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +11,9 @@ using MPK.Connect.Service.Business.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Helpers;
 using MPK.Connect.TestEnvironment.Settings;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace MPK.Connect.TestEnvironment
 {
@@ -82,7 +82,6 @@ namespace MPK.Connect.TestEnvironment
                 var scenarios = new HarmonySearchTestScenario(ObjectiveFunctionType.Comprehensive);
 
                 RunTestWithMultipleRoutes(tester, scenarios);
-                //RunTestWithSingleRoute(automaticTester, scenarios);
             }
         }
 
@@ -90,21 +89,13 @@ namespace MPK.Connect.TestEnvironment
         {
             var testRoutes = new List<Tuple<Location, Location>>
             {
-                new Tuple<Location, Location>(new Location("Kwiska"), new Location("Świdnicka")),
-                new Tuple<Location, Location>(new Location("Biskupin"), new Location("Port Lotniczy")),
-                new Tuple<Location, Location>(new Location("Pl. Bema"), new Location("Oporów")),
-                new Tuple<Location, Location>(new Location("Gaj"), new Location("Pl. Grunwaldzki"))
+                //new Tuple<Location, Location>(new Location("Grunwaldzka"), new Location("Ogród Botaniczny")),
+                new Tuple<Location, Location>(new Location("Rynek"), new Location("Pl. Grunwaldzki")),
+                //new Tuple<Location, Location>(new Location("Bajana"), new Location("FAT")),
+                //new Tuple<Location, Location>(new Location("Biskupin"), new Location("Port Lotniczy"))
             };
 
-            tester.RunTestsWithLocations(testRoutes, scenarios);
-        }
-
-        private static void RunTestWithSingleRoute(HarmonySearchTester tester, HarmonySearchTestScenario scenarios)
-        {
-            var source = new Location("Kwiska");
-            var destination = new Location("Świdnicka");
-
-            tester.RunTestsWithScenario(scenarios, source, destination);
+            tester.RunTestsWithLocations(testRoutes, scenarios, new DateTime(2019, 05, 13, 16, 0, 0));
         }
     }
 }
