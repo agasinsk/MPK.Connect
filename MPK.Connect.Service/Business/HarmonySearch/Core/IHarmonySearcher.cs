@@ -19,6 +19,8 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         IParameterProvider ParameterProvider { get; }
         HarmonySearchType Type { get; }
 
+        void Reset();
+
         Harmony<T> SearchForHarmony();
     }
 }

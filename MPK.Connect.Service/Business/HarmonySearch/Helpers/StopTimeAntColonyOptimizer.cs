@@ -19,10 +19,11 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
     {
         private readonly Graph<int, StopTimeInfo> _graph;
         private readonly IObjectiveFunction<StopTimeInfo> _objectiveFunction;
+        private readonly double[] _pheromoneArray;
+        private readonly Dictionary<int, Dictionary<int, int>> _pheromoneIndexes;
         private readonly StopDto _referentialDestinationStop;
         private readonly List<GraphNode<int, StopTimeInfo>> _sourceNodes;
-        private readonly int RouteElementCountLimit = 1000;
-        private Dictionary<int, Dictionary<int, double>> _pheromoneAmounts;
+        private readonly int RouteElementCountLimit = 200;
         public double EdgeCostInfluence { get; set; }
         public double InitialPheromoneAmount { get; set; }
         public double PheromoneEvaporationSpeed { get; set; }
@@ -56,8 +57,24 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 
             PheromoneEvaporationSpeed = 0.05;
 
-            _pheromoneAmounts = _graph.Nodes.Values
-                .ToDictionary(k => k.Id, k => k.Neighbors.ToDictionary(v => v.DestinationId, v => InitialPheromoneAmount));
+            // Initialize pheromone tables
+            _pheromoneIndexes = _graph.Nodes.Values
+                .ToDictionary(k => k.Id, k => k.Neighbors.ToDictionary(n => n.DestinationId, v => 0));
+            _pheromoneArray = new double[_pheromoneIndexes.Sum(n => n.Value.Count)];
+
+            var index = 0;
+
+            foreach (var nodeId in _pheromoneIndexes.Keys.ToList())
+            {
+                var neighborNodesPheromone = _pheromoneIndexes[nodeId];
+
+                foreach (var neighborId in neighborNodesPheromone.Keys.ToList())
+                {
+                    neighborNodesPheromone[neighborId] = index;
+                    _pheromoneArray[index] = InitialPheromoneAmount;
+                    index++;
+                }
+            }
         }
 
         /// <summary>
@@ -72,6 +89,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
             for (var i = 0; i < solutionCount; i++)
             {
                 var antSolution = GetAntSolution();
+
                 antSolutions.Add(antSolution);
             }
 
@@ -83,8 +101,10 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
         /// </summary>
         public void Reset()
         {
-            _pheromoneAmounts = _graph.Nodes.Values
-                .ToDictionary(k => k.Id, k => k.Neighbors.ToDictionary(v => v.DestinationId, v => InitialPheromoneAmount));
+            for (var i = 0; i < _pheromoneArray.Length; i++)
+            {
+                _pheromoneArray[i] = InitialPheromoneAmount;
+            }
         }
 
         /// <summary>
@@ -99,17 +119,29 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
         }
 
         /// <summary>
+        /// Adds the pheromone amount.
+        /// </summary>
+        /// <param name="firstArgumentId">The first argument identifier.</param>
+        /// <param name="nextArgumentId">The next argument identifier.</param>
+        /// <param name="reinforcementAmount">The reinforcement amount.</param>
+        private void AddPheromoneAmount(int firstArgumentId, int nextArgumentId, double reinforcementAmount)
+        {
+            if (_pheromoneIndexes[firstArgumentId].ContainsKey(nextArgumentId))
+            {
+                var pheromoneIndex = _pheromoneIndexes[firstArgumentId][nextArgumentId];
+
+                _pheromoneArray[pheromoneIndex] += reinforcementAmount;
+            }
+        }
+
+        /// <summary>
         /// Evaporates pheromone
         /// </summary>
         private void EvaporatePheromone()
         {
-            foreach (var nodeId in _pheromoneAmounts.Keys.ToList())
+            for (var i = 0; i < _pheromoneArray.Length; i++)
             {
-                var neighborNodesPheromone = _pheromoneAmounts[nodeId];
-                foreach (var neighborId in neighborNodesPheromone.Keys.ToList())
-                {
-                    neighborNodesPheromone[neighborId] *= 1 - PheromoneEvaporationSpeed;
-                }
+                _pheromoneArray[i] *= (1 - PheromoneEvaporationSpeed);
             }
         }
 
@@ -152,10 +184,25 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
         /// <returns></returns>
         private double GetNodeImportance(int currentNodeId, GraphEdge<int> graphEdge)
         {
-            var pheromone = Math.Pow(_pheromoneAmounts[currentNodeId][graphEdge.DestinationId], PheromoneInfluence);
+            var pheromoneAmount = GetPheromoneAmount(currentNodeId, graphEdge.DestinationId);
+
+            var pheromone = Math.Pow(pheromoneAmount, PheromoneInfluence);
             var edgeCost = Math.Pow(graphEdge.Cost, EdgeCostInfluence);
 
             return pheromone * edgeCost;
+        }
+
+        /// <summary>
+        /// Gets the pheromone amount.
+        /// </summary>
+        /// <param name="currentNodeId">The current node identifier.</param>
+        /// <param name="destinationId">The destination identifier.</param>
+        /// <returns></returns>
+        private double GetPheromoneAmount(int currentNodeId, int destinationId)
+        {
+            var index = _pheromoneIndexes[currentNodeId][destinationId];
+
+            return _pheromoneArray[index];
         }
 
         /// <summary>
@@ -195,10 +242,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
 
                 var reinforcementAmount = PheromoneEvaporationSpeed * reinforcementCoefficient;
 
-                if (_pheromoneAmounts[firstArgumentId].ContainsKey(nextArgumentId))
-                {
-                    _pheromoneAmounts[firstArgumentId][nextArgumentId] += reinforcementAmount;
-                }
+                AddPheromoneAmount(firstArgumentId, nextArgumentId, reinforcementAmount);
             }
         }
 
@@ -219,27 +263,50 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Helpers
                 return _graph[node.Neighbors.First().DestinationId];
             }
 
-            var bestNeighborId = node.Neighbors
-                .ToDictionary(n => n.DestinationId, n => GetNodeImportance(node.Id, n))
-                .OrderBy(n => n.Value)
-                .FirstOrDefault().Key;
+            var bestNeighborsIds = node.Neighbors
+                .GroupBy(n => GetNodeImportance(node.Id, n), g => g.DestinationId)
+                .OrderBy(g => g.Key)
+                .Select(s => s.ToList())
+                .FirstOrDefault();
+
+            if (bestNeighborsIds == null)
+            {
+                return null;
+            }
+
+            // If there is more than 1 neighbor with the same fitness choose randomly
+            var bestNeighborId = bestNeighborsIds.Count > 1 ?
+                bestNeighborsIds.GetRandomElement() : bestNeighborsIds.First();
 
             return _graph[bestNeighborId];
         }
 
         /// <summary>
-        /// Updates the local pheromone.
+        /// Sets the pheromone amount.
+        /// </summary>
+        /// <param name="firstArgumentId">The first argument identifier.</param>
+        /// <param name="nextArgumentId">The next argument identifier.</param>
+        /// <param name="amount">The new amount.</param>
+        private void SetPheromoneAmount(int firstArgumentId, int nextArgumentId, double amount)
+        {
+            var pheromoneIndex = _pheromoneIndexes[firstArgumentId][nextArgumentId];
+            _pheromoneArray[pheromoneIndex] += amount;
+        }
+
+        /// <summary>
+        /// Updates the pheromone locally.
         /// </summary>
         /// <param name="currentNodeId">The current node identifier.</param>
         /// <param name="nextNodeId">The next node identifier.</param>
         private void UpdateLocalPheromone(int currentNodeId, int nextNodeId)
         {
-            var pheromoneAmount = _pheromoneAmounts[currentNodeId][nextNodeId];
+            var pheromoneAmount = GetPheromoneAmount(currentNodeId, nextNodeId);
+
             var pheromoneAmountAfterEvaporation = pheromoneAmount * (1 - PheromoneEvaporationSpeed);
-
             var addedPheromoneAmount = PheromoneEvaporationSpeed * 1 / InitialPheromoneAmount;
+            var newAmount = pheromoneAmountAfterEvaporation + addedPheromoneAmount;
 
-            _pheromoneAmounts[currentNodeId][nextNodeId] = pheromoneAmountAfterEvaporation + addedPheromoneAmount;
+            SetPheromoneAmount(currentNodeId, nextNodeId, newAmount);
         }
     }
 }

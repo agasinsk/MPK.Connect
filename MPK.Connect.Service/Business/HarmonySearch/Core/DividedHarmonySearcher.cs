@@ -19,6 +19,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
         private long RegroupRate => MaxImprovisationCount / 10;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DividedHarmonySearcher{T}"/> class.
+        /// </summary>
+        /// <param name="harmonyGenerator">Harmony generator</param>
+        /// <param name="parameterProvider"></param>
+        /// <param name="harmonyMemorySize">Harmony memory size</param>
+        /// <param name="maxImprovisationCount">Maximal improvisation count</param>
         public DividedHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, IParameterProvider parameterProvider, int harmonyMemorySize = DefaultHarmonyMemorySize, long maxImprovisationCount = DefaultMaxImprovisationCount) : base(harmonyGenerator, parameterProvider, harmonyMemorySize, maxImprovisationCount)
         {
         }
@@ -50,9 +57,17 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             }
         }
 
+        /// <summary>
+        /// Looks for optimal solution of a function
+        /// </summary>
+        /// <returns></returns>
+        /// <inheritdoc/>
         public override Harmony<T> SearchForHarmony()
         {
             InitializeHarmonyMemory();
+
+            ImprovisationCount = 0;
+            ImprovisationCountWithTheSameBestValue = 0;
 
             while (SearchingShouldContinue())
             {

@@ -245,10 +245,12 @@ namespace MPK.Connect.TestEnvironment
 
             for (var iteration = 1; iteration <= IterationCount; iteration++)
             {
+                harmonySearcher.Reset();
+
                 var singleIterationTestResult = RunSingleTest(harmonySearcher);
                 testResults.Add(singleIterationTestResult);
 
-                _logger.LogInformation($"Finished testing {harmonySearcher.Type.ToString()} HS, generator {harmonySearcher.HarmonyGeneratorType}, function {harmonySearcher.ObjectiveFunctionType}, iteration {iteration}.");
+                _logger.LogInformation($"Finished testing {harmonySearcher.Type.ToString()} HS, generator {harmonySearcher.HarmonyGeneratorType}, function {harmonySearcher.ObjectiveFunctionType}, iteration {iteration} in {singleIterationTestResult.Time.TotalSeconds} s");
             }
 
             var parameterDataTable = DataTableUtils.GetParameterDataTable(harmonySearcher);
