@@ -113,12 +113,12 @@ namespace MPK.Connect.TestEnvironment.Helpers
             }
 
             resultsDataTable.Columns.Add("t [s]", typeof(double));
-            resultsDataTable.Columns.Add("c*", typeof(int));
-            resultsDataTable.Columns.Add("c", typeof(int));
+            resultsDataTable.Columns.Add("c*", typeof(double));
+            resultsDataTable.Columns.Add("c", typeof(double));
             resultsDataTable.Columns.Add("SE", typeof(double));
             resultsDataTable.Columns.Add("sigma", typeof(double));
             resultsDataTable.Columns.Add("NI", typeof(int));
-            resultsDataTable.Columns.Add("SR", typeof(double));
+            resultsDataTable.Columns.Add("SR [%]", typeof(double));
 
             foreach (var testResult in testResults)
             {

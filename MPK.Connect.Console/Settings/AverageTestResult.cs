@@ -13,7 +13,7 @@ namespace MPK.Connect.TestEnvironment.Settings
         public int NonFeasibleCount { get; set; }
         public double ObjectiveFunctionValueStandardDeviation { get; }
         public double ObjectiveFunctionValueStandardError { get; }
-        public double SuccessRatio => (double)FeasibleSolutionsCount / (FeasibleSolutionsCount + NonFeasibleCount);
+        public double SuccessRatio => FeasibleSolutionsCount * 100d / (FeasibleSolutionsCount + NonFeasibleCount);
         public double WorstObjectiveFunctionValue { get; set; }
 
         public AverageTestResult(IEnumerable<TestResult> testResults)

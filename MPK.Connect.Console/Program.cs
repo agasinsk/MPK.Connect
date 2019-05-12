@@ -8,7 +8,9 @@ using MPK.Connect.DataAccess;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Service.Business;
 using MPK.Connect.Service.Business.Graph;
+using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
+using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Helpers;
 using MPK.Connect.TestEnvironment.Settings;
 using System;
@@ -79,7 +81,7 @@ namespace MPK.Connect.TestEnvironment
             {
                 var tester = scope.Resolve<HarmonySearchTester>();
 
-                var scenarios = new HarmonySearchTestScenario(ObjectiveFunctionType.Comprehensive);
+                var scenarios = new HarmonySearchTestScenario(HarmonySearchType.AntColony, HarmonyGeneratorType.RandomDirectedStop, ObjectiveFunctionType.Comprehensive);
 
                 RunTestWithMultipleRoutes(tester, scenarios);
             }
@@ -89,10 +91,10 @@ namespace MPK.Connect.TestEnvironment
         {
             var testRoutes = new List<Tuple<Location, Location>>
             {
-                new Tuple<Location, Location>(new Location("Grunwaldzka"), new Location("Ogród Botaniczny")),
+                //new Tuple<Location, Location>(new Location("Grunwaldzka"), new Location("Ogród Botaniczny")),
                 //new Tuple<Location, Location>(new Location("Rynek"), new Location("Pl. Grunwaldzki")),
                 //new Tuple<Location, Location>(new Location("Bajana"), new Location("FAT")),
-               // new Tuple<Location, Location>(new Location("Biskupin"), new Location("Port Lotniczy"))
+                new Tuple<Location, Location>(new Location("Biskupin"), new Location("Port Lotniczy"))
             };
 
             tester.RunTestsWithLocations(testRoutes, scenarios, new DateTime(2019, 05, 13, 16, 0, 0));
