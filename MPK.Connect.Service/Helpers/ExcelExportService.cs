@@ -100,7 +100,7 @@ namespace MPK.Connect.Service.Helpers
                     var cellContent = cell.Value.ToString();
                     if (double.TryParse(cellContent, out var cellValue) && !int.TryParse(cellContent, out var cellIntValue))
                     {
-                        cell.Style.Numberformat.Format = "0.000";
+                        cell.Style.Numberformat.Format = "0.0000";
                     }
 
                     if (cellContent.Contains('/'))

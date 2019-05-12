@@ -89,10 +89,10 @@ namespace MPK.Connect.TestEnvironment
         {
             var testRoutes = new List<Tuple<Location, Location>>
             {
-                //new Tuple<Location, Location>(new Location("Grunwaldzka"), new Location("Ogród Botaniczny")),
-                new Tuple<Location, Location>(new Location("Rynek"), new Location("Pl. Grunwaldzki")),
+                new Tuple<Location, Location>(new Location("Grunwaldzka"), new Location("Ogród Botaniczny")),
+                //new Tuple<Location, Location>(new Location("Rynek"), new Location("Pl. Grunwaldzki")),
                 //new Tuple<Location, Location>(new Location("Bajana"), new Location("FAT")),
-                //new Tuple<Location, Location>(new Location("Biskupin"), new Location("Port Lotniczy"))
+               // new Tuple<Location, Location>(new Location("Biskupin"), new Location("Port Lotniczy"))
             };
 
             tester.RunTestsWithLocations(testRoutes, scenarios, new DateTime(2019, 05, 13, 16, 0, 0));

@@ -112,10 +112,13 @@ namespace MPK.Connect.TestEnvironment.Helpers
                 resultsDataTable.Columns.Add("Funkcja celu", typeof(string));
             }
 
-            resultsDataTable.Columns.Add("Czas [ms]", typeof(double));
-            resultsDataTable.Columns.Add("Rozw. [min.]", typeof(double));
-            resultsDataTable.Columns.Add("Liczba iteracji", typeof(int));
-            resultsDataTable.Columns.Add("Dopuszcz. rozw.", typeof(string));
+            resultsDataTable.Columns.Add("t [s]", typeof(double));
+            resultsDataTable.Columns.Add("c*", typeof(int));
+            resultsDataTable.Columns.Add("c", typeof(int));
+            resultsDataTable.Columns.Add("SE", typeof(double));
+            resultsDataTable.Columns.Add("sigma", typeof(double));
+            resultsDataTable.Columns.Add("NI", typeof(int));
+            resultsDataTable.Columns.Add("SR", typeof(double));
 
             foreach (var testResult in testResults)
             {
@@ -137,9 +140,12 @@ namespace MPK.Connect.TestEnvironment.Helpers
                 var testResultDataRow = new List<object>
                 {
                     testResult.AverageTime,
+                    testResult.BestObjectiveFunctionValue,
                     testResult.AverageObjectiveFunctionValue,
+                    testResult.ObjectiveFunctionValueStandardError,
+                    testResult.ObjectiveFunctionValueStandardDeviation,
                     testResult.ImprovisationCount,
-                    $"{testResult.FeasibleSolutionsCount}/{testResult.NonFeasibleCount + testResult.FeasibleSolutionsCount}"
+                    testResult.SuccessRatio
                 };
 
                 resultsDataTable.Rows.Add(typesDataRow.Concat(testResultDataRow).ToArray());
