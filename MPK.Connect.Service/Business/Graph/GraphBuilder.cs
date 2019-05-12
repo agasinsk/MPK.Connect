@@ -12,13 +12,13 @@ namespace MPK.Connect.Service.Business.Graph
 {
     public class GraphBuilder : IGraphBuilder
     {
-        private readonly TimeSpan _additionalTransferCost = TimeSpan.FromSeconds(30);
         private readonly IGenericRepository<Calendar> _calendarRepository;
         private readonly TimeSpan _maxStopTimeDepartureTime = TimeSpan.FromHours(2);
         private readonly TimeSpan _minimumSwitchingTime = TimeSpan.FromMinutes(1);
         private readonly TimeSpan _oneDayTimeSpan = TimeSpan.FromHours(24);
         private readonly IGenericRepository<Stop> _stopRepository;
         private readonly IGenericRepository<StopTime> _stopTimeRepository;
+        private readonly TimeSpan _transferTime = TimeSpan.FromMinutes(2.5);
 
         public GraphBuilder(IGenericRepository<Stop> stopRepository, IGenericRepository<StopTime> stopTimeRepository, IGenericRepository<Calendar> calendarRepository)
         {
@@ -50,59 +50,19 @@ namespace MPK.Connect.Service.Business.Graph
             // Create a directed edge for every bus route segment
             CreateDirectedEdgesWithinEachTrip(dbStopTimes, graph);
 
-            // Add edges corresponding to switching stops of the same name
-            CreateDirectedEdgesForSwitchingStopsWithSameName(dbStopTimes, graph);
-
             // Add edges corresponding to switching buses (trips)
             CreateDirectedEdgesForSwitchingTrips(dbStopTimes, graph);
 
+            // Add edges corresponding to switching stops of the same name
+            CreateDirectedEdgesForSwitchingStopsWithSameName(dbStopTimes, graph);
+
             // Add edges between last and first stop of the same route but different direction
-            CreateDirectedEdgesForSwitchingTripDirection(dbStopTimes, graph);
+            CreatedDirectedEdgesForSwitchingTripDirection(dbStopTimes, graph);
 
             return graph;
         }
 
-        /// <summary>
-        /// Groups stop times by stop name and creates edges between the different stops of the same name
-        /// </summary>
-        /// <param name="dbStopTimes">Stop times</param>
-        /// <param name="graph">Graph</param>
-        private void CreateDirectedEdgesForSwitchingStopsWithSameName(Dictionary<int, StopTimeInfo> dbStopTimes, Graph<int, StopTimeInfo> graph)
-        {
-            var stopTimesGroupedByStopName = dbStopTimes.Values
-                .GroupBy(st => st.StopDto.Name)
-                .ToDictionary(k => k.Key, v => v.AsEnumerable());
-
-            foreach (var stopTimesGroup in stopTimesGroupedByStopName)
-            {
-                var stopTimesWithTheSameStopName = stopTimesGroup.Value.ToList();
-                foreach (var sourceStopTime in stopTimesWithTheSameStopName)
-                {
-                    var stopTimesAfterSource = stopTimesWithTheSameStopName
-                        .Where(st => sourceStopTime.DepartureTime + _minimumSwitchingTime <= st.DepartureTime
-                                     && st.TripId != sourceStopTime.TripId);
-
-                    foreach (var destination in stopTimesAfterSource)
-                    {
-                        var cost = destination.DepartureTime - sourceStopTime.DepartureTime + _minimumSwitchingTime;
-
-                        if (destination.StopId != sourceStopTime.StopId)
-                        {
-                            cost += _additionalTransferCost;
-                        }
-
-                        graph.AddDirectedEdge(sourceStopTime, destination, cost.TotalMinutes);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Creates the directed edges for switching trip direction.
-        /// </summary>
-        /// <param name="dbStopTimes">The database stop times.</param>
-        /// <param name="graph">The graph.</param>
-        private void CreateDirectedEdgesForSwitchingTripDirection(Dictionary<int, StopTimeInfo> dbStopTimes, Graph<int, StopTimeInfo> graph)
+        private void CreatedDirectedEdgesForSwitchingTripDirection(Dictionary<int, StopTimeInfo> dbStopTimes, Graph<int, StopTimeInfo> graph)
         {
             var firstStopTimesOfTrips = dbStopTimes.Values
                 .GroupBy(st => st.TripId)
@@ -127,11 +87,43 @@ namespace MPK.Connect.Service.Business.Graph
                     {
                         var sourceStopTime = firstAndLastStopTimeOfStop.Value[index];
                         var nextStopTime = firstAndLastStopTimeOfStop.Value[index + 1];
+
                         if (sourceStopTime.DirectionId != nextStopTime.DirectionId)
                         {
                             var transferTime = nextStopTime.DepartureTime - sourceStopTime.DepartureTime;
+
                             graph.AddDirectedEdge(sourceStopTime, nextStopTime, transferTime.TotalMinutes);
                         }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Groups stop times by stop name and creates edges between the different stops of the same name
+        /// </summary>
+        /// <param name="dbStopTimes">Stop times</param>
+        /// <param name="graph">Graph</param>
+        private void CreateDirectedEdgesForSwitchingStopsWithSameName(Dictionary<int, StopTimeInfo> dbStopTimes, Graph<int, StopTimeInfo> graph)
+        {
+            var stopTimesGroupedByStopName = dbStopTimes.Values
+                .GroupBy(st => st.StopDto.Name)
+                .ToDictionary(k => k.Key, v => v.AsEnumerable());
+
+            foreach (var stopTimesGroup in stopTimesGroupedByStopName)
+            {
+                var stopTimesWithTheSameStopName = stopTimesGroup.Value.ToList();
+                foreach (var sourceStopTime in stopTimesWithTheSameStopName)
+                {
+                    var stopTimesAfterSource = stopTimesWithTheSameStopName
+                        .Where(st => sourceStopTime.DepartureTime + _minimumSwitchingTime <= st.DepartureTime
+                                     && st.TripId != sourceStopTime.TripId);
+
+                    foreach (var destination in stopTimesAfterSource)
+                    {
+                        var cost = destination.DepartureTime - sourceStopTime.DepartureTime + _transferTime;
+
+                        graph.AddDirectedEdge(sourceStopTime, destination, cost.TotalMinutes);
                     }
                 }
             }
@@ -157,7 +149,7 @@ namespace MPK.Connect.Service.Business.Graph
                     var destination = stopTransferTimes[i + 1];
                     if (source.TripId != destination.TripId && source.DepartureTime + _minimumSwitchingTime <= destination.DepartureTime)
                     {
-                        var cost = destination.DepartureTime - source.DepartureTime + _minimumSwitchingTime;
+                        var cost = destination.DepartureTime - source.DepartureTime + _transferTime;
 
                         graph.AddDirectedEdge(source, destination, cost.TotalMinutes);
                     }

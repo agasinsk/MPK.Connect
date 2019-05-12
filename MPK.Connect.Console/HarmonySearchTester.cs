@@ -146,7 +146,7 @@ namespace MPK.Connect.TestEnvironment
                 var singleIterationTestResult = RunSingleAStarTest(pathSearcher);
                 testResults.Add(singleIterationTestResult);
 
-                _logger.LogInformation($"Finished testing A*, iteration {iteration}.");
+                _logger.LogInformation($"Finished testing A*, iteration {iteration} in {singleIterationTestResult.Time.TotalSeconds} s.");
             }
 
             var solutionsDataTable = DataTableUtils.GetSolutionsDataTable(testResults);

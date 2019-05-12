@@ -27,7 +27,16 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         /// <param name="harmonyMemorySize">Size of the harmony memory.</param>
         /// <param name="maxImprovisationCount">The maximum improvisation count.</param>
         /// <exception cref="ArgumentNullException">antColonyOptimizer</exception>
-        public AntColonyHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, IParameterProvider parameterProvider, IAntColonyOptimizer<T> antColonyOptimizer, int harmonyMemorySize = HarmonySearchConstants.DefaultHarmonyMemorySize, long maxImprovisationCount = HarmonySearchConstants.DefaultMaxImprovisationCount) : base(harmonyGenerator, parameterProvider, harmonyMemorySize, maxImprovisationCount) => _antColonyOptimizer = antColonyOptimizer ?? throw new ArgumentNullException(nameof(antColonyOptimizer));
+        public AntColonyHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, IParameterProvider parameterProvider,
+            IAntColonyOptimizer<T> antColonyOptimizer,
+            int harmonyMemorySize = HarmonySearchConstants.DefaultHarmonyMemorySize,
+            long maxImprovisationCount = HarmonySearchConstants.DefaultMaxImprovisationCount) : base(harmonyGenerator,
+            parameterProvider, harmonyMemorySize, maxImprovisationCount)
+        {
+            _antColonyOptimizer = antColonyOptimizer ?? throw new ArgumentNullException(nameof(antColonyOptimizer));
+
+            MaxImprovisationCountWithTheSameBestValue = (int)(maxImprovisationCount / 20);
+        }
 
         /// <inheritdoc/>
         /// <summary>

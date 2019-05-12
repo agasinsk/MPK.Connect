@@ -27,9 +27,11 @@ namespace MPK.Connect.Service.Business.Graph
                             .First().Id))
                     .ToList());
 
-            // Get only stops with neighbors closer to destination
-            var stopsWithRightDirectionIds = new List<int>();
+            // Calculate straight-line distance to destination
+            var distanceToDestination = sourceStopTimesGroupedByStop.Keys
+                .Select(s => s.GetDistanceTo(referentialDestinationStop)).Max();
 
+            var stopsWithRightDirectionIds = new List<int>();
             foreach (var stopWithTimes in sourceStopTimesGroupedByStop)
             {
                 // Get neighbor stops
@@ -39,9 +41,6 @@ namespace MPK.Connect.Service.Business.Graph
                         .Where(s => s.Name.TrimToLower() != sourceName.TrimToLower()))
                     .Distinct()
                     .ToList();
-
-                // Calculate straight-line distance from stop to destination
-                var distanceToDestination = stopWithTimes.Key.GetDistanceTo(referentialDestinationStop);
 
                 if (neighborStops.Any())
                 {

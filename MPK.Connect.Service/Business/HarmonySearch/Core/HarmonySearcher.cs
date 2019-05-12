@@ -13,9 +13,9 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
     public class HarmonySearcher<T> : IHarmonySearcher<T>
     {
         protected readonly IHarmonyGenerator<T> HarmonyGenerator;
-        protected readonly int MaxImprovisationCountWithTheSameBestValue;
         protected double BestHarmonyObjectiveValue;
         protected int ImprovisationCountWithTheSameBestValue;
+        protected int MaxImprovisationCountWithTheSameBestValue;
         public HarmonyGeneratorType HarmonyGeneratorType => HarmonyGenerator.Type;
         public HarmonyMemory<T> HarmonyMemory { get; }
         public int ImprovisationCount { get; protected set; }
