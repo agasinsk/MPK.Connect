@@ -2,11 +2,11 @@
 {
     public class RandomFactory
     {
-        private static IBoundedRandom _random = null;
+        private static IBoundedRandom _instance = null;
 
         public static IBoundedRandom GetInstance()
         {
-            return _random ?? (_random = new BoundedRandom());
+            return _instance ?? (_instance = new BoundedRandom());
         }
     }
 }

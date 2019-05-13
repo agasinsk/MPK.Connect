@@ -1,21 +1,21 @@
-﻿using System;
-using MPK.Connect.Service.Business.HarmonySearch.Functions;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Business.HarmonySearch.ParameterProviders;
+using System;
 using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
 {
     /// <inheritdoc/>
     /// <summary>
-    /// Implements harmony search algorithm
+    /// Implements Harmony Search algorithm
     /// </summary>
     public class HarmonySearcher<T> : IHarmonySearcher<T>
     {
         protected readonly IHarmonyGenerator<T> HarmonyGenerator;
-        protected readonly int MaxImprovisationCountWithTheSameBestValue;
         protected double BestHarmonyObjectiveValue;
         protected int ImprovisationCountWithTheSameBestValue;
+        protected int MaxImprovisationCountWithTheSameBestValue;
         public HarmonyGeneratorType HarmonyGeneratorType => HarmonyGenerator.Type;
         public HarmonyMemory<T> HarmonyMemory { get; }
         public int ImprovisationCount { get; protected set; }
@@ -58,6 +58,18 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
             }
         }
 
+        /// <summary>
+        /// Resets this instance.
+        /// </summary>
+        public virtual void Reset()
+        {
+            ImprovisationCount = 0;
+            ImprovisationCountWithTheSameBestValue = 0;
+            BestHarmonyObjectiveValue = double.PositiveInfinity;
+
+            HarmonyMemory.Clear();
+        }
+
         /// <inheritdoc/>
         /// <summary>
         /// Looks for optimal solution of a function
@@ -66,6 +78,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
         {
             InitializeHarmonyMemory();
 
+            ImprovisationCountWithTheSameBestValue = 0;
             ImprovisationCount = 0;
 
             while (SearchingShouldContinue())

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
@@ -13,6 +8,11 @@ using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Helpers;
 using MPK.Connect.TestEnvironment.Helpers;
 using MPK.Connect.TestEnvironment.Settings;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
 
 namespace MPK.Connect.TestEnvironment
 {
@@ -21,7 +21,7 @@ namespace MPK.Connect.TestEnvironment
     /// </summary>
     internal class HarmonySearchTester
     {
-        private const int IterationCount = 15;
+        private const int IterationCount = 30;
         private readonly IActionTimer _actionTimer;
         private readonly IExcelExportService _excelExportService;
         private readonly IGraphBuilder _graphBuilder;
@@ -146,7 +146,7 @@ namespace MPK.Connect.TestEnvironment
                 var singleIterationTestResult = RunSingleAStarTest(pathSearcher);
                 testResults.Add(singleIterationTestResult);
 
-                _logger.LogInformation($"Finished testing A*, iteration {iteration}.");
+                _logger.LogInformation($"Finished testing A*, iteration {iteration} in {singleIterationTestResult.Time.TotalSeconds} s.");
             }
 
             var solutionsDataTable = DataTableUtils.GetSolutionsDataTable(testResults);
@@ -245,10 +245,12 @@ namespace MPK.Connect.TestEnvironment
 
             for (var iteration = 1; iteration <= IterationCount; iteration++)
             {
+                harmonySearcher.Reset();
+
                 var singleIterationTestResult = RunSingleTest(harmonySearcher);
                 testResults.Add(singleIterationTestResult);
 
-                _logger.LogInformation($"Finished testing {harmonySearcher.Type.ToString()} HS, generator {harmonySearcher.HarmonyGeneratorType}, function {harmonySearcher.ObjectiveFunctionType}, iteration {iteration}.");
+                _logger.LogInformation($"Finished testing {harmonySearcher.Type.ToString()} HS, generator {harmonySearcher.HarmonyGeneratorType}, function {harmonySearcher.ObjectiveFunctionType}, iteration {iteration} in {singleIterationTestResult.Time.TotalSeconds} s");
             }
 
             var parameterDataTable = DataTableUtils.GetParameterDataTable(harmonySearcher);

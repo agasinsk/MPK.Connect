@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using MPK.Connect.Service.Business.HarmonySearch.Core;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Business.HarmonySearch.Generator;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MPK.Connect.TestEnvironment.Settings
 {

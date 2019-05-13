@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MPK.Connect.Service.Business.HarmonySearch.Generator;
+﻿using MPK.Connect.Service.Business.HarmonySearch.Generator;
 using MPK.Connect.Service.Business.HarmonySearch.ParameterProviders;
 using MPK.Connect.Service.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using static MPK.Connect.Service.Business.HarmonySearch.Constants.HarmonySearchConstants;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Core
@@ -19,6 +19,13 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
         private long RegroupRate => MaxImprovisationCount / 10;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DividedHarmonySearcher{T}"/> class.
+        /// </summary>
+        /// <param name="harmonyGenerator">Harmony generator</param>
+        /// <param name="parameterProvider"></param>
+        /// <param name="harmonyMemorySize">Harmony memory size</param>
+        /// <param name="maxImprovisationCount">Maximal improvisation count</param>
         public DividedHarmonySearcher(IHarmonyGenerator<T> harmonyGenerator, IParameterProvider parameterProvider, int harmonyMemorySize = DefaultHarmonyMemorySize, long maxImprovisationCount = DefaultMaxImprovisationCount) : base(harmonyGenerator, parameterProvider, harmonyMemorySize, maxImprovisationCount)
         {
         }
@@ -40,17 +47,27 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Core
 
             foreach (var subHarmonyMemory in _subHarmonyMemories)
             {
-                while (subHarmonyMemory.Count < subHarmonyMemory.MaxCapacity)
+                var triesCount = 0;
+                while (subHarmonyMemory.Count < subHarmonyMemory.MaxCapacity && triesCount < subHarmonyMemory.MaxCapacity * 3)
                 {
                     var randomHarmony = HarmonyGenerator.GenerateRandomHarmony();
                     subHarmonyMemory.Add(randomHarmony);
+                    triesCount++;
                 }
             }
         }
 
+        /// <summary>
+        /// Looks for optimal solution of a function
+        /// </summary>
+        /// <returns></returns>
+        /// <inheritdoc/>
         public override Harmony<T> SearchForHarmony()
         {
             InitializeHarmonyMemory();
+
+            ImprovisationCount = 0;
+            ImprovisationCountWithTheSameBestValue = 0;
 
             while (SearchingShouldContinue())
             {

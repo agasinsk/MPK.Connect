@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using OfficeOpenXml;
+﻿using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using OfficeOpenXml.Table;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
+using System.IO;
 
 namespace MPK.Connect.Service.Helpers
 {
@@ -14,13 +15,9 @@ namespace MPK.Connect.Service.Helpers
         private const string DefaultPath = "../../../results/";
         private const string HarmonySearchSheetName = "Harmony search";
 
-        public ExcelExportService()
-        {
-            Directory.CreateDirectory(DefaultPath);
-        }
+        public ExcelExportService() => Directory.CreateDirectory(DefaultPath);
 
-        public void ExportToExcel(DataTable infoDataTable, DataTable parameterDataTable, DataTable solutionsDataTable,
-            string filePath = null)
+        public void ExportToExcel(DataTable infoDataTable, DataTable parameterDataTable, DataTable solutionsDataTable, string filePath = null)
         {
             using (var excelPackage = new ExcelPackage())
             {
@@ -96,7 +93,25 @@ namespace MPK.Connect.Service.Helpers
             {
                 range = WriteTableName(excelWorksheet, range, dataTable);
 
-                range = excelWorksheet.Cells[range.End.Row + 1, 1].LoadFromDataTable(dataTable, true, TableStyles.Light1);
+                range = excelWorksheet.Cells[range.End.Row + 1, 1].LoadFromDataTable(dataTable, true, TableStyles.Light15);
+
+                foreach (var cell in excelWorksheet.Cells[range.Start.Row + 1, 1, range.End.Row, range.End.Column])
+                {
+                    var cellContent = cell.Value.ToString();
+                    if (double.TryParse(cellContent, out var cellValue) && !int.TryParse(cellContent, out var cellIntValue))
+                    {
+                        cell.Style.Numberformat.Format = "0.0000";
+                    }
+
+                    if (cellContent.Contains('/'))
+                    {
+                        cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    cell.Style.Fill.BackgroundColor.SetColor(Color.White);
+                }
             }
 
             excelWorksheet.Cells.AutoFitColumns();
