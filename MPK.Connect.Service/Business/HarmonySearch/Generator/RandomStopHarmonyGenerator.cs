@@ -117,6 +117,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
             var firstStopTimeWithStop = _stopIdToStopTimes[randomStopId]
                 .FirstOrDefault(s => !forbiddenStopTimeIds.Contains(s.Data.Id)
+                                     && currentNode.Neighbors.Select(n => n.DestinationId).Contains(s.Data.Id)
                                      && s.Data.DepartureTime > currentNode.Data.DepartureTime);
 
             return firstStopTimeWithStop;

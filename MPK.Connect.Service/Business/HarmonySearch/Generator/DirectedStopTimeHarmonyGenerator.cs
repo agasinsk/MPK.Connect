@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using MPK.Connect.Model.Business;
+﻿using MPK.Connect.Model.Business;
 using MPK.Connect.Model.Business.TravelPlan;
 using MPK.Connect.Model.Graph;
 using MPK.Connect.Service.Business.HarmonySearch.Core;
 using MPK.Connect.Service.Business.HarmonySearch.Functions;
 using MPK.Connect.Service.Utils;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 {
@@ -125,6 +125,7 @@ namespace MPK.Connect.Service.Business.HarmonySearch.Generator
 
             var firstStopTimeWithStop = _stopIdToStopTimes[randomStopId]
                 .FirstOrDefault(s => !forbiddenStopTimeIds.Contains(s.Data.Id)
+                                     && currentNode.Neighbors.Select(n => n.DestinationId).Contains(s.Data.Id)
                                      && s.Data.DepartureTime > currentNode.Data.DepartureTime);
 
             return firstStopTimeWithStop;
